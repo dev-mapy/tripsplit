@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Suspense } from "react";
+import { Analytics } from "@vercel/analytics/react";
 import "./globals.css";
 import { NuqsAdapter } from "nuqs/adapters/next/app";
 import { TripProvider } from "@/lib/trip-context";
@@ -28,6 +29,7 @@ export default function RootLayout({
             <TripProvider>{children}</TripProvider>
           </Suspense>
         </NuqsAdapter>
+        <Analytics />
       </body>
     </html>
   );
