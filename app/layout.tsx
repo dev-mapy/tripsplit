@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { Suspense } from "react";
 import "./globals.css";
 import { NuqsAdapter } from "nuqs/adapters/next/app";
 import { TripProvider } from "@/lib/trip-context";
@@ -23,7 +24,9 @@ export default function RootLayout({
       </head>
       <body>
         <NuqsAdapter>
-          <TripProvider>{children}</TripProvider>
+          <Suspense fallback={null}>
+            <TripProvider>{children}</TripProvider>
+          </Suspense>
         </NuqsAdapter>
       </body>
     </html>
