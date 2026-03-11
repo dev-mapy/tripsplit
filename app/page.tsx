@@ -42,6 +42,20 @@ export default function Home() {
           <p style={{ color: "var(--text-muted)", marginTop: 8, fontSize: 15 }}>
             No login. No drama. Just fair splits.
           </p>
+          <a
+            href="/home"
+            style={{
+              display: "inline-block",
+              marginTop: 10,
+              fontFamily: "'Lato', sans-serif",
+              fontSize: 12,
+              color: "rgba(240,235,227,0.3)",
+              textDecoration: "none",
+              letterSpacing: "0.3px",
+            }}
+          >
+            ← About TripSplit
+          </a>
 
           {/* Step indicator */}
           <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 8, marginTop: 24 }}>
