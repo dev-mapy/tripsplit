@@ -45,3 +45,4 @@ GEMINI.md
 CLAUDE.md
 TRIPSPLIT_CONTEXT.md
 md-tasks/
+.env*.local
