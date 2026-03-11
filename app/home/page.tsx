@@ -1,5 +1,6 @@
 import Link from "next/link";
 import type { Metadata } from "next";
+import { getBaseUrl } from "@/lib/utils";
 
 export const metadata: Metadata = {
   title: "TripSplit — Split travel expenses with friends. No login needed.",
@@ -342,7 +343,7 @@ function Hero() {
               whiteSpace: "nowrap",
             }}
           >
-            tripsplit.vercel.app/?trip=QmFsaV8yMDI2...
+            {getBaseUrl()}/?trip=QmFsaV8yMDI2...
           </span>
           <span
             style={{
