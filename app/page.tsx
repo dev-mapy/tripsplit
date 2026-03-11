@@ -1,65 +1,73 @@
-import Image from "next/image";
+"use client";
+
+import { useTrip } from "@/lib/trip-context";
+import TravelerSetup from "@/components/TravelerSetup";
+import ExpenseList from "@/components/ExpenseList";
+import Settlement from "@/components/Settlement";
+
+const STEPS = ["setup", "expenses", "result"] as const;
+const STEP_LABELS = ["Trip Setup", "Expenses", "Settlement"];
 
 export default function Home() {
+  const { step } = useTrip();
+
   return (
-    <div className="flex min-h-screen items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex min-h-screen w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
+    <main style={{ minHeight: "100vh", padding: "0 0 80px", position: "relative", overflow: "hidden" }}>
+
+      {/* Stars background */}
+      <div style={{ position: "fixed", inset: 0, pointerEvents: "none", zIndex: 0 }}>
+        {Array.from({ length: 30 }).map((_, i) => (
+          <div key={i} style={{
+            position: "absolute",
+            width: i % 5 === 0 ? 3 : 2,
+            height: i % 5 === 0 ? 3 : 2,
+            borderRadius: "50%",
+            background: `rgba(255,255,255,${0.2 + (i % 5) * 0.1})`,
+            top: `${(i * 37) % 100}%`,
+            left: `${(i * 61) % 100}%`,
+            animation: `twinkle ${2 + (i % 3)}s ease-in-out infinite`,
+            animationDelay: `${(i % 4) * 0.7}s`,
+          }} />
+        ))}
+      </div>
+
+      <div style={{ position: "relative", zIndex: 1, maxWidth: 680, margin: "0 auto", padding: "40px 20px 0" }}>
+
+        {/* Header */}
+        <div style={{ textAlign: "center", marginBottom: 48 }}>
+          <div style={{ fontSize: 48, marginBottom: 12 }}>✈️</div>
+          <h1 style={{ fontSize: "clamp(32px, 6vw, 48px)", fontWeight: 700, background: "linear-gradient(135deg, #ffd200, #f7971e)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", margin: 0 }}>
+            TripSplit
           </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
+          <p style={{ color: "var(--text-muted)", marginTop: 8, fontSize: 15 }}>
+            No login. No drama. Just fair splits.
           </p>
+
+          {/* Step indicator */}
+          <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 8, marginTop: 24 }}>
+            {STEPS.map((s, i) => (
+              <div key={s} style={{ display: "flex", alignItems: "center", gap: 8 }}>
+                <div style={{
+                  borderRadius: "50%",
+                  transition: "all 0.3s",
+                  width: step === s ? 12 : 10,
+                  height: step === s ? 12 : 10,
+                  background: step === s ? "#ffd200" : STEPS.indexOf(step) > i ? "rgba(255,210,0,0.5)" : "rgba(255,255,255,0.2)",
+                }} />
+                {i < 2 && <div style={{ width: 32, height: 1, background: "rgba(255,255,255,0.15)" }} />}
+              </div>
+            ))}
+          </div>
+          <div style={{ display: "flex", justifyContent: "center", gap: 48, marginTop: 6, fontSize: 11, color: "var(--text-faint)", letterSpacing: "0.5px", textTransform: "uppercase" }}>
+            {STEP_LABELS.map((l) => <span key={l}>{l}</span>)}
+          </div>
         </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
-        </div>
-      </main>
-    </div>
+
+        {/* Step content */}
+        {step === "setup"    && <TravelerSetup />}
+        {step === "expenses" && <ExpenseList />}
+        {step === "result"   && <Settlement />}
+      </div>
+    </main>
   );
 }
