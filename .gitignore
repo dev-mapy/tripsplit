@@ -43,4 +43,5 @@ next-env.d.ts
 # Gemini
 GEMINI.md
 CLAUDE.md
+TRIPSPLIT_CONTEXT.md
 md-tasks/
