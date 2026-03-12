@@ -1,14 +1,20 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
+import { useAuth } from "@/lib/auth-context";
+import { saveTrip } from "@/lib/api";
 import { useTrip } from "@/lib/trip-context";
 import { CURRENCIES } from "@/lib/constants";
 import { avatarColor, getInitial } from "@/lib/utils";
 
 export default function TravelerSetup() {
+  const { user } = useAuth();
+  const router = useRouter();
   const { trip, updateTripName, updateCurrency, addTraveler, removeTraveler, setStep } =
     useTrip();
   const [newName, setNewName] = useState("");
+  const [loading, setLoading] = useState(false);
 
   const handleAdd = () => {
     if (!newName.trim()) return;
@@ -17,6 +23,31 @@ export default function TravelerSetup() {
   };
 
   const canContinue = trip.name.trim().length > 0 && trip.travelers.length >= 2;
+
+  const handleContinue = async () => {
+    if (!canContinue || loading) return;
+
+    if (user) {
+      setLoading(true);
+      try {
+        const { url } = await saveTrip({
+          name: trip.name,
+          slug: "",
+          currencyCode: trip.currency.code,
+          travelers: trip.travelers,
+          expenses: trip.expenses,
+        });
+        router.push(`${url}?edit=1`);
+      } catch (err) {
+        console.error("Failed to auto-save trip:", err);
+        setStep("expenses");
+      } finally {
+        setLoading(false);
+      }
+    } else {
+      setStep("expenses");
+    }
+  };
 
   return (
     <div className="animate-fade-up" style={{ display: "flex", flexDirection: "column", gap: 20 }}>
@@ -88,11 +119,11 @@ export default function TravelerSetup() {
       </div>
 
       <button
-        style={{ ...styles.btnPrimary, opacity: canContinue ? 1 : 0.5 }}
-        disabled={!canContinue}
-        onClick={() => setStep("expenses")}
+        style={{ ...styles.btnPrimary, opacity: canContinue && !loading ? 1 : 0.5 }}
+        disabled={!canContinue || loading}
+        onClick={handleContinue}
       >
-        Continue to Expenses →
+        {loading ? "Saving..." : "Continue to Expenses →"}
       </button>
     </div>
   );
