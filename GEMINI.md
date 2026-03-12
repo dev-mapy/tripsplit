@@ -42,3 +42,14 @@ The following task-tracking files have been moved to the `../md-tasks/` director
 | `/` | `app/page.tsx` | Redirects to `/home` |
 | `/home` | `app/home/page.tsx` | Landing page |
 | `/split` | `app/split/page.tsx` | The trip splitter app |
+
+## Read-Only Mode (BUILT)
+
+When a user opens a shared link (?trip= param exists on load):
+- `isSharedView` = true (from useTrip context)
+- App jumps straight to the result/settlement step
+- Settlement page shows a purple "👀 read-only" banner
+- "Edit Expenses" and "New Trip" buttons are hidden
+- Replaced with a "Start your own trip ✈️" CTA linking to /split
+- ShareButton is still visible so they can re-share the link
+- Owner (isSharedView = false) sees the normal Edit + New Trip buttons
