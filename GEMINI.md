@@ -228,3 +228,31 @@ Prisma with Supabase Postgres
 ### TripProvider Update
 - Now accepts optional `initialTrip` prop
 - Used by SavedTripView to seed context with DB trip data
+
+## Dashboard (BUILT)
+
+### Route
+`/dashboard` → `app/dashboard/page.tsx` (server) + `DashboardView.tsx` (client)
+
+### Behavior
+- Server-side auth check — redirects to /home?signin=required if not signed in
+- Fetches all trips for the current user ordered by createdAt desc
+- Passes shaped trip summaries to DashboardView client component
+
+### TripSummary shape (passed to client)
+{
+  id, slug, name, currencyCode, currencySymbol, currencyFlag,
+  travelerCount, expenseCount, total, createdAt, updatedAt
+}
+
+### Features
+- Trip cards with name, total, travelers, expenses, date, slug
+- "View →" links to /t/[slug]
+- Delete with inline confirmation overlay (cannot be undone)
+- Empty state with CTA to create first trip
+- User avatar + first name + sign out in header
+- "New Trip" CTA always visible at top
+
+### Protected by
+- Server-side redirect in page.tsx
+- middleware.ts (redirects /dashboard to /home if no session)
