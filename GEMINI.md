@@ -53,3 +53,28 @@ When a user opens a shared link (?trip= param exists on load):
 - Replaced with a "Start your own trip ✈️" CTA linking to /split
 - ShareButton is still visible so they can re-share the link
 - Owner (isSharedView = false) sees the normal Edit + New Trip buttons
+
+## Affiliate Cards (BUILT)
+
+### Placement
+- Expenses page (step 2) → Yesim card (after ShareButton)
+- Result page (step 3) → Klook card (above category breakdown)
+
+### Components
+- `components/AffiliateCard.tsx` — reusable base card
+- `components/YesimCard.tsx` — Yesim instance (orange #f97316)
+- `components/KlookCard.tsx` — Klook instance (red #ef4444)
+
+### QR Code Images
+- `public/affiliates/klook-qr-code.jpeg`
+- `public/affiliates/yesim-qr-code.jpeg`
+
+### Environment Variables
+- `NEXT_PUBLIC_KLOOK_URL` — Klook affiliate link
+- `NEXT_PUBLIC_YESIM_URL` — Yesim affiliate link
+
+### Adding More Affiliates Later (Booking.com, Agoda)
+1. Add QR code image to `public/affiliates/`
+2. Add env var to `.env.local` and Vercel dashboard
+3. Create `components/BookingCard.tsx` using `AffiliateCard` base
+4. Drop into desired step page
