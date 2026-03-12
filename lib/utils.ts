@@ -14,3 +14,26 @@ export const getBaseUrl = () => {
   if (process.env.VERCEL_URL) return `https://${process.env.VERCEL_URL}`;
   return "http://localhost:3000";
 };
+
+/**
+ * Generate a URL-safe slug from a trip name.
+ * e.g. "Bali Summer 2026 🌴" → "bali-summer-2026"
+ */
+export const generateSlug = (name: string): string => {
+  return name
+    .toLowerCase()
+    .replace(/[^\w\s-]/g, "") // remove emoji and special chars
+    .trim()
+    .replace(/\s+/g, "-") // spaces to hyphens
+    .replace(/-+/g, "-") // collapse multiple hyphens
+    .slice(0, 50); // max 50 chars
+};
+
+/**
+ * Append a short random suffix to make a slug unique.
+ * e.g. "bali-2026" → "bali-2026-a1b2c3"
+ */
+export const uniqueSlug = (base: string): string => {
+  const suffix = Math.random().toString(36).slice(2, 8);
+  return `${base}-${suffix}`;
+};

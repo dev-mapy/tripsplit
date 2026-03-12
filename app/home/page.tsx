@@ -1,6 +1,7 @@
 import Link from "next/link";
 import type { Metadata } from "next";
 import { getBaseUrl } from "@/lib/utils";
+import { Nav } from "@/components/Nav";
 
 export const metadata: Metadata = {
   title: "TripSplit — No login. No drama. Just fair splits.",
@@ -66,55 +67,6 @@ function Stars() {
         />
       ))}
     </div>
-  );
-}
-
-/* ── Nav ── */
-function Nav() {
-  return (
-    <nav
-      style={{
-        position: "relative",
-        zIndex: 10,
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "space-between",
-        padding: "24px 40px",
-        maxWidth: 1100,
-        margin: "0 auto",
-      }}
-    >
-      <div
-        style={{
-          fontFamily: "'Playfair Display', serif",
-          fontSize: 22,
-          fontWeight: 700,
-          background: "linear-gradient(135deg, #ffd200, #f7971e)",
-          WebkitBackgroundClip: "text",
-          WebkitTextFillColor: "transparent",
-        }}
-      >
-        ✈️ TripSplit
-      </div>
-
-      <Link
-        href="/split"
-        style={{
-          background: "linear-gradient(135deg, #f7971e, #ffd200)",
-          color: "#1a1a2e",
-          borderRadius: 10,
-          padding: "10px 24px",
-          fontWeight: 700,
-          fontSize: 14,
-          textDecoration: "none",
-          fontFamily: "'Lato', sans-serif",
-          letterSpacing: "0.3px",
-          transition: "all 0.2s",
-        }}
-      >
-        Try it free →
-      </Link>
-    </nav>
   );
 }
 

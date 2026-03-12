@@ -106,3 +106,70 @@ When a user opens a shared link (?trip= param exists on load):
 - https://opengraph.xyz — paste live URL to preview card
 - https://cards-dev.twitter.com/validator — Twitter card preview
 - WhatsApp: paste URL in a chat to confirm preview renders
+
+## Database Schema (BUILT)
+
+### ORM
+Prisma with Supabase Postgres
+
+### Table: saved_trips
+| Column        | Type     | Notes                          |
+|---|---|---|
+| id            | String   | cuid() primary key             |
+| slug          | String   | unique, URL-safe identifier    |
+| user_id       | String   | Supabase Auth user UUID        |
+| name          | String   | trip name                      |
+| currency_code | String   | e.g. "USD", "PHP"              |
+| travelers     | Json     | Traveler[] array               |
+| expenses      | Json     | Expense[] array                |
+| created_at    | DateTime | auto                           |
+| updated_at    | DateTime | auto                           |
+
+### Row Level Security (RLS)
+- SELECT: users can read own trips OR anyone can read by slug (public)
+- INSERT: only authenticated user can insert own trips
+- UPDATE: only owner can update
+- DELETE: only owner can delete
+
+### Key Files
+- `prisma/schema.prisma` — schema definition
+- `lib/prisma.ts` — singleton Prisma client
+- `lib/utils.ts` — generateSlug(), uniqueSlug()
+
+### Slug Format
+- Generated from trip name: "Bali 2026 🌴" → "bali-2026"
+- Unique suffix appended if collision: "bali-2026-a1b2c3"
+- Max 50 chars, URL-safe, lowercase, hyphens only
+
+### Env Vars
+- DATABASE_URL — Supabase connection string (server only)
+- DIRECT_URL — same as DATABASE_URL (required by Prisma for migrations)
+
+## Save Trip API (BUILT)
+
+### API Routes
+| Method | Route | Auth | Description |
+|---|---|---|---|
+| POST | /api/trips | Required | Save a new trip |
+| GET | /api/trips | Required | Get all trips for current user |
+| GET | /api/trips/[slug] | Public | Get a trip by slug |
+| PATCH | /api/trips/[slug] | Owner only | Update a trip |
+| DELETE | /api/trips/[slug] | Owner only | Delete a trip |
+
+### API Client (`lib/api.ts`)
+- saveTrip(payload) → { slug, url }
+- fetchUserTrips() → SavedTrip[]
+- fetchTripBySlug(slug) → SavedTrip | null
+- updateTrip(slug, payload) → { slug, updatedAt }
+- deleteTrip(slug) → void
+
+### Slug Generation
+- generateSlug("Bali 2026 🌴") → "bali-2026"
+- uniqueSlug("bali-2026") → "bali-2026-a1b2c3"
+- Collision check on POST — auto-appends suffix if slug taken
+
+### Security
+- POST/PATCH/DELETE require authenticated user (401 if not)
+- PATCH/DELETE verify ownership (403 if not owner)
+- GET /api/trips/[slug] is public — no auth required
+

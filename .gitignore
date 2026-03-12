@@ -46,3 +46,8 @@ CLAUDE.md
 TRIPSPLIT_CONTEXT.md
 md-tasks/
 .env*.local
+
+# Prisma
+prisma/migrations/
+
+/lib/generated/prisma
