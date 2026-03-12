@@ -256,3 +256,28 @@ Prisma with Supabase Postgres
 ### Protected by
 - Server-side redirect in page.tsx
 - middleware.ts (redirects /dashboard to /home if no session)
+
+## User Communications (BUILT)
+
+### Where users learn about saving trips
+
+| Location | Component | What it says |
+|---|---|---|
+| Landing page hero | `app/home/page.tsx` | "✓ Save trips with Google" badge |
+| Landing page features | `app/home/page.tsx` | 3-feature grid: instant link, save permanently, trip history |
+| How it works | `app/home/page.tsx` | Step 04 — "Save & revisit" |
+| Setup step | `components/SaveNudge.tsx` | "Want a cleaner link? Sign in with Google" — dismissable |
+| Result page | `components/SaveTripButton.tsx` | "Save this trip" card with clean link example |
+| Landing nav | `app/home/page.tsx` | "My Trips" link → /dashboard |
+
+### Tone principles
+- Never frame sign-in as a requirement
+- Always lead with the free no-login option
+- Sign-in is always "get more" not "you must"
+- SaveNudge is dismissable — never force it
+
+### Components
+- `components/SaveNudge.tsx` — dismissable nudge on setup step
+  - Hidden if user is already signed in
+  - Hidden after user dismisses
+  - Opens SignInModal on "Sign in →" click

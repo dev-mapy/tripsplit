@@ -5,6 +5,7 @@ import TravelerSetup from "@/components/TravelerSetup";
 import ExpenseList from "@/components/ExpenseList";
 import Settlement from "@/components/Settlement";
 import UserNav from "@/components/UserNav";
+import SaveNudge from "@/components/SaveNudge";
 
 const STEPS = ["setup", "expenses", "result"] as const;
 const STEP_LABELS = ["Trip Setup", "Expenses", "Settlement"];
@@ -89,7 +90,12 @@ export default function SplitApp() {
         </div>
 
         {/* Step content */}
-        {step === "setup"    && <TravelerSetup />}
+        {step === "setup" && (
+          <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
+            <TravelerSetup />
+            <SaveNudge />
+          </div>
+        )}
         {step === "expenses" && <ExpenseList />}
         {step === "result"   && <Settlement />}
       </div>

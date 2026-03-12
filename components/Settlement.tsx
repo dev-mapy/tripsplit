@@ -237,13 +237,18 @@ export default function Settlement() {
         </div>
       ) : (
         /* Owner CTA — can edit or start new */
-        <div style={{ display: "flex", gap: 10 }}>
-          <button style={{ ...btnGhost, flex: 1 }} onClick={() => setStep("expenses")}>
-            ← Edit Expenses
-          </button>
-          <button style={{ ...btnPrimary, flex: 1 }} onClick={resetTrip}>
-            New Trip ✈️
-          </button>
+        <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+          <div style={{ display: "flex", gap: 10 }}>
+            <button
+              style={{ ...btnGhost, flex: 1 }}
+              onClick={() => setStep("expenses")}
+            >
+              ← Edit Expenses
+            </button>
+            <button style={{ ...btnPrimary, flex: 1 }} onClick={resetTrip}>
+              New Trip ✈️
+            </button>
+          </div>
         </div>
       )}
     </div>
