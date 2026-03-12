@@ -5,6 +5,7 @@ import { calcSettlement } from "@/lib/calculator";
 import { CATEGORIES } from "@/lib/constants";
 import { avatarColor, getInitial } from "@/lib/utils";
 import ShareButton from "@/components/ShareButton";
+import SaveTripButton from "@/components/SaveTripButton";
 import KlookCard from "@/components/KlookCard";
 import Link from "next/link";
 
@@ -70,6 +71,9 @@ export default function Settlement() {
 
       {/* ── Share link ── */}
       <ShareButton />
+
+      {/* ── Save trip (owner only, not shown in shared view) ── */}
+      {!isSharedView && <SaveTripButton />}
 
       {/* ── Balances ── */}
       <div style={card}>
@@ -233,13 +237,18 @@ export default function Settlement() {
         </div>
       ) : (
         /* Owner CTA — can edit or start new */
-        <div style={{ display: "flex", gap: 10 }}>
-          <button style={{ ...btnGhost, flex: 1 }} onClick={() => setStep("expenses")}>
-            ← Edit Expenses
-          </button>
-          <button style={{ ...btnPrimary, flex: 1 }} onClick={resetTrip}>
-            New Trip ✈️
-          </button>
+        <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+          <div style={{ display: "flex", gap: 10 }}>
+            <button
+              style={{ ...btnGhost, flex: 1 }}
+              onClick={() => setStep("expenses")}
+            >
+              ← Edit Expenses
+            </button>
+            <button style={{ ...btnPrimary, flex: 1 }} onClick={resetTrip}>
+              New Trip ✈️
+            </button>
+          </div>
         </div>
       )}
     </div>

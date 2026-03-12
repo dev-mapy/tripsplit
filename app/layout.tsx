@@ -5,6 +5,7 @@ import Script from "next/script";
 import "./globals.css";
 import { NuqsAdapter } from "nuqs/adapters/next/app";
 import { TripProvider } from "@/lib/trip-context";
+import { AuthProvider } from "@/lib/auth-context";
 
 export const metadata: Metadata = {
   metadataBase: new URL(
@@ -72,7 +73,9 @@ export default function RootLayout({
         />
         <NuqsAdapter>
           <Suspense fallback={null}>
-            <TripProvider>{children}</TripProvider>
+            <AuthProvider>
+              <TripProvider>{children}</TripProvider>
+            </AuthProvider>
           </Suspense>
         </NuqsAdapter>
         <Analytics />

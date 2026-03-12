@@ -42,9 +42,14 @@ const makeDefaultTrip = (): Trip => ({
   expenses: [],
 });
 
-const TripContext = createContext<TripContextValue | null>(null);
+export const TripContext = createContext<TripContextValue | null>(null);
 
-export function TripProvider({ children }: { children: ReactNode }) {
+interface TripProviderProps {
+  children: ReactNode;
+  initialTrip?: Partial<Trip>;
+}
+
+export function TripProvider({ children, initialTrip }: TripProviderProps) {
   const [encodedTrip, setEncodedTrip] = useQueryState("trip", {
     defaultValue: "",
     shallow: false,
@@ -52,6 +57,9 @@ export function TripProvider({ children }: { children: ReactNode }) {
 
   // On first load: if a ?trip= param exists, decode it. Otherwise use defaults.
   const [trip, setTrip] = useState<Trip>(() => {
+    if (initialTrip) {
+      return { ...makeDefaultTrip(), ...initialTrip };
+    }
     if (typeof window !== "undefined") {
       const params = new URLSearchParams(window.location.search);
       const param = params.get("trip");

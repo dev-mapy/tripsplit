@@ -3,8 +3,13 @@
 import { useState } from "react";
 import { useTrip } from "@/lib/trip-context";
 
-export default function ShareButton() {
-  const { shareUrl } = useTrip();
+interface Props {
+  overrideUrl?: string;
+}
+
+export default function ShareButton({ overrideUrl }: Props = {}) {
+  const { shareUrl: contextUrl } = useTrip();
+  const shareUrl = overrideUrl ?? contextUrl;
   const [copied, setCopied] = useState(false);
 
   const handleCopy = async () => {

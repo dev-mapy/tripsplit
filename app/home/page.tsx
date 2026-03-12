@@ -1,6 +1,7 @@
 import Link from "next/link";
 import type { Metadata } from "next";
-import { getBaseUrl } from "@/lib/utils";
+import { getBaseUrl, getCleanBaseUrl } from "@/lib/utils";
+import { Nav } from "@/components/Nav";
 
 export const metadata: Metadata = {
   title: "TripSplit — No login. No drama. Just fair splits.",
@@ -66,55 +67,6 @@ function Stars() {
         />
       ))}
     </div>
-  );
-}
-
-/* ── Nav ── */
-function Nav() {
-  return (
-    <nav
-      style={{
-        position: "relative",
-        zIndex: 10,
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "space-between",
-        padding: "24px 40px",
-        maxWidth: 1100,
-        margin: "0 auto",
-      }}
-    >
-      <div
-        style={{
-          fontFamily: "'Playfair Display', serif",
-          fontSize: 22,
-          fontWeight: 700,
-          background: "linear-gradient(135deg, #ffd200, #f7971e)",
-          WebkitBackgroundClip: "text",
-          WebkitTextFillColor: "transparent",
-        }}
-      >
-        ✈️ TripSplit
-      </div>
-
-      <Link
-        href="/split"
-        style={{
-          background: "linear-gradient(135deg, #f7971e, #ffd200)",
-          color: "#1a1a2e",
-          borderRadius: 10,
-          padding: "10px 24px",
-          fontWeight: 700,
-          fontSize: 14,
-          textDecoration: "none",
-          fontFamily: "'Lato', sans-serif",
-          letterSpacing: "0.3px",
-          transition: "all 0.2s",
-        }}
-      >
-        Try it free →
-      </Link>
-    </nav>
   );
 }
 
@@ -243,6 +195,7 @@ function Hero() {
           "✓ No login required",
           "✓ No app to download",
           "✓ Free to use",
+          "✓ Save trips with Google",
         ].map((badge) => (
           <span
             key={badge}
@@ -367,6 +320,70 @@ function Hero() {
           </span>
         </div>
       </div>
+
+      {/* Feature highlights */}
+      <div
+        className="animate-fade-up"
+        style={{
+          display: "grid",
+          gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))",
+          gap: 16,
+          maxWidth: 720,
+          margin: "48px auto 0",
+          animationDelay: "0.6s",
+        }}
+      >
+        {[
+          {
+            icon: "🔗",
+            title: "Instant share link",
+            desc: "Share a link immediately — no account needed.",
+          },
+          {
+            icon: "💾",
+            title: "Save permanently",
+            desc: "Sign in with Google to get a clean link like /t/bali-2026.",
+          },
+          {
+            icon: "📋",
+            title: "Trip history",
+            desc: "Access and edit all your saved trips anytime.",
+          },
+        ].map((f) => (
+          <div
+            key={f.title}
+            style={{
+              background: "rgba(255,255,255,0.04)",
+              border: "1px solid rgba(255,255,255,0.08)",
+              borderRadius: 16,
+              padding: "20px 18px",
+              textAlign: "left",
+            }}
+          >
+            <div style={{ fontSize: 28, marginBottom: 10 }}>{f.icon}</div>
+            <div
+              style={{
+                fontFamily: "'Playfair Display', serif",
+                fontSize: 16,
+                fontWeight: 600,
+                marginBottom: 6,
+              }}
+            >
+              {f.title}
+            </div>
+            <div
+              style={{
+                fontFamily: "'Lato', sans-serif",
+                fontSize: 13,
+                color: "rgba(240,235,227,0.5)",
+                lineHeight: 1.6,
+              }}
+            >
+              {f.desc}
+            </div>
+          </div>
+        ))}
+      </div>
     </section>
   );
 }
@@ -391,6 +408,12 @@ function HowItWorks() {
       emoji: "🔗",
       title: "Share one link",
       desc: "Your entire trip is encoded into a single URL. Share it and everyone sees exactly who owes what.",
+    },
+    {
+      number: "04",
+      emoji: "💾",
+      title: "Save & revisit",
+      desc: `Sign in with Google to save your trip permanently and get a clean link like ${getCleanBaseUrl()}/t/bali-2026.`,
     },
   ];
 
@@ -430,7 +453,7 @@ function HowItWorks() {
             animationDelay: "0.1s",
           }}
         >
-          Three steps to a settled trip
+          From expenses to settled — in minutes
         </h2>
       </div>
 
