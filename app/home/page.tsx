@@ -3,9 +3,18 @@ import type { Metadata } from "next";
 import { getBaseUrl } from "@/lib/utils";
 
 export const metadata: Metadata = {
-  title: "TripSplit — Split travel expenses with friends. No login needed.",
+  title: "TripSplit — No login. No drama. Just fair splits.",
   description:
-    "The easiest way to split trip expenses. Add your costs, share one link, and everyone sees exactly who owes what. No account needed.",
+    "The easiest way to split trip expenses with friends. Add costs, share one link, and everyone sees who owes what. Free, no account needed.",
+  alternates: {
+    canonical: "/home",
+  },
+  openGraph: {
+    title: "TripSplit — No login. No drama. Just fair splits.",
+    description:
+      "The easiest way to split trip expenses with friends. Share one link — no account needed.",
+    url: "/home",
+  },
 };
 
 export default function LandingPage() {

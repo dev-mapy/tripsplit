@@ -78,3 +78,31 @@ When a user opens a shared link (?trip= param exists on load):
 2. Add env var to `.env.local` and Vercel dashboard
 3. Create `components/BookingCard.tsx` using `AffiliateCard` base
 4. Drop into desired step page
+
+## OG Image + SEO (BUILT)
+
+### OG Images (Next.js ImageResponse — edge runtime)
+- `app/opengraph-image.tsx` — landing page OG image (1200x630)
+- `app/split/opengraph-image.tsx` — app OG image with mock settlement card
+- `app/icon.tsx` — dynamic ✈️ favicon (32x32)
+
+### Metadata
+- Root metadata in `app/layout.tsx` — metadataBase, default title template,
+  keywords, OG, Twitter card, robots
+- Page-level metadata in `app/home/page.tsx` and `app/split/page.tsx`
+- All pages use canonical URLs via `alternates.canonical`
+- Title template: "%s | TripSplit" — page titles auto-append brand name
+
+### Crawling
+- `app/sitemap.ts` → `/sitemap.xml`
+- `app/robots.ts` → `/robots.txt`
+- Both use `NEXT_PUBLIC_APP_URL` env var for base URL
+
+### Testing OG Images Locally
+- `http://localhost:3000/opengraph-image`
+- `http://localhost:3000/split/opengraph-image`
+
+### Testing After Deploy
+- https://opengraph.xyz — paste live URL to preview card
+- https://cards-dev.twitter.com/validator — Twitter card preview
+- WhatsApp: paste URL in a chat to confirm preview renders
