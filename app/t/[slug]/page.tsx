@@ -4,6 +4,7 @@ import { CURRENCIES } from "@/lib/constants";
 import { DEFAULT_CURRENCY } from "@/lib/constants";
 import type { Metadata } from "next";
 import type { Traveler, Expense } from "@/types";
+import { getBaseUrl } from "@/lib/utils";
 import SavedTripView from "./SavedTripView";
 
 interface Props {
@@ -40,7 +41,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
   const ogImageUrl = new URL(
     `/api/og?name=${encodeURIComponent(trip.name)}&total=${total}&symbol=${encodeURIComponent(currency.symbol)}&travelers=${travelers.length}&expenses=${expenses.length}`,
-    process.env.NEXT_PUBLIC_APP_URL ?? "https://tripsplit.vercel.app"
+    getBaseUrl()
   ).toString();
 
   return {

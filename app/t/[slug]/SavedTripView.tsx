@@ -4,7 +4,7 @@ import { useState, useCallback } from "react";
 import { useAuth } from "@/lib/auth-context";
 import { calcSettlement } from "@/lib/calculator";
 import { CATEGORIES } from "@/lib/constants";
-import { avatarColor, getInitial } from "@/lib/utils";
+import { avatarColor, getInitial, getBaseUrl } from "@/lib/utils";
 import { updateTrip } from "@/lib/api";
 import ShareButton from "@/components/ShareButton";
 import AffiliateCard from "@/components/AffiliateCard";
@@ -311,7 +311,7 @@ function SavedTripContent({
           </div>
 
           {/* Share link */}
-          <ShareButton overrideUrl={`${process.env.NEXT_PUBLIC_APP_URL ?? ""}/t/${slug}`} />
+          <ShareButton overrideUrl={`${getBaseUrl()}/t/${slug}`} />
 
           {/* Affiliate: Klook */}
           <AffiliateCard

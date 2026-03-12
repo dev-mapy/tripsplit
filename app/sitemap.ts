@@ -1,7 +1,7 @@
 import type { MetadataRoute } from "next";
+import { getBaseUrl } from "@/lib/utils";
 
-const baseUrl =
-  process.env.NEXT_PUBLIC_APP_URL ?? "https://tripsplit-mu.vercel.app";
+const baseUrl = getBaseUrl();
 
 export default function sitemap(): MetadataRoute.Sitemap {
   return [

@@ -6,11 +6,10 @@ import "./globals.css";
 import { NuqsAdapter } from "nuqs/adapters/next/app";
 import { TripProvider } from "@/lib/trip-context";
 import { AuthProvider } from "@/lib/auth-context";
+import { getBaseUrl } from "@/lib/utils";
 
 export const metadata: Metadata = {
-  metadataBase: new URL(
-    process.env.NEXT_PUBLIC_APP_URL ?? "https://tripsplit-mu.vercel.app"
-  ),
+  metadataBase: new URL(getBaseUrl()),
   title: {
     default: "TripSplit — Split travel expenses with friends",
     template: "%s | TripSplit",
@@ -31,7 +30,7 @@ export const metadata: Metadata = {
   openGraph: {
     type: "website",
     locale: "en_US",
-    url: process.env.NEXT_PUBLIC_APP_URL ?? "https://tripsplit-mu.vercel.app",
+    url: getBaseUrl(),
     siteName: "TripSplit",
     title: "TripSplit — Split travel expenses with friends",
     description:
