@@ -1,70 +1,86 @@
-*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+@import "tailwindcss";
 
-:root {
-  --gold: #ffd200;
-  --gold-warm: #f7971e;
-  --bg-deep: #0f0c29;
-  --bg-mid: #302b63;
-  --bg-dark: #24243e;
-  --text: #f0ebe3;
-  --text-muted: rgba(240, 235, 227, 0.5);
-  --text-faint: rgba(240, 235, 227, 0.3);
-  --glass: rgba(255, 255, 255, 0.07);
-  --glass-border: rgba(255, 255, 255, 0.12);
-  --success: #4ade80;
-  --danger: #f87171;
+@theme {
+  --color-gold: #ffd200;
+  --color-gold-warm: #f7971e;
+  --color-bg-deep: #0f0c29;
+  --color-bg-mid: #302b63;
+  --color-bg-dark: #24243e;
+  --color-text: #f0ebe3;
+  --color-text-muted: rgba(240, 235, 227, 0.5);
+  --color-text-faint: rgba(240, 235, 227, 0.3);
+  --color-glass: rgba(255, 255, 255, 0.07);
+  --color-glass-border: rgba(255, 255, 255, 0.12);
+  --color-success: #4ade80;
+  --color-danger: #f87171;
+
+  --font-serif: "Playfair Display", serif;
+  --font-sans: "Lato", sans-serif;
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(24px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes slideIn {
+    from { opacity: 0; transform: translateX(-20px); }
+    to   { opacity: 1; transform: translateX(0); }
+  }
+  @keyframes popIn {
+    from { opacity: 0; transform: scale(0.92); }
+    to   { opacity: 1; transform: scale(1); }
+  }
+  @keyframes twinkle {
+    0%, 100% { opacity: 0.3; }
+    50%       { opacity: 1; }
+  }
+  @keyframes spin {
+    from { transform: rotate(0deg); }
+    to   { transform: rotate(360deg); }
+  }
+
+  --animate-fade-up: fadeUp 0.5s ease both;
+  --animate-slide-in: slideIn 0.3s ease both;
+  --animate-pop-in: popIn 0.25s ease both;
+  --animate-twinkle: twinkle 2s ease-in-out infinite;
+  --animate-spin: spin 1s linear infinite;
 }
 
-body {
-  background: linear-gradient(135deg, var(--bg-deep) 0%, var(--bg-mid) 40%, var(--bg-dark) 100%);
-  color: var(--text);
-  font-family: "Lato", sans-serif;
-  min-height: 100vh;
+@layer base {
+  *, *::before, *::after {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+  }
+
+  body {
+    background: linear-gradient(135deg, var(--color-bg-deep) 0%, var(--color-bg-mid) 40%, var(--color-bg-dark) 100%);
+    color: var(--color-text);
+    font-family: var(--font-sans);
+    min-height: 100vh;
+  }
+
+  h1, h2, h3 {
+    font-family: var(--font-serif);
+  }
+
+  input, select, button {
+    font-family: inherit;
+  }
+
+  /* Hide number input arrows */
+  input::-webkit-outer-spin-button,
+  input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
+
+  input[type=number] {
+    -moz-appearance: textfield;
+  }
 }
 
-h1, h2, h3 {
-  font-family: "Playfair Display", serif;
-}
-
-input, select, button { font-family: inherit; }
-
-@keyframes fadeUp {
-  from { opacity: 0; transform: translateY(24px); }
-  to   { opacity: 1; transform: translateY(0); }
-}
-
-@keyframes slideIn {
-  from { opacity: 0; transform: translateX(-20px); }
-  to   { opacity: 1; transform: translateX(0); }
-}
-
-@keyframes popIn {
-  from { opacity: 0; transform: scale(0.92); }
-  to   { opacity: 1; transform: scale(1); }
-}
-
-@keyframes twinkle {
-  0%, 100% { opacity: 0.3; }
-  50%       { opacity: 1; }
-}
-
-@keyframes spin {
-  from { transform: rotate(0deg); }
-  to   { transform: rotate(360deg); }
-}
-
-.animate-fade-up   { animation: fadeUp  0.5s ease both; }
-.animate-slide-in  { animation: slideIn 0.3s ease both; }
-.animate-pop-in    { animation: popIn   0.25s ease both; }
-.animate-spin      { animation: spin    1s linear infinite; display: inline-block; }
-
-/* Hide number input arrows */
-input::-webkit-outer-spin-button,
-input::-webkit-inner-spin-button {
-  -webkit-appearance: none;
-  margin: 0;
-}
-
-input[type=number] {
-  -moz-appearance: textfield;
+@layer utilities {
+  .animate-spin {
+    display: inline-block;
+  }
 }

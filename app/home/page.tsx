@@ -2,6 +2,12 @@ import Link from "next/link";
 import type { Metadata } from "next";
 import { getBaseUrl, getCleanBaseUrl } from "@/lib/utils";
 import { Nav } from "@/components/Nav";
+import { Button } from "@/components/ui/Button";
+import { Card } from "@/components/ui/Card";
+import { Badge } from "@/components/ui/Badge";
+import { Typography } from "@/components/ui/Typography";
+import { StarsBackground } from "@/components/ui/StarsBackground";
+import { Container, Section } from "@/components/ui/Layout";
 
 export const metadata: Metadata = {
   title: "TripSplit — No login. No drama. Just fair splits.",
@@ -20,8 +26,8 @@ export const metadata: Metadata = {
 
 export default function LandingPage() {
   return (
-    <main style={{ minHeight: "100vh", overflowX: "hidden" }}>
-      <Stars />
+    <main className="min-h-screen overflow-x-hidden">
+      <StarsBackground count={50} />
       <Nav />
       <Hero />
       <HowItWorks />
@@ -30,361 +36,130 @@ export default function LandingPage() {
   );
 }
 
-/* ── Stars Background ── */
-function Stars() {
-  const stars = Array.from({ length: 50 }, (_, i) => ({
-    top: `${(i * 37 + 11) % 100}%`,
-    left: `${(i * 61 + 7) % 100}%`,
-    size: i % 7 === 0 ? 3 : i % 3 === 0 ? 2 : 1.5,
-    opacity: 0.2 + (i % 5) * 0.1,
-    duration: 2 + (i % 4),
-    delay: (i % 5) * 0.6,
-  }));
-
-  return (
-    <div
-      style={{
-        position: "fixed",
-        inset: 0,
-        pointerEvents: "none",
-        zIndex: 0,
-      }}
-    >
-      {stars.map((s, i) => (
-        <div
-          key={i}
-          style={{
-            position: "absolute",
-            width: s.size,
-            height: s.size,
-            borderRadius: "50%",
-            background: `rgba(255,255,255,${s.opacity})`,
-            top: s.top,
-            left: s.left,
-            animation: `twinkle ${s.duration}s ease-in-out infinite`,
-            animationDelay: `${s.delay}s`,
-          }}
-        />
-      ))}
-    </div>
-  );
-}
-
 /* ── Hero ── */
 function Hero() {
   return (
-    <section
-      style={{
-        position: "relative",
-        zIndex: 1,
-        textAlign: "center",
-        padding: "80px 24px 100px",
-        maxWidth: 780,
-        margin: "0 auto",
-      }}
-    >
-      {/* Eyebrow */}
-      <div
-        className="animate-fade-up"
-        style={{
-          display: "inline-flex",
-          alignItems: "center",
-          gap: 8,
-          background: "rgba(255,210,0,0.1)",
-          border: "1px solid rgba(255,210,0,0.25)",
-          borderRadius: 20,
-          padding: "6px 16px",
-          fontSize: 13,
-          color: "#ffd200",
-          fontFamily: "'Lato', sans-serif",
-          fontWeight: 700,
-          letterSpacing: "0.5px",
-          marginBottom: 32,
-          textTransform: "uppercase",
-        }}
-      >
-        <span>✦</span> No login. No app. No drama.
-      </div>
+    <Section padding="pt-20 pb-24 md:pt-30 md:pb-40">
+      <Container maxWidth={780} className="text-center">
+        {/* Eyebrow */}
+        <Badge icon="✦" className="mb-8">
+          No login. No app. No drama.
+        </Badge>
 
-      {/* Headline */}
-      <h1
-        className="animate-fade-up"
-        style={{
-          fontFamily: "'Playfair Display', serif",
-          fontSize: "clamp(40px, 7vw, 72px)",
-          fontWeight: 700,
-          lineHeight: 1.1,
-          margin: "0 0 28px",
-          animationDelay: "0.1s",
-        }}
-      >
-        Split trip expenses
-        <br />
-        <span
-          style={{
-            background: "linear-gradient(135deg, #ffd200, #f7971e)",
-            WebkitBackgroundClip: "text",
-            WebkitTextFillColor: "transparent",
-          }}
-        >
-          with one link.
-        </span>
-      </h1>
-
-      {/* Subheadline */}
-      <p
-        className="animate-fade-up"
-        style={{
-          fontFamily: "'Lato', sans-serif",
-          fontSize: "clamp(16px, 2.5vw, 20px)",
-          color: "rgba(240,235,227,0.6)",
-          lineHeight: 1.7,
-          margin: "0 auto 48px",
-          maxWidth: 520,
-          animationDelay: "0.2s",
-        }}
-      >
-        Add your group&apos;s expenses, and TripSplit calculates exactly who
-        owes what. Share one link — no account needed.
-      </p>
-
-      {/* CTA */}
-      <div
-        className="animate-fade-up"
-        style={{
-          display: "flex",
-          gap: 14,
-          justifyContent: "center",
-          flexWrap: "wrap",
-          animationDelay: "0.3s",
-        }}
-      >
-        <Link
-          href="/split"
-          style={{
-            background: "linear-gradient(135deg, #f7971e, #ffd200)",
-            color: "#1a1a2e",
-            borderRadius: 14,
-            padding: "16px 36px",
-            fontWeight: 700,
-            fontSize: 17,
-            textDecoration: "none",
-            fontFamily: "'Lato', sans-serif",
-            letterSpacing: "0.3px",
-            boxShadow: "0 8px 32px rgba(247,151,30,0.35)",
-            transition: "all 0.2s",
-          }}
-        >
-          Split a trip now ✈️
-        </Link>
-      </div>
-
-      {/* Trust badges */}
-      <div
-        className="animate-fade-up"
-        style={{
-          display: "flex",
-          gap: 24,
-          justifyContent: "center",
-          flexWrap: "wrap",
-          marginTop: 36,
-          animationDelay: "0.4s",
-        }}
-      >
-        {[
-          "✓ No login required",
-          "✓ No app to download",
-          "✓ Free to use",
-          "✓ Save trips with Google",
-        ].map((badge) => (
-          <span
-            key={badge}
-            style={{
-              fontFamily: "'Lato', sans-serif",
-              fontSize: 14,
-              color: "rgba(240,235,227,0.45)",
-            }}
-          >
-            {badge}
+        {/* Headline */}
+        <Typography as="h1" variant="h1">
+          Split trip expenses
+          <br />
+          <span className="bg-linear-to-br from-gold to-gold-warm bg-clip-text text-transparent">
+            with one link.
           </span>
-        ))}
-      </div>
+        </Typography>
 
-      {/* Floating preview card */}
-      <div
-        className="animate-fade-up"
-        style={{
-          marginTop: 72,
-          animationDelay: "0.5s",
-          background: "rgba(255,255,255,0.05)",
-          backdropFilter: "blur(12px)",
-          border: "1px solid rgba(255,255,255,0.1)",
-          borderRadius: 24,
-          padding: "28px 32px",
-          maxWidth: 480,
-          margin: "72px auto 0",
-          textAlign: "left",
-        }}
-      >
-        <div
-          style={{
-            fontSize: 12,
-            fontFamily: "'Lato', sans-serif",
-            textTransform: "uppercase",
-            letterSpacing: "1px",
-            color: "rgba(240,235,227,0.4)",
-            marginBottom: 16,
-          }}
-        >
-          💸 Settlement Plan
+        {/* Subheadline */}
+        <Typography variant="body" className="max-w-[520px] mx-auto">
+          Add your group&apos;s expenses, and TripSplit calculates exactly who
+          owes what. Share one link — no account needed.
+        </Typography>
+
+        {/* CTA */}
+        <div className="flex gap-4 justify-center flex-wrap animate-fade-up [animation-delay:0.3s]">
+          <Button href="/split">
+            Split a trip now ✈️
+          </Button>
         </div>
 
-        {[
-          { from: "Bob", to: "Ana", amount: "$45.00" },
-          { from: "Carlos", to: "Ana", amount: "$30.00" },
-        ].map((tx, i) => (
-          <div
-            key={i}
-            style={{
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "space-between",
-              background: "rgba(255,210,0,0.07)",
-              border: "1px solid rgba(255,210,0,0.15)",
-              borderRadius: 12,
-              padding: "14px 18px",
-              marginBottom: 10,
-              fontFamily: "'Lato', sans-serif",
-              fontSize: 15,
-            }}
-          >
-            <div>
-              <span style={{ fontWeight: 700, color: "#f87171" }}>
-                {tx.from}
-              </span>
-              <span style={{ color: "rgba(240,235,227,0.4)", margin: "0 8px" }}>
-                → pays →
-              </span>
-              <span style={{ fontWeight: 700, color: "#4ade80" }}>{tx.to}</span>
-            </div>
-            <div
-              style={{
-                fontFamily: "'Playfair Display', serif",
-                fontSize: 18,
-                fontWeight: 700,
-                color: "#ffd200",
-              }}
+        {/* Trust badges */}
+        <div className="flex gap-6 justify-center flex-wrap mt-9 animate-fade-up [animation-delay:0.4s]">
+          {[
+            "✓ No login required",
+            "✓ No app to download",
+            "✓ Free to use",
+            "✓ Save trips with Google",
+          ].map((badge) => (
+            <span
+              key={badge}
+              className="font-sans text-sm text-text-faint/70"
             >
-              {tx.amount}
-            </div>
-          </div>
-        ))}
-
-        <div
-          style={{
-            marginTop: 16,
-            padding: "12px 16px",
-            background: "rgba(255,210,0,0.06)",
-            border: "1px solid rgba(255,210,0,0.15)",
-            borderRadius: 10,
-            fontSize: 13,
-            fontFamily: "'Lato', sans-serif",
-            color: "rgba(240,235,227,0.5)",
-            display: "flex",
-            alignItems: "center",
-            gap: 8,
-          }}
-        >
-          <span style={{ color: "#ffd200" }}>🔗</span>
-          <span
-            style={{
-              fontFamily: "monospace",
-              fontSize: 12,
-              overflow: "hidden",
-              textOverflow: "ellipsis",
-              whiteSpace: "nowrap",
-            }}
-          >
-            {getBaseUrl()}/?trip=QmFsaV8yMDI2...
-          </span>
-          <span
-            style={{
-              marginLeft: "auto",
-              color: "#ffd200",
-              fontWeight: 700,
-              fontSize: 12,
-              whiteSpace: "nowrap",
-            }}
-          >
-            Copy
-          </span>
+              {badge}
+            </span>
+          ))}
         </div>
-      </div>
 
-      {/* Feature highlights */}
-      <div
-        className="animate-fade-up"
-        style={{
-          display: "grid",
-          gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))",
-          gap: 16,
-          maxWidth: 720,
-          margin: "48px auto 0",
-          animationDelay: "0.6s",
-        }}
-      >
-        {[
-          {
-            icon: "🔗",
-            title: "Instant share link",
-            desc: "Share a link immediately — no account needed.",
-          },
-          {
-            icon: "💾",
-            title: "Save permanently",
-            desc: "Sign in with Google to get a clean link like /t/bali-2026.",
-          },
-          {
-            icon: "📋",
-            title: "Trip history",
-            desc: "Access and edit all your saved trips anytime.",
-          },
-        ].map((f) => (
-          <div
-            key={f.title}
-            style={{
-              background: "rgba(255,255,255,0.04)",
-              border: "1px solid rgba(255,255,255,0.08)",
-              borderRadius: 16,
-              padding: "20px 18px",
-              textAlign: "left",
-            }}
-          >
-            <div style={{ fontSize: 28, marginBottom: 10 }}>{f.icon}</div>
+        {/* Floating preview card */}
+        <Card animate className="max-w-[480px] mx-auto mt-18 text-left [animation-delay:0.5s]">
+          <Typography variant="sub" className="mb-4">
+            💸 Settlement Plan
+          </Typography>
+
+          {[
+            { from: "Bob", to: "Ana", amount: "$45.00" },
+            { from: "Carlos", to: "Ana", amount: "$30.00" },
+          ].map((tx, i) => (
             <div
-              style={{
-                fontFamily: "'Playfair Display', serif",
-                fontSize: 16,
-                fontWeight: 600,
-                marginBottom: 6,
-              }}
+              key={i}
+              className="flex items-center justify-between bg-gold/7 border border-gold/15 rounded-xl px-[18px] py-3.5 mb-2.5 font-sans text-[15px]"
             >
-              {f.title}
+              <div>
+                <span className="font-bold text-danger">
+                  {tx.from}
+                </span>
+                <span className="text-text-faint mx-2">
+                  → pays →
+                </span>
+                <span className="font-bold text-success">{tx.to}</span>
+              </div>
+              <div className="font-serif text-lg font-bold text-gold">
+                {tx.amount}
+              </div>
             </div>
-            <div
-              style={{
-                fontFamily: "'Lato', sans-serif",
-                fontSize: 13,
-                color: "rgba(240,235,227,0.5)",
-                lineHeight: 1.6,
-              }}
-            >
-              {f.desc}
-            </div>
+          ))}
+
+          <div className="mt-4 px-4 py-3 bg-gold/6 border border-gold/15 rounded-lg text-[13px] font-sans text-text-muted flex items-center gap-2">
+            <span className="text-gold">🔗</span>
+            <span className="font-mono text-xs overflow-hidden text-ellipsis whitespace-nowrap">
+              {getBaseUrl()}/?trip=QmFsaV8yMDI2...
+            </span>
+            <span className="ml-auto text-gold font-bold text-xs whitespace-nowrap">
+              Copy
+            </span>
           </div>
-        ))}
-      </div>
-    </section>
+        </Card>
+
+        {/* Feature highlights */}
+        <div className="grid grid-cols-[repeat(auto-fit,minmax(200px,1fr))] gap-4 max-w-[720px] mx-auto mt-12 animate-fade-up [animation-delay:0.6s]">
+          {[
+            {
+              icon: "🔗",
+              title: "Instant share link",
+              desc: "Share a link immediately — no account needed.",
+            },
+            {
+              icon: "💾",
+              title: "Save permanently",
+              desc: "Sign in with Google to get a clean link like /t/bali-2026.",
+            },
+            {
+              icon: "📋",
+              title: "Trip history",
+              desc: "Access and edit all your saved trips anytime.",
+            },
+          ].map((f) => (
+            <div
+              key={f.title}
+              className="bg-white/4 border border-white/8 rounded-2xl p-5 text-left"
+            >
+              <div className="text-[28px] mb-2.5">{f.icon}</div>
+              <Typography variant="h3" className="mb-1.5 leading-tight">
+                {f.title}
+              </Typography>
+              <p className="font-sans text-[13px] text-text-muted leading-relaxed">
+                {f.desc}
+              </p>
+            </div>
+          ))}
+        </div>
+      </Container>
+    </Section>
   );
 }
 
@@ -418,173 +193,64 @@ function HowItWorks() {
   ];
 
   return (
-    <section
-      style={{
-        position: "relative",
-        zIndex: 1,
-        padding: "80px 24px 120px",
-        maxWidth: 1000,
-        margin: "0 auto",
-      }}
-    >
-      {/* Section label */}
-      <div style={{ textAlign: "center", marginBottom: 64 }}>
-        <div
-          className="animate-fade-up"
-          style={{
-            fontFamily: "'Lato', sans-serif",
-            fontSize: 11,
-            fontWeight: 700,
-            letterSpacing: "2px",
-            textTransform: "uppercase",
-            color: "rgba(240,235,227,0.4)",
-            marginBottom: 16,
-          }}
-        >
-          How it works
+    <Section>
+      <Container>
+        {/* Section label */}
+        <div className="text-center mb-16">
+          <Typography variant="eyebrow">
+            How it works
+          </Typography>
+          <Typography as="h2" variant="h2" className="[animation-delay:0.1s]">
+            From expenses to settled — in minutes
+          </Typography>
         </div>
-        <h2
-          className="animate-fade-up"
-          style={{
-            fontFamily: "'Playfair Display', serif",
-            fontSize: "clamp(28px, 4vw, 42px)",
-            fontWeight: 700,
-            margin: 0,
-            animationDelay: "0.1s",
-          }}
-        >
-          From expenses to settled — in minutes
-        </h2>
-      </div>
 
-      {/* Steps */}
-      <div
-        style={{
-          display: "grid",
-          gridTemplateColumns: "repeat(auto-fit, minmax(260px, 1fr))",
-          gap: 24,
-        }}
-      >
-        {steps.map((step, i) => (
-          <div
-            key={step.number}
-            className="animate-fade-up"
-            style={{
-              background: "rgba(255,255,255,0.05)",
-              backdropFilter: "blur(12px)",
-              border: "1px solid rgba(255,255,255,0.09)",
-              borderRadius: 20,
-              padding: "36px 28px",
-              animationDelay: `${0.1 + i * 0.12}s`,
-              position: "relative",
-              overflow: "hidden",
-            }}
-          >
-            {/* Background number watermark */}
-            <div
-              style={{
-                position: "absolute",
-                top: -10,
-                right: 16,
-                fontFamily: "'Playfair Display', serif",
-                fontSize: 96,
-                fontWeight: 700,
-                color: "rgba(255,210,0,0.04)",
-                lineHeight: 1,
-                userSelect: "none",
-              }}
+        {/* Steps */}
+        <div className="grid grid-cols-[repeat(auto-fit,minmax(260px,1fr))] gap-6">
+          {steps.map((step, i) => (
+            <Card
+              key={step.number}
+              animate
+              className="[animation-delay:0.2s] relative overflow-hidden group"
+              style={{ animationDelay: `${0.1 + i * 0.12}s` }}
             >
-              {step.number}
-            </div>
+              {/* Background number watermark */}
+              <div className="absolute -top-2.5 right-4 font-serif text-[96px] font-bold text-gold/4 leading-none select-none">
+                {step.number}
+              </div>
 
-            <div style={{ fontSize: 36, marginBottom: 20 }}>{step.emoji}</div>
+              <div className="text-4xl mb-5">{step.emoji}</div>
 
-            <div
-              style={{
-                fontFamily: "'Lato', sans-serif",
-                fontSize: 11,
-                fontWeight: 700,
-                letterSpacing: "1.5px",
-                textTransform: "uppercase",
-                color: "#ffd200",
-                marginBottom: 10,
-              }}
-            >
-              Step {step.number}
-            </div>
+              <div className="font-sans text-[11px] font-bold tracking-[1.5px] uppercase text-gold mb-2.5">
+                Step {step.number}
+              </div>
 
-            <h3
-              style={{
-                fontFamily: "'Playfair Display', serif",
-                fontSize: 22,
-                fontWeight: 600,
-                margin: "0 0 12px",
-              }}
-            >
-              {step.title}
-            </h3>
+              <Typography variant="h3" className="mb-3">
+                {step.title}
+              </Typography>
 
-            <p
-              style={{
-                fontFamily: "'Lato', sans-serif",
-                fontSize: 15,
-                color: "rgba(240,235,227,0.55)",
-                lineHeight: 1.7,
-                margin: 0,
-              }}
-            >
-              {step.desc}
-            </p>
-          </div>
-        ))}
-      </div>
+              <p className="font-sans text-[15px] text-text-muted leading-[1.7]">
+                {step.desc}
+              </p>
+            </Card>
+          ))}
+        </div>
 
-      {/* Bottom CTA */}
-      <div
-        className="animate-fade-up"
-        style={{
-          textAlign: "center",
-          marginTop: 64,
-          animationDelay: "0.4s",
-        }}
-      >
-        <Link
-          href="/split"
-          style={{
-            background: "linear-gradient(135deg, #f7971e, #ffd200)",
-            color: "#1a1a2e",
-            borderRadius: 14,
-            padding: "16px 40px",
-            fontWeight: 700,
-            fontSize: 16,
-            textDecoration: "none",
-            fontFamily: "'Lato', sans-serif",
-            display: "inline-block",
-            boxShadow: "0 8px 32px rgba(247,151,30,0.3)",
-          }}
-        >
-          Start splitting for free ✈️
-        </Link>
-      </div>
-    </section>
+        {/* Bottom CTA */}
+        <div className="text-center mt-16 animate-fade-up [animation-delay:0.4s]">
+          <Button href="/split">
+            Start splitting for free ✈️
+          </Button>
+        </div>
+      </Container>
+    </Section>
   );
 }
 
 /* ── Footer ── */
 function Footer() {
   return (
-    <footer
-      style={{
-        position: "relative",
-        zIndex: 1,
-        textAlign: "center",
-        padding: "32px 24px",
-        borderTop: "1px solid rgba(255,255,255,0.06)",
-        fontFamily: "'Lato', sans-serif",
-        fontSize: 13,
-        color: "rgba(240,235,227,0.3)",
-      }}
-    >
+    <footer className="relative z-10 text-center py-8 px-6 border-t border-white/6 font-sans text-[13px] text-text-faint">
       Built with ✈️ by TripSplit · No login. No drama. Just fair splits.
     </footer>
   );
