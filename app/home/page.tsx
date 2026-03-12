@@ -1,6 +1,6 @@
 import Link from "next/link";
 import type { Metadata } from "next";
-import { getBaseUrl } from "@/lib/utils";
+import { getBaseUrl, getCleanBaseUrl } from "@/lib/utils";
 import { Nav } from "@/components/Nav";
 
 export const metadata: Metadata = {
@@ -413,7 +413,7 @@ function HowItWorks() {
       number: "04",
       emoji: "💾",
       title: "Save & revisit",
-      desc: "Sign in with Google to save your trip permanently and get a clean link like tripsplit.app/t/bali-2026.",
+      desc: `Sign in with Google to save your trip permanently and get a clean link like ${getCleanBaseUrl()}/t/bali-2026.`,
     },
   ];
 

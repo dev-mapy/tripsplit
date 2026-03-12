@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useAuth } from "@/lib/auth-context";
+import { getCleanBaseUrl } from "@/lib/utils";
 
 interface Props {
   onClose: () => void;
@@ -28,7 +29,7 @@ export default function SignInModal({
   const messages = {
     save: {
       title: "Save your trip",
-      desc: "Sign in to save this trip permanently and get a clean shareable link like tripsplit.app/t/bali-2026.",
+      desc: `Sign in to save this trip permanently and get a clean shareable link like ${getCleanBaseUrl()}/t/bali-2026.`,
       perks: [
         "✈️ Clean custom link instead of a long URL",
         "📋 Trip history — access all your past trips",

@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { useAuth } from "@/lib/auth-context";
 import { useTrip } from "@/lib/trip-context";
 import { saveTrip } from "@/lib/api";
+import { getCleanBaseUrl } from "@/lib/utils";
 import SignInModal from "@/components/SignInModal";
 
 export default function SaveTripButton() {
@@ -90,7 +91,7 @@ export default function SaveTripButton() {
                   fontSize: 12,
                 }}
               >
-                tripsplit.app/t/bali-2026
+                {getCleanBaseUrl()}/t/bali-2026
               </span>{" "}
               and access this trip anytime.
             </div>
