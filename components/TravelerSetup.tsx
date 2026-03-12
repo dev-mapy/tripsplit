@@ -119,11 +119,24 @@ export default function TravelerSetup() {
       </div>
 
       <button
-        style={{ ...styles.btnPrimary, opacity: canContinue && !loading ? 1 : 0.5 }}
+        style={{
+          ...styles.btnPrimary,
+          opacity: canContinue && !loading ? 1 : 0.5,
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          gap: 8,
+        }}
         disabled={!canContinue || loading}
         onClick={handleContinue}
       >
-        {loading ? "Saving..." : "Continue to Expenses →"}
+        {loading ? (
+          <>
+            <span className="animate-spin">🌀</span> Saving...
+          </>
+        ) : (
+          "Continue to Expenses →"
+        )}
       </button>
     </div>
   );
