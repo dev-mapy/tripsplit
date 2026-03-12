@@ -9,7 +9,7 @@ import { AuthProvider } from "@/lib/auth-context";
 
 export const metadata: Metadata = {
   metadataBase: new URL(
-    process.env.NEXT_PUBLIC_APP_URL ?? "https://tripsplit.app"
+    process.env.NEXT_PUBLIC_APP_URL ?? "https://tripsplit-mu.vercel.app"
   ),
   title: {
     default: "TripSplit — Split travel expenses with friends",
@@ -31,7 +31,7 @@ export const metadata: Metadata = {
   openGraph: {
     type: "website",
     locale: "en_US",
-    url: process.env.NEXT_PUBLIC_APP_URL ?? "https://tripsplit.app",
+    url: process.env.NEXT_PUBLIC_APP_URL ?? "https://tripsplit-mu.vercel.app",
     siteName: "TripSplit",
     title: "TripSplit — Split travel expenses with friends",
     description:

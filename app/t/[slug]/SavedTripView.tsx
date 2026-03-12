@@ -11,6 +11,7 @@ import AffiliateCard from "@/components/AffiliateCard";
 import ExpenseForm from "@/components/ExpenseForm";
 import Link from "next/link";
 import type { Currency, Traveler, Expense, Trip } from "@/types";
+import styles from "./SavedTripView.module.css";
 
 // Minimal TripProvider override for this page
 import { TripProvider, TripContext } from "@/lib/trip-context";
@@ -141,55 +142,17 @@ function SavedTripContent({
         }}
       >
         {/* Nav */}
-        <div
-          style={{
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "space-between",
-            marginBottom: 40,
-          }}
-        >
-          <Link
-            href="/split"
-            style={{
-              fontFamily: "'Playfair Display', serif",
-              fontSize: 20,
-              fontWeight: 700,
-              background: "linear-gradient(135deg, #ffd200, #f7971e)",
-              WebkitBackgroundClip: "text",
-              WebkitTextFillColor: "transparent",
-              textDecoration: "none",
-            }}
-          >
+        <div className={styles.header}>
+          <Link href="/split" className={styles.logo}>
             ✈️ TripSplit
           </Link>
-          <div style={{ display: "flex", gap: 10, alignItems: "center" }}>
+          <div className={styles.right}>
             {isOwner && (
-              <Link
-                href="/dashboard"
-                style={{
-                  fontFamily: "'Lato', sans-serif",
-                  fontSize: 13,
-                  color: "rgba(240,235,227,0.5)",
-                  textDecoration: "none",
-                }}
-              >
+              <Link href="/dashboard" className={styles.myTrips}>
                 My Trips
               </Link>
             )}
-            <Link
-              href="/split"
-              style={{
-                background: "linear-gradient(135deg, #f7971e, #ffd200)",
-                color: "#1a1a2e",
-                borderRadius: 10,
-                padding: "8px 18px",
-                fontFamily: "'Lato', sans-serif",
-                fontWeight: 700,
-                fontSize: 13,
-                textDecoration: "none",
-              }}
-            >
+            <Link href="/split" className={styles.newTrip}>
               New Trip ✈️
             </Link>
           </div>

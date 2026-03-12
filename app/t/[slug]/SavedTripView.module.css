@@ -1,0 +1,63 @@
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 40px;
+}
+
+.logo {
+  font-family: 'Playfair Display', serif;
+  font-size: 20px;
+  font-weight: 700;
+  background: linear-gradient(135deg, #ffd200, #f7971e);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  text-decoration: none;
+}
+
+.right {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+.myTrips {
+  font-family: 'Lato', sans-serif;
+  font-size: 13px;
+  color: rgba(240, 235, 227, 0.5);
+  text-decoration: none;
+}
+
+.newTrip {
+  background: linear-gradient(135deg, #f7971e, #ffd200);
+  color: #1a1a2e;
+  border-radius: 10px;
+  padding: 8px 18px;
+  font-family: 'Lato', sans-serif;
+  font-weight: 700;
+  font-size: 13px;
+  text-decoration: none;
+  transition: all 0.2s;
+}
+
+@media (max-width: 600px) {
+  .header {
+    margin-bottom: 24px;
+  }
+  
+  .logo {
+    font-size: 18px;
+  }
+  
+  .myTrips {
+    display: none;
+  }
+}
+
+@media (max-width: 400px) {
+  .header {
+    flex-direction: column;
+    gap: 12px;
+    align-items: center;
+  }
+}

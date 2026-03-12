@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/lib/auth-context";
 import { deleteTrip } from "@/lib/api";
+import styles from "./DashboardView.module.css";
 
 interface TripSummary {
   id: string;
@@ -105,38 +106,13 @@ export default function DashboardView({
         }}
       >
         {/* Header */}
-        <div
-          style={{
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "space-between",
-            marginBottom: 48,
-          }}
-        >
-          <Link
-            href="/split"
-            style={{
-              fontFamily: "'Playfair Display', serif",
-              fontSize: 22,
-              fontWeight: 700,
-              background: "linear-gradient(135deg, #ffd200, #f7971e)",
-              WebkitBackgroundClip: "text",
-              WebkitTextFillColor: "transparent",
-              textDecoration: "none",
-            }}
-          >
+        <div className={styles.header}>
+          <Link href="/split" className={styles.logo}>
             ✈️ TripSplit
           </Link>
 
-          <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
-            {/* Avatar */}
-            <div
-              style={{
-                display: "flex",
-                alignItems: "center",
-                gap: 8,
-              }}
-            >
+          <div className={styles.userSection}>
+            <div className={styles.userInfo}>
               {userAvatar ? (
                 // eslint-disable-next-line @next/next/no-img-element
                 <img
@@ -167,16 +143,7 @@ export default function DashboardView({
                   {firstName[0].toUpperCase()}
                 </div>
               )}
-              <span
-                style={{
-                  fontFamily: "'Lato', sans-serif",
-                  fontSize: 14,
-                  color: "rgba(240,235,227,0.7)",
-                  fontWeight: 700,
-                }}
-              >
-                {firstName}
-              </span>
+              <span className={styles.userName}>{firstName}</span>
             </div>
 
             <button
@@ -184,16 +151,7 @@ export default function DashboardView({
                 await signOut();
                 router.push("/home");
               }}
-              style={{
-                background: "rgba(255,255,255,0.07)",
-                border: "1px solid rgba(255,255,255,0.12)",
-                borderRadius: 8,
-                padding: "7px 14px",
-                fontFamily: "'Lato', sans-serif",
-                fontSize: 13,
-                color: "rgba(240,235,227,0.7)",
-                cursor: "pointer",
-              }}
+              className={styles.signOutButton}
             >
               Sign out
             </button>

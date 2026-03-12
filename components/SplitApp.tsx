@@ -6,6 +6,7 @@ import ExpenseList from "@/components/ExpenseList";
 import Settlement from "@/components/Settlement";
 import UserNav from "@/components/UserNav";
 import SaveNudge from "@/components/SaveNudge";
+import styles from "./SplitApp.module.css";
 
 const STEPS = ["setup", "expenses", "result"] as const;
 const STEP_LABELS = ["Trip Setup", "Expenses", "Settlement"];
@@ -60,12 +61,7 @@ export default function SplitApp() {
           </a>
 
           {/* User nav — top right */}
-          <div style={{
-            position: "absolute",
-            top: 40,
-            right: 20,
-            zIndex: 10,
-          }}>
+          <div className={styles.userNavContainer}>
             <UserNav />
           </div>
 

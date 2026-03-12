@@ -9,9 +9,7 @@ export const avatarColor = (index: number) =>
   `hsl(${index * 60 + 200}, 60%, 55%)`;
 
 export const getBaseUrl = () => {
-  console.log("NEXT_PUBLIC_APP_URL", process.env.NEXT_PUBLIC_APP_URL);
-  if (process.env.NEXT_PUBLIC_APP_URL) return process.env.NEXT_PUBLIC_APP_URL;
-  return "http://localhost:3000";
+  return process.env.NEXT_PUBLIC_APP_URL ?? "http://localhost:3000";
 };
 
 export const getCleanBaseUrl = () => {
