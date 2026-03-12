@@ -7,8 +7,45 @@ import { NuqsAdapter } from "nuqs/adapters/next/app";
 import { TripProvider } from "@/lib/trip-context";
 
 export const metadata: Metadata = {
-  title: "TripSplit — No login. No drama. Just fair splits.",
-  description: "Split travel expenses with friends. No account needed.",
+  metadataBase: new URL(
+    process.env.NEXT_PUBLIC_APP_URL ?? "https://tripsplit.app"
+  ),
+  title: {
+    default: "TripSplit — Split travel expenses with friends",
+    template: "%s | TripSplit",
+  },
+  description:
+    "The easiest way to split trip expenses. Add your costs, share one link, and everyone sees exactly who owes what. No account needed.",
+  keywords: [
+    "travel expense splitter",
+    "trip cost calculator",
+    "split expenses",
+    "travel budget",
+    "group travel",
+    "chip in calculator",
+    "no login expense tracker",
+  ],
+  authors: [{ name: "TripSplit" }],
+  creator: "TripSplit",
+  openGraph: {
+    type: "website",
+    locale: "en_US",
+    url: process.env.NEXT_PUBLIC_APP_URL ?? "https://tripsplit.app",
+    siteName: "TripSplit",
+    title: "TripSplit — Split travel expenses with friends",
+    description:
+      "Split travel expenses fairly with friends. No sign-up required — just create a trip, add expenses, and share one link.",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "TripSplit — Split travel expenses with friends",
+    description:
+      "Split travel expenses fairly with friends. No sign-up required — just create a trip, add expenses, and share one link.",
+  },
+  robots: {
+    index: true,
+    follow: true,
+  },
 };
 
 export default function RootLayout({
