@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Suspense } from "react";
 import { Analytics } from "@vercel/analytics/react";
+import Script from "next/script";
 import "./globals.css";
 import { NuqsAdapter } from "nuqs/adapters/next/app";
 import { TripProvider } from "@/lib/trip-context";
@@ -24,6 +25,14 @@ export default function RootLayout({
         />
       </head>
       <body>
+        <Script
+          id="travelpayouts-monetization"
+          src="https://emrldco.com/NTA2OTk3.js?t=506997"
+          strategy="afterInteractive"
+          data-noptimize="1"
+          data-cfasync="false"
+          data-wpfc-render="false"
+        />
         <NuqsAdapter>
           <Suspense fallback={null}>
             <TripProvider>{children}</TripProvider>
