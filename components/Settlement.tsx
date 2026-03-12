@@ -5,6 +5,7 @@ import { calcSettlement } from "@/lib/calculator";
 import { CATEGORIES } from "@/lib/constants";
 import { avatarColor, getInitial } from "@/lib/utils";
 import ShareButton from "@/components/ShareButton";
+import SaveTripButton from "@/components/SaveTripButton";
 import KlookCard from "@/components/KlookCard";
 import Link from "next/link";
 
@@ -70,6 +71,9 @@ export default function Settlement() {
 
       {/* ── Share link ── */}
       <ShareButton />
+
+      {/* ── Save trip (owner only, not shown in shared view) ── */}
+      {!isSharedView && <SaveTripButton />}
 
       {/* ── Balances ── */}
       <div style={card}>

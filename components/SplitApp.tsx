@@ -4,6 +4,7 @@ import { useTrip } from "@/lib/trip-context";
 import TravelerSetup from "@/components/TravelerSetup";
 import ExpenseList from "@/components/ExpenseList";
 import Settlement from "@/components/Settlement";
+import UserNav from "@/components/UserNav";
 
 const STEPS = ["setup", "expenses", "result"] as const;
 const STEP_LABELS = ["Trip Setup", "Expenses", "Settlement"];
@@ -56,6 +57,16 @@ export default function SplitApp() {
           >
             ← About TripSplit
           </a>
+
+          {/* User nav — top right */}
+          <div style={{
+            position: "absolute",
+            top: 40,
+            right: 20,
+            zIndex: 10,
+          }}>
+            <UserNav />
+          </div>
 
           {/* Step indicator */}
           <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 8, marginTop: 24 }}>

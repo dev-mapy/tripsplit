@@ -173,3 +173,58 @@ Prisma with Supabase Postgres
 - PATCH/DELETE verify ownership (403 if not owner)
 - GET /api/trips/[slug] is public — no auth required
 
+## Save Trip UI (BUILT)
+
+### Components
+- `components/SignInModal.tsx` — Google sign-in modal with perks list
+  - Props: onClose(), reason: "save" | "dashboard"
+  - Shows different messaging based on reason
+  - Reassures user that TripSplit still works without signing in
+
+- `components/SaveTripButton.tsx` — save button on settlement page
+  - Shows "Sign in to save →" if not authenticated
+  - Opens SignInModal if not signed in
+  - Calls POST /api/trips and redirects to /t/[slug] on success
+  - Only visible to trip owner (hidden in isSharedView)
+
+- `components/UserNav.tsx` — avatar + dropdown in app header
+  - Shows "Sign in" button if not authenticated
+  - Shows avatar (Google photo or initials) if signed in
+  - Dropdown: My Trips → /dashboard, New Trip → /split, Sign out
+
+### Flow
+1. User finishes trip → sees "Save this trip" card on result page
+2. Clicks "Sign in to save →" → SignInModal appears
+3. Clicks "Continue with Google" → redirected to Google OAuth
+4. Returns to /auth/callback → session created → redirected to /dashboard
+   (Note: after OAuth redirect, user will need to save again from /split
+   or from their session — this is standard OAuth behavior)
+5. Once signed in, "Save trip →" button saves directly
+6. On save success → redirected to /t/[slug]
+
+
+## Saved Trip Page (BUILT)
+
+### Route
+`/t/[slug]` → `app/t/[slug]/page.tsx` (server) + `SavedTripView.tsx` (client)
+
+### Behavior
+- Server fetches trip from DB by slug
+- If not found → renders `not-found.tsx` (404)
+- Passes trip data to `SavedTripView` client component
+- `isOwner` = user.id === trip.userId
+  - Owner: sees "Save changes" bar + can edit/add expenses
+  - Non-owner: sees read-only banner + "Start your own trip" CTA
+
+### Components
+- `app/t/[slug]/page.tsx` — server component, fetches trip, generates metadata
+- `app/t/[slug]/SavedTripView.tsx` — client component, full trip UI
+- `app/t/[slug]/not-found.tsx` — 404 page for missing slugs
+
+### ShareButton Update
+- Now accepts optional `overrideUrl` prop
+- Used on saved trip page to share `/t/[slug]` instead of `?trip=` URL
+
+### TripProvider Update
+- Now accepts optional `initialTrip` prop
+- Used by SavedTripView to seed context with DB trip data
