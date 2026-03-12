@@ -41,4 +41,4 @@ The following task-tracking files have been moved to the `../md-tasks/` director
 |---|---|---|
 | `/` | `app/page.tsx` | Redirects to `/home` |
 | `/home` | `app/home/page.tsx` | Landing page |
-| `/app` | `app/app/page.tsx` | The trip splitter app |
+| `/split` | `app/split/page.tsx` | The trip splitter app |

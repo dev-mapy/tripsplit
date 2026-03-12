@@ -89,7 +89,7 @@ function Nav() {
       </div>
 
       <Link
-        href="/app"
+        href="/split"
         style={{
           background: "linear-gradient(135deg, #f7971e, #ffd200)",
           color: "#1a1a2e",
@@ -199,7 +199,7 @@ function Hero() {
         }}
       >
         <Link
-          href="/app"
+          href="/split"
           style={{
             background: "linear-gradient(135deg, #f7971e, #ffd200)",
             color: "#1a1a2e",
@@ -517,7 +517,7 @@ function HowItWorks() {
         }}
       >
         <Link
-          href="/app"
+          href="/split"
           style={{
             background: "linear-gradient(135deg, #f7971e, #ffd200)",
             color: "#1a1a2e",
