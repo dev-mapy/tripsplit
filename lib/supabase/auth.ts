@@ -3,6 +3,7 @@ import { getBaseUrl } from "@/lib/utils";
 
 export async function signInWithGoogle() {
   const supabase = createClient();
+  
   const { error } = await supabase.auth.signInWithOAuth({
     provider: "google",
     options: {
