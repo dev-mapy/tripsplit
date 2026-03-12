@@ -5,6 +5,7 @@ import { calcSettlement } from "@/lib/calculator";
 import { CATEGORIES } from "@/lib/constants";
 import { avatarColor, getInitial } from "@/lib/utils";
 import ShareButton from "@/components/ShareButton";
+import KlookCard from "@/components/KlookCard";
 import Link from "next/link";
 
 export default function Settlement() {
@@ -163,6 +164,8 @@ export default function Settlement() {
           </div>
         )}
       </div>
+
+      <KlookCard />
 
       {/* ── Category breakdown ── */}
       {byCategory.length > 0 && (

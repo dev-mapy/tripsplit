@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useTrip } from "@/lib/trip-context";
 import ExpenseForm from "@/components/ExpenseForm";
 import ShareButton from "@/components/ShareButton";
+import YesimCard from "@/components/YesimCard";
 import type { Expense } from "@/types";
 
 export default function ExpenseList() {
@@ -74,6 +75,7 @@ export default function ExpenseList() {
         )}
 
         {trip.expenses.length > 0 && <ShareButton />}
+        <YesimCard />
 
         <div style={{ display: "flex", gap: 10 }}>
           <button style={{ ...btnGhost, flex: 1, fontSize: 15 }} onClick={openAdd}>+ Add Expense</button>
