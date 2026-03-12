@@ -337,6 +337,10 @@ export default function DashboardView({
                       style={{
                         background: "rgba(248,113,113,0.2)",
                         border: "1px solid rgba(248,113,113,0.4)",
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        gap: 8,
                         borderRadius: 10,
                         padding: "10px 20px",
                         fontFamily: "'Lato', sans-serif",
@@ -347,9 +351,13 @@ export default function DashboardView({
                         opacity: deletingSlug === trip.slug ? 0.6 : 1,
                       }}
                     >
-                      {deletingSlug === trip.slug
-                        ? "Deleting..."
-                        : "Yes, delete"}
+                        {deletingSlug === trip.slug ? (
+                          <>
+                            <span className="animate-spin">🌀</span> Deleting...
+                          </>
+                        ) : (
+                          "Yes, delete"
+                        )}
                     </button>
                   </div>
                 </div>

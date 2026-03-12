@@ -117,6 +117,10 @@ export default function SaveTripButton() {
               background: saving
                 ? "rgba(255,210,0,0.3)"
                 : "linear-gradient(135deg, #f7971e, #ffd200)",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              gap: 8,
               color: "#1a1a2e",
               border: "none",
               borderRadius: 10,
@@ -130,7 +134,15 @@ export default function SaveTripButton() {
               flexShrink: 0,
             }}
           >
-            {saving ? "Saving..." : user ? "Save trip →" : "Sign in to save →"}
+            {saving ? (
+              <>
+                <span className="animate-spin">🌀</span> Saving...
+              </>
+            ) : user ? (
+              "Save trip →"
+            ) : (
+              "Sign in to save →"
+            )}
           </button>
         </div>
       </div>

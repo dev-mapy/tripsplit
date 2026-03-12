@@ -9,6 +9,7 @@ import {
   type ReactNode,
 } from "react";
 import { useQueryState } from "nuqs";
+import { useAuth } from "@/lib/auth-context";
 import type { Trip, Traveler, Expense, Currency } from "@/types";
 import { DEFAULT_CURRENCY } from "@/lib/constants";
 import { randomId } from "@/lib/utils";
@@ -50,6 +51,7 @@ interface TripProviderProps {
 }
 
 export function TripProvider({ children, initialTrip }: TripProviderProps) {
+  const { user } = useAuth();
   const [encodedTrip, setEncodedTrip] = useQueryState("trip", {
     defaultValue: "",
     shallow: false,
@@ -98,12 +100,13 @@ export function TripProvider({ children, initialTrip }: TripProviderProps) {
     }
   }, [encodedTrip]);
 
-  // Sync URL when trip changes
+  // Sync URL when trip changes (only for anonymous users)
   useEffect(() => {
+    if (user) return;
     if (trip.name || trip.expenses.length > 0) {
       syncUrl(trip);
     }
-  }, [trip, syncUrl]);
+  }, [trip, syncUrl, user]);
 
   const updateTripName = useCallback((name: string) => {
     setTrip((t) => ({ ...t, name }));

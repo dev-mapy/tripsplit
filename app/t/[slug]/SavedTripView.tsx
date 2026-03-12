@@ -245,6 +245,10 @@ function SavedTripContent({
                   background: saved
                     ? "rgba(74,222,128,0.2)"
                     : "linear-gradient(135deg, #f7971e, #ffd200)",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  gap: 8,
                   color: saved ? "#4ade80" : "#1a1a2e",
                   border: saved ? "1px solid rgba(74,222,128,0.4)" : "none",
                   borderRadius: 8,
@@ -257,7 +261,15 @@ function SavedTripContent({
                   whiteSpace: "nowrap",
                 }}
               >
-                {saving ? "Saving..." : saved ? "✓ Saved" : "Save changes"}
+                {saving ? (
+                  <>
+                    <span className="animate-spin">🌀</span> Saving...
+                  </>
+                ) : saved ? (
+                  "✓ Saved"
+                ) : (
+                  "Save changes"
+                )}
               </button>
             </div>
           )}
