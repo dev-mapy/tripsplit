@@ -1,3 +1,4 @@
+import { getCleanBaseUrl } from "@/lib/utils";
 import { ImageResponse } from "next/og";
 
 export const runtime = "edge";
@@ -112,7 +113,7 @@ export default function OGImage() {
             fontFamily: "monospace",
           }}
         >
-          tripsplit.app
+          { getCleanBaseUrl() }
         </div>
       </div>
     ),

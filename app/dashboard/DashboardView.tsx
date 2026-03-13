@@ -13,6 +13,7 @@ import { StarsBackground } from "@/components/ui/StarsBackground";
 import { Layout } from "@/components/ui/Layout";
 import { UserNav } from "@/components/UserNav";
 import { formatAmount } from "@/lib/utils";
+import { getCleanBaseUrl } from "@/lib/utils";
 
 interface TripSummary {
   id: string;
@@ -187,7 +188,7 @@ export default function DashboardView({
                   </div>
 
                   <div className="font-mono text-[11px] opacity-30 truncate">
-                    tripsplit.app/t/{trip.slug}
+                    { getCleanBaseUrl() }/t/{trip.slug}
                   </div>
                 </div>
 

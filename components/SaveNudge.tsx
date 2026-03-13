@@ -5,6 +5,7 @@ import { useAuth } from "@/lib/auth-context";
 import SignInModal from "@/components/SignInModal";
 import { Typography } from "@/components/ui/Typography";
 import { Button } from "@/components/ui/Button";
+import { getCleanBaseUrl } from "@/lib/utils";
 
 export default function SaveNudge() {
   const { user } = useAuth();
@@ -22,7 +23,7 @@ export default function SaveNudge() {
           <Typography variant="small" className="opacity-70 leading-relaxed">
             <strong className="opacity-100 text-blue-300">Want a cleaner link?</strong>{" "}
             Sign in with Google to save trips at{" "}
-            <span className="font-mono text-[11px] bg-white/5 px-1 rounded">tripsplit.app/t/your-trip</span>{" "}
+            <span className="font-mono text-[11px] bg-white/5 px-1 rounded">{ getCleanBaseUrl() }/t/your-trip</span>{" "}
             and access your history anytime.
           </Typography>
         </div>
