@@ -15,10 +15,12 @@
   "dependencies": {
     "@prisma/adapter-pg": "^7.5.0",
     "@prisma/client": "^7.5.0",
+    "@radix-ui/react-slot": "^1.2.4",
     "@supabase/ssr": "^0.9.0",
     "@supabase/supabase-js": "^2.99.1",
     "@vercel/analytics": "^2.0.0",
     "next": "16.1.6",
+    "nextjs-toploader": "^3.9.17",
     "nuqs": "^2.8.9",
     "pg": "^8.20.0",
     "react": "19.2.3",
@@ -41,6 +43,6 @@
     "prisma": "^7.5.0",
     "tailwindcss": "^4",
     "typescript": "^5",
-    "vitest": "^4.0.18"
+    "vitest": "^4.1.0"
   }
 }

@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 import { prisma } from "@/lib/prisma";
 import { generateSlug, uniqueSlug } from "@/lib/utils";
+import { MAX_FREE_TRIPS } from "@/lib/constants";
 import type { SaveTripPayload } from "@/types";
 
 // POST /api/trips — save a new trip
@@ -34,6 +35,18 @@ export async function POST(request: NextRequest) {
       return NextResponse.json(
         { error: "At least 2 travelers are required" },
         { status: 400 }
+      );
+    }
+
+    // Enforce trip limit
+    const tripCount = await prisma.savedTrip.count({
+      where: { userId: user.id },
+    });
+
+    if (tripCount >= MAX_FREE_TRIPS) {
+      return NextResponse.json(
+        { error: `You have reached the limit of ${MAX_FREE_TRIPS} saved trips.` },
+        { status: 403 }
       );
     }
 

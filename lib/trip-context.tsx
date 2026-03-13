@@ -31,6 +31,7 @@ interface TripContextValue {
   resetTrip: () => void;
   shareUrl: string;
   isSharedView: boolean;
+  isReadOnly: boolean;
 }
 
 const makeDefaultTrip = (): Trip => ({
@@ -48,9 +49,14 @@ export const TripContext = createContext<TripContextValue | null>(null);
 interface TripProviderProps {
   children: ReactNode;
   initialTrip?: Partial<Trip>;
+  isReadOnly?: boolean;
 }
 
-export function TripProvider({ children, initialTrip }: TripProviderProps) {
+export function TripProvider({
+  children,
+  initialTrip,
+  isReadOnly = false,
+}: TripProviderProps) {
   const { user } = useAuth();
   const [encodedTrip, setEncodedTrip] = useQueryState("trip", {
     defaultValue: "",
@@ -102,11 +108,11 @@ export function TripProvider({ children, initialTrip }: TripProviderProps) {
 
   // Sync URL when trip changes (only for anonymous users)
   useEffect(() => {
-    if (user) return;
+    if (initialTrip) return;
     if (trip.name || trip.expenses.length > 0) {
       syncUrl(trip);
     }
-  }, [trip, syncUrl, user]);
+  }, [trip, syncUrl, initialTrip]);
 
   const updateTripName = useCallback((name: string) => {
     setTrip((t) => ({ ...t, name }));
@@ -178,6 +184,7 @@ export function TripProvider({ children, initialTrip }: TripProviderProps) {
         resetTrip,
         shareUrl,
         isSharedView,
+        isReadOnly,
       }}
     >
       {children}

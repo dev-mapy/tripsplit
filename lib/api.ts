@@ -31,6 +31,21 @@ export async function fetchUserTrips(): Promise<SavedTrip[]> {
   return trips;
 }
 
+export async function fetchTripCount(): Promise<{
+  count: number;
+  limit: number;
+  remaining: number;
+}> {
+  const res = await fetch(`${BASE}/count`);
+
+  if (!res.ok) {
+    const { error } = await res.json();
+    throw new Error(error ?? "Failed to fetch trip count");
+  }
+
+  return res.json();
+}
+
 export async function fetchTripBySlug(
   slug: string
 ): Promise<SavedTrip | null> {

@@ -4,6 +4,10 @@ import { useState, useEffect } from "react";
 import { useTrip } from "@/lib/trip-context";
 import { CATEGORIES } from "@/lib/constants";
 import type { Expense } from "@/types";
+import { Button } from "@/components/ui/Button";
+import { Card } from "@/components/ui/Card";
+import { Typography } from "@/components/ui/Typography";
+import { formatCurrency } from "@/lib/utils";
 
 interface Props {
   editing: Expense | null;
@@ -15,7 +19,7 @@ export default function ExpenseForm({ editing, onClose }: Props) {
   const sym = trip.currency.symbol;
 
   const [desc, setDesc] = useState("");
-  const [amount, setAmount] = useState("");
+  const [amount, setAmount] = useState(""); // Displayed string with commas
   const [category, setCategory] = useState(CATEGORIES[0]);
   const [paidBy, setPaidBy] = useState(trip.travelers[0]?.id ?? "");
   const [splitAmong, setSplitAmong] = useState<string[]>(
@@ -25,7 +29,7 @@ export default function ExpenseForm({ editing, onClose }: Props) {
   useEffect(() => {
     if (editing) {
       setDesc(editing.desc);
-      setAmount(String(editing.amount));
+      setAmount(formatCurrency(editing.amount));
       setCategory(editing.category);
       setPaidBy(editing.paidBy);
       setSplitAmong(editing.splitAmong);
@@ -38,16 +42,76 @@ export default function ExpenseForm({ editing, onClose }: Props) {
     );
   };
 
+  // Helper to parse comma-formatted string back to number
+  const parseAmount = (val: string) => {
+    const clean = val.replace(/,/g, "");
+    return parseFloat(clean);
+  };
+
+  const currentAmount = parseAmount(amount);
+
   const perPerson =
-    amount && splitAmong.length > 0
-      ? (parseFloat(amount) / splitAmong.length).toFixed(2)
+    !isNaN(currentAmount) && splitAmong.length > 0
+      ? (currentAmount / splitAmong.length).toFixed(2)
       : null;
 
-  const isValid = desc.trim() && amount && splitAmong.length > 0;
+  const isValid = desc.trim() && !isNaN(currentAmount) && currentAmount > 0 && splitAmong.length > 0;
+
+  const handleAmountChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const raw = e.target.value;
+
+    // 1. Extract digits and dots, removing commas
+    let clean = raw.replace(/,/g, "").replace(/[^0-9.]/g, "");
+
+    // 2. Handle multiple dots by keeping only the first one
+    const dotIndex = clean.indexOf(".");
+    if (dotIndex !== -1) {
+      const before = clean.slice(0, dotIndex);
+      const after = clean.slice(dotIndex + 1).replace(/\./g, "");
+      clean = `${before}.${after}`;
+    }
+
+    // 3. Split into parts
+    const [intPart, decPart] = clean.split(".");
+
+    // 4. Limit integer part to 8 digits and decimal to 2
+    let finalInt = intPart.slice(0, 8);
+    let finalDec = decPart !== undefined ? decPart.slice(0, 2) : undefined;
+
+    // 5. Format the integer part with commas
+    let formattedInt = "";
+    if (finalInt !== "") {
+      const n = parseInt(finalInt);
+      if (!isNaN(n)) {
+        formattedInt = n.toLocaleString("en-US");
+      }
+    }
+
+    // 6. Final assembly - setAmount ensures the input remains controlled and clean
+    if (finalDec !== undefined) {
+      setAmount(`${formattedInt}.${finalDec}`);
+    } else {
+      // Check if it should have a trailing dot
+      if (clean.includes(".")) {
+        setAmount(`${formattedInt}.`);
+      } else {
+        setAmount(formattedInt);
+      }
+    }
+  };
+
+  // On blur, ensure it looks like a currency if it's not empty
+  const handleAmountBlur = () => {
+    if (amount === "") return;
+    const num = parseAmount(amount);
+    if (!isNaN(num)) {
+      setAmount(formatCurrency(num));
+    }
+  };
 
   const handleSave = () => {
     if (!isValid) return;
-    const payload = { desc: desc.trim(), amount: parseFloat(amount), category, paidBy, splitAmong };
+    const payload = { desc: desc.trim(), amount: currentAmount, category, paidBy, splitAmong };
     if (editing) {
       updateExpense(editing.id, payload);
     } else {
@@ -62,86 +126,145 @@ export default function ExpenseForm({ editing, onClose }: Props) {
   };
 
   return (
-    <div style={overlay} onClick={(e) => e.target === e.currentTarget && onClose()}>
-      <div className="animate-pop-in" style={modal}>
-
-        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 24 }}>
-          <h2 style={{ fontSize: 22 }}>{editing ? "Edit Expense" : "Add Expense"}</h2>
-          <button onClick={onClose} style={{ background: "none", border: "none", color: "var(--text-faint)", fontSize: 26, cursor: "pointer" }}>×</button>
-        </div>
-
-        <label style={lbl}>Description</label>
-        <input style={inp} placeholder="e.g. Dinner at the beach" value={desc} onChange={(e) => setDesc(e.target.value)} />
-
-        <div style={{ display: "flex", gap: 12, margin: "16px 0" }}>
-          <div style={{ flex: 1 }}>
-            <label style={lbl}>Amount ({sym})</label>
-            <input style={inp} type="number" min="0" step="0.01" placeholder="0.00" value={amount} onChange={(e) => setAmount(e.target.value)} />
-          </div>
-          <div style={{ flex: 1, position: "relative" }}>
-            <label style={lbl}>Category</label>
-            <select style={{ ...inp, appearance: "none", cursor: "pointer" }} value={category} onChange={(e) => setCategory(e.target.value)}>
-              {CATEGORIES.map((c) => (
-                <option key={c} value={c} style={{ background: "#24243e", color: "#fff" }}>
-                  {c}
-                </option>
-              ))}
-            </select>
-            <div style={{ position: "absolute", right: 12, bottom: 12, pointerEvents: "none", color: "var(--text-faint)", fontSize: 12 }}>
-              ▼
-            </div>
-          </div>
-        </div>
-
-        <label style={lbl}>Paid By</label>
-        <div style={{ display: "flex", flexWrap: "wrap", gap: 8, marginBottom: 16 }}>
-          {trip.travelers.map((t) => {
-            const active = paidBy === t.id;
-            return (
-              <button key={t.id} onClick={() => setPaidBy(t.id)} style={{ ...pill, background: active ? "rgba(255,210,0,0.2)" : "rgba(255,255,255,0.05)", border: active ? "1px solid #ffd200" : "1px solid rgba(255,255,255,0.12)", color: active ? "#ffd200" : "var(--text)" }}>
-                {t.name}
-              </button>
-            );
-          })}
-        </div>
-
-        <label style={lbl}>Split Among</label>
-        <div style={{ display: "flex", flexWrap: "wrap", gap: 8, marginBottom: 16 }}>
-          {trip.travelers.map((t) => {
-            const active = splitAmong.includes(t.id);
-            return (
-              <button key={t.id} onClick={() => toggleSplit(t.id)} style={{ ...pill, background: active ? "rgba(255,210,0,0.2)" : "rgba(255,255,255,0.05)", border: active ? "1px solid #ffd200" : "1px solid rgba(255,255,255,0.12)", color: active ? "#ffd200" : "var(--text)" }}>
-                {active ? "✓ " : ""}{t.name}
-              </button>
-            );
-          })}
-        </div>
-
-        {perPerson && (
-          <div style={{ background: "rgba(255,210,0,0.08)", border: "1px solid rgba(255,210,0,0.2)", borderRadius: 10, padding: "12px 16px", marginBottom: 20, fontSize: 14, color: "var(--text-muted)" }}>
-            Each person pays: <strong style={{ color: "#ffd200" }}>{sym}{perPerson}</strong>
-          </div>
-        )}
-
-        <div style={{ display: "flex", gap: 10 }}>
-          {editing && (
-            <button onClick={handleDelete} style={{ ...btnGhost, color: "#f87171", borderColor: "rgba(248,113,113,0.3)" }}>
-              Delete
-            </button>
-          )}
-          <button onClick={handleSave} disabled={!isValid} style={{ ...btnPrimary, flex: 1, opacity: isValid ? 1 : 0.5 }}>
-            {editing ? "Save Changes ✓" : "Add Expense ✓"}
+    <div
+      className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[100] flex items-center justify-center p-5 overflow-y-auto"
+      onClick={(e) => e.target === e.currentTarget && onClose()}
+    >
+      <Card className="w-full max-auto max-w-[480px] p-7 md:p-8 animate-pop-in relative">
+        <div className="flex justify-between items-center mb-6">
+          <Typography variant="h2">{editing ? "Edit Expense" : "Add Expense"}</Typography>
+          <button
+            onClick={onClose}
+            className="bg-none border-none text-text-faint hover:text-white text-3xl cursor-pointer transition-colors"
+          >
+            ×
           </button>
         </div>
-      </div>
+
+        <div className="flex flex-col gap-6">
+          <div>
+            <Typography variant="small" className="uppercase tracking-widest opacity-40 font-bold mb-2 block">
+              Description
+            </Typography>
+            <input
+              className="w-full bg-white/8 border border-white/15 rounded-xl px-4 py-3 text-[15px] text-text outline-none focus:border-gold/50 focus:bg-white/12 transition-all"
+              placeholder="e.g. Dinner at the beach"
+              value={desc}
+              onChange={(e) => setDesc(e.target.value)}
+            />
+          </div>
+
+          <div className="flex flex-col sm:flex-row gap-4">
+            <div className="flex-1">
+              <Typography variant="small" className="uppercase tracking-widest opacity-40 font-bold mb-2 block">
+                Amount ({sym})
+              </Typography>
+              <input
+                className="w-full bg-white/8 border border-white/15 rounded-xl px-4 py-3 text-[15px] text-text outline-none focus:border-gold/50 focus:bg-white/12 transition-all font-mono"
+                placeholder="0.00"
+                value={amount}
+                onChange={handleAmountChange}
+                onBlur={handleAmountBlur}
+              />
+            </div>
+            <div className="flex-1 relative">
+              <Typography variant="small" className="uppercase tracking-widest opacity-40 font-bold mb-2 block">
+                Category
+              </Typography>
+              <select
+                className="w-full bg-white/8 border border-white/15 rounded-xl px-4 py-3 text-[15px] text-text outline-none focus:border-gold/50 focus:bg-white/12 transition-all appearance-none cursor-pointer"
+                value={category}
+                onChange={(e) => setCategory(e.target.value)}
+              >
+                {CATEGORIES.map((c) => (
+                  <option key={c} value={c} className="bg-[#1e1b3c] text-white">
+                    {c}
+                  </option>
+                ))}
+              </select>
+              <div className="absolute right-4 bottom-3.5 pointer-events-none text-text-faint text-[10px]">
+                ▼
+              </div>
+            </div>
+          </div>
+
+          <div>
+            <Typography variant="small" className="uppercase tracking-widest opacity-40 font-bold mb-3 block">
+              Paid By
+            </Typography>
+            <div className="flex flex-wrap gap-2">
+              {trip.travelers.map((t) => {
+                const active = paidBy === t.id;
+                return (
+                  <button
+                    key={t.id}
+                    onClick={() => setPaidBy(t.id)}
+                    className={`
+                      px-4 py-2 rounded-xl text-sm font-medium transition-all cursor-pointer
+                      ${active
+                        ? "bg-gold/15 border border-gold text-gold"
+                        : "bg-white/8 border border-white/12 text-text opacity-70 hover:opacity-100 hover:bg-white/12"}
+                    `}
+                  >
+                    {t.name}
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+
+          <div>
+            <Typography variant="small" className="uppercase tracking-widest opacity-40 font-bold mb-3 block">
+              Split Among
+            </Typography>
+            <div className="flex flex-wrap gap-2">
+              {trip.travelers.map((t) => {
+                const active = splitAmong.includes(t.id);
+                return (
+                  <button
+                    key={t.id}
+                    onClick={() => toggleSplit(t.id)}
+                    className={`
+                      px-4 py-2 rounded-xl text-sm font-medium transition-all cursor-pointer
+                      ${active
+                        ? "bg-gold/15 border border-gold text-gold"
+                        : "bg-white/8 border border-white/12 text-text opacity-70 hover:opacity-100 hover:bg-white/12"}
+                    `}
+                  >
+                    {active ? "✓ " : ""}{t.name}
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+
+          {perPerson && (
+            <div className="bg-gold/10 border border-gold/20 rounded-xl p-4 text-sm">
+              <span className="opacity-60">Each person pays: </span>
+              <span className="text-gold font-bold">{sym}{new Intl.NumberFormat("en-US").format(parseFloat(perPerson))}</span>
+            </div>
+          )}
+
+          <div className="flex gap-3 pt-2">
+            {editing && (
+              <Button
+                variant="ghost"
+                onClick={handleDelete}
+                className="text-red-400 border-red-400/30 hover:bg-red-400/10"
+              >
+                Delete
+              </Button>
+            )}
+            <Button
+              onClick={handleSave}
+              disabled={!isValid}
+              className="flex-1"
+            >
+              {editing ? "Save Changes ✓" : "Add Expense ✓"}
+            </Button>
+          </div>
+        </div>
+      </Card>
     </div>
   );
 }
-
-const overlay: React.CSSProperties = { position: "fixed", inset: 0, background: "rgba(0,0,0,0.6)", backdropFilter: "blur(4px)", zIndex: 100, display: "flex", alignItems: "center", justifyContent: "center", padding: 20 };
-const modal: React.CSSProperties = { background: "rgba(30,27,60,0.97)", border: "1px solid rgba(255,255,255,0.12)", borderRadius: 20, padding: 28, width: "100%", maxWidth: 480, maxHeight: "90vh", overflowY: "auto" };
-const lbl: React.CSSProperties = { display: "block", fontSize: 11, fontWeight: 700, letterSpacing: "1px", textTransform: "uppercase", color: "var(--text-muted)", marginBottom: 8 };
-const inp: React.CSSProperties = { width: "100%", background: "rgba(255,255,255,0.08)", border: "1px solid rgba(255,255,255,0.15)", borderRadius: 10, color: "var(--text)", padding: "12px 16px", fontSize: 15, outline: "none" };
-const pill: React.CSSProperties = { border: "none", borderRadius: 20, padding: "8px 14px", cursor: "pointer", fontSize: 14, transition: "all 0.15s" };
-const btnPrimary: React.CSSProperties = { background: "linear-gradient(135deg, #f7971e, #ffd200)", color: "#1a1a2e", border: "none", borderRadius: 12, padding: "14px 28px", fontWeight: 700, fontSize: 15, cursor: "pointer" };
-const btnGhost: React.CSSProperties = { background: "rgba(255,255,255,0.08)", color: "var(--text)", border: "1px solid rgba(255,255,255,0.15)", borderRadius: 10, padding: "10px 18px", fontSize: 14, cursor: "pointer" };

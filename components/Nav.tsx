@@ -1,47 +1,23 @@
 "use client";
 
 import Link from "next/link";
-import { useAuth } from "@/lib/auth-context";
-import styles from "./Nav.module.css";
+import { UserNav } from "@/components/UserNav";
 
 export function Nav() {
-  const { user, signInWithGoogle, signOut, loading } = useAuth();
-
   return (
-    <nav className={styles.nav}>
-      <Link href="/home" className={styles.logo}>
+    <nav className="relative z-50 flex items-center justify-between px-6 py-6 max-w-6xl mx-auto">
+      <Link href="/home" className="font-serif text-[22px] font-bold bg-linear-to-br from-gold to-gold-warm bg-clip-text text-transparent no-underline">
         ✈️ TripSplit
       </Link>
 
-      <div className={styles.right}>
-        {loading ? (
-          <div className={styles.loading}>
-            Loading...
-          </div>
-        ) : user ? (
-          <button
-            onClick={() => signOut()}
-            className={styles.authButton}
-          >
-            Sign Out
-          </button>
-        ) : (
-          <button
-            onClick={() => signInWithGoogle()}
-            className={styles.authButton}
-          >
-            Sign In with Google
-          </button>
-        )}
-
-        <div className={styles.links}>
-          <Link href="/dashboard" className={styles.myTrips}>
-            My Trips
-          </Link>
-          <Link href="/split" className={styles.tryFree}>
-            Try it free →
-          </Link>
-        </div>
+      <div className="flex items-center gap-6">
+        <Link
+          href="/split"
+          className="text-sm font-bold text-text-muted hover:text-white transition-colors no-underline hidden sm:block"
+        >
+          Try it free
+        </Link>
+        <UserNav />
       </div>
     </nav>
   );

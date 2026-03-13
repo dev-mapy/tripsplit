@@ -4,13 +4,18 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/lib/auth-context";
 import { useTrip } from "@/lib/trip-context";
+import { useTripLimit } from "@/lib/trip-limit-context";
 import { saveTrip } from "@/lib/api";
 import { getCleanBaseUrl } from "@/lib/utils";
 import SignInModal from "@/components/SignInModal";
+import { Button } from "@/components/ui/Button";
+import { Card } from "@/components/ui/Card";
+import { Typography } from "@/components/ui/Typography";
 
 export default function SaveTripButton() {
   const { user } = useAuth();
   const { trip } = useTrip();
+  const { count, limit, isFull, refresh } = useTripLimit();
   const router = useRouter();
 
   const [showSignIn, setShowSignIn] = useState(false);
@@ -36,6 +41,9 @@ export default function SaveTripButton() {
         expenses: trip.expenses,
       });
 
+      // Refresh the limit count before navigating
+      await refresh();
+
       // Redirect to the saved trip page
       router.push(url);
     } catch (err) {
@@ -46,106 +54,58 @@ export default function SaveTripButton() {
 
   return (
     <>
-      <div
-        style={{
-          background: "rgba(255,210,0,0.06)",
-          border: "1px solid rgba(255,210,0,0.2)",
-          borderRadius: 16,
-          padding: "20px 24px",
-        }}
-      >
-        <div
-          style={{
-            display: "flex",
-            alignItems: "flex-start",
-            justifyContent: "space-between",
-            gap: 16,
-            flexWrap: "wrap",
-          }}
-        >
-          <div style={{ flex: 1, minWidth: 200 }}>
-            <div
-              style={{
-                fontFamily: "'Playfair Display', serif",
-                fontSize: 17,
-                fontWeight: 600,
-                marginBottom: 6,
-                color: "#ffd200",
-              }}
-            >
-              💾 Save this trip
-            </div>
-            <div
-              style={{
-                fontFamily: "'Lato', sans-serif",
-                fontSize: 13,
-                color: "rgba(240,235,227,0.5)",
-                lineHeight: 1.6,
-              }}
-            >
+      <Card className="bg-gold/5 border-gold/20 p-6 md:p-7">
+        <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
+          <div className="flex-1 min-w-0">
+            <Typography variant="h3" className="text-gold mb-2 font-bold flex items-center gap-2">
+              <span>💾</span> Save this trip
+            </Typography>
+            <Typography variant="small" className="opacity-60 leading-relaxed">
               Get a clean link like{" "}
-              <span
-                style={{
-                  fontFamily: "monospace",
-                  color: "rgba(240,235,227,0.7)",
-                  fontSize: 12,
-                }}
-              >
+              <span className="font-mono text-text-muted bg-white/5 px-1.5 py-0.5 rounded-md text-[11px]">
                 {getCleanBaseUrl()}/t/bali-2026
               </span>{" "}
               and access this trip anytime.
-            </div>
+            </Typography>
 
             {error && (
-              <div
-                style={{
-                  marginTop: 8,
-                  fontSize: 13,
-                  color: "#f87171",
-                  fontFamily: "'Lato', sans-serif",
-                }}
-              >
-                ⚠️ {error}
-              </div>
+              <Typography variant="small" className="text-red-400 mt-3 flex items-center gap-2">
+                <span>⚠️</span> {error}
+              </Typography>
+            )}
+
+            {user && isFull && (
+              <Typography variant="small" className="text-red-400 mt-3 flex items-center gap-2">
+                <span>⚠️</span> You've reached your limit of {limit} trips.
+              </Typography>
             )}
           </div>
 
-          <button
-            onClick={handleSave}
-            disabled={saving}
-            style={{
-              background: saving
-                ? "rgba(255,210,0,0.3)"
-                : "linear-gradient(135deg, #f7971e, #ffd200)",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              gap: 8,
-              color: "#1a1a2e",
-              border: "none",
-              borderRadius: 10,
-              padding: "12px 22px",
-              fontFamily: "'Lato', sans-serif",
-              fontWeight: 700,
-              fontSize: 14,
-              cursor: saving ? "not-allowed" : "pointer",
-              whiteSpace: "nowrap",
-              transition: "all 0.2s",
-              flexShrink: 0,
-            }}
-          >
-            {saving ? (
-              <>
-                <span className="animate-spin">🌀</span> Saving...
-              </>
-            ) : user ? (
-              "Save trip →"
-            ) : (
-              "Sign in to save →"
+          <div className="flex flex-col items-center gap-2 w-full md:w-auto">
+            <Button
+              onClick={handleSave}
+              disabled={saving || (!!user && isFull)}
+              size="md"
+              className="w-full md:w-auto min-w-[180px]"
+            >
+              {saving ? (
+                <>
+                  <span className="animate-spin mr-2">🌀</span> Saving...
+                </>
+              ) : user ? (
+                isFull ? "Limit Reached" : "Save trip →"
+              ) : (
+                "Sign in to save →"
+              )}
+            </Button>
+            {user && (
+              <Typography variant="small" className={`font-mono font-bold text-[10px] ${isFull ? "text-red-400" : "text-gold/50"}`}>
+                {count}/{limit} trips used
+              </Typography>
             )}
-          </button>
+          </div>
         </div>
-      </div>
+      </Card>
 
       {showSignIn && <SignInModal onClose={() => setShowSignIn(false)} reason="save" />}
     </>

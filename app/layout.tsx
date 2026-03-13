@@ -6,7 +6,9 @@ import "./globals.css";
 import { NuqsAdapter } from "nuqs/adapters/next/app";
 import { TripProvider } from "@/lib/trip-context";
 import { AuthProvider } from "@/lib/auth-context";
+import { TripLimitProvider } from "@/lib/trip-limit-context";
 import { getBaseUrl } from "@/lib/utils";
+import NextTopLoader from "nextjs-toploader";
 
 export const metadata: Metadata = {
   metadataBase: new URL(getBaseUrl()),
@@ -73,7 +75,20 @@ export default function RootLayout({
         <NuqsAdapter>
           <Suspense fallback={null}>
             <AuthProvider>
-              <TripProvider>{children}</TripProvider>
+              <TripLimitProvider>
+                <NextTopLoader
+                color="#ffd200"
+                initialPosition={0.08}
+                crawlSpeed={200}
+                height={3}
+                crawl={true}
+                showSpinner={false}
+                easing="ease"
+                speed={200}
+                shadow="0 0 10px #ffd200,0 0 5px #ffd200"
+              />
+                <TripProvider>{children}</TripProvider>
+              </TripLimitProvider>
             </AuthProvider>
           </Suspense>
         </NuqsAdapter>

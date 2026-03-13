@@ -3,6 +3,8 @@
 import { useState } from "react";
 import { useAuth } from "@/lib/auth-context";
 import SignInModal from "@/components/SignInModal";
+import { Typography } from "@/components/ui/Typography";
+import { Button } from "@/components/ui/Button";
 
 export default function SaveNudge() {
   const { user } = useAuth();
@@ -14,73 +16,28 @@ export default function SaveNudge() {
 
   return (
     <>
-      <div
-        style={{
-          background: "rgba(99,102,241,0.08)",
-          border: "1px solid rgba(99,102,241,0.2)",
-          borderRadius: 14,
-          padding: "14px 18px",
-          display: "flex",
-          alignItems: "center",
-          gap: 14,
-          flexWrap: "wrap",
-        }}
-      >
-        <span style={{ fontSize: 20, flexShrink: 0 }}>💡</span>
-        <div style={{ flex: 1, minWidth: 200 }}>
-          <div
-            style={{
-              fontFamily: "'Lato', sans-serif",
-              fontSize: 13,
-              color: "rgba(240,235,227,0.65)",
-              lineHeight: 1.6,
-            }}
-          >
-            <strong style={{ color: "rgba(240,235,227,0.85)" }}>
-              Want a cleaner link?
-            </strong>{" "}
+      <div className="bg-blue-500/10 border border-blue-500/20 rounded-2xl p-4 flex items-center gap-4 flex-wrap animate-fade-up">
+        <span className="text-xl flex-shrink-0">💡</span>
+        <div className="flex-1 min-w-[200px]">
+          <Typography variant="small" className="opacity-70 leading-relaxed">
+            <strong className="opacity-100 text-blue-300">Want a cleaner link?</strong>{" "}
             Sign in with Google to save trips at{" "}
-            <span
-              style={{
-                fontFamily: "monospace",
-                fontSize: 12,
-                color: "rgba(240,235,227,0.6)",
-              }}
-            >
-              tripsplit.app/t/your-trip
-            </span>{" "}
+            <span className="font-mono text-[11px] bg-white/5 px-1 rounded">tripsplit.app/t/your-trip</span>{" "}
             and access your history anytime.
-          </div>
+          </Typography>
         </div>
-        <div style={{ display: "flex", gap: 8, flexShrink: 0 }}>
-          <button
+        <div className="flex items-center gap-3 flex-shrink-0">
+          <Button
+            variant="secondary"
+            size="sm"
             onClick={() => setShowSignIn(true)}
-            style={{
-              background: "rgba(99,102,241,0.2)",
-              border: "1px solid rgba(99,102,241,0.35)",
-              borderRadius: 8,
-              padding: "7px 14px",
-              fontFamily: "'Lato', sans-serif",
-              fontSize: 13,
-              fontWeight: 700,
-              color: "#a5b4fc",
-              cursor: "pointer",
-              whiteSpace: "nowrap",
-            }}
+            className="text-blue-300 border-blue-500/30 hover:bg-blue-500/20"
           >
             Sign in →
-          </button>
+          </Button>
           <button
             onClick={() => setDismissed(true)}
-            style={{
-              background: "none",
-              border: "none",
-              color: "rgba(240,235,227,0.25)",
-              cursor: "pointer",
-              fontSize: 18,
-              lineHeight: 1,
-              padding: "0 4px",
-            }}
+            className="text-text-faint hover:text-white transition-colors cursor-pointer text-xl p-1"
           >
             ×
           </button>

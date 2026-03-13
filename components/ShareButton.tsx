@@ -2,6 +2,8 @@
 
 import { useState } from "react";
 import { useTrip } from "@/lib/trip-context";
+import { Typography } from "@/components/ui/Typography";
+import { Card } from "@/components/ui/Card";
 
 interface Props {
   overrideUrl?: string;
@@ -34,98 +36,34 @@ export default function ShareButton({ overrideUrl }: Props = {}) {
   if (!shareUrl) return null;
 
   return (
-    <div style={wrapper}>
-      <div style={labelRow}>
-        <span style={label}>🔗 Shareable Link</span>
-        <span style={hint}>Anyone with this link can view the split</span>
+    <Card className="bg-gold/5 border-gold/20 p-5 flex flex-col gap-3">
+      <div className="flex items-center justify-between flex-wrap gap-2">
+        <Typography variant="small" className="font-bold text-gold tracking-wide">
+          🔗 Shareable Link
+        </Typography>
+        <Typography variant="small" className="opacity-40 text-[11px]">
+          Anyone with this link can view the split
+        </Typography>
       </div>
 
-      <div style={linkRow}>
-        <div style={urlBox}>
-          <span style={urlText}>{shareUrl}</span>
+      <div className="flex gap-2 items-stretch">
+        <div className="flex-1 bg-black/30 border border-white/10 rounded-xl px-4 py-2.5 overflow-hidden flex items-center">
+          <span className="font-mono text-xs text-text-muted truncate opacity-80">
+            {shareUrl}
+          </span>
         </div>
         <button
           onClick={handleCopy}
-          style={{
-            ...copyBtn,
-            background: copied
-              ? "rgba(74,222,128,0.2)"
-              : "rgba(255,210,0,0.15)",
-            borderColor: copied
-              ? "rgba(74,222,128,0.5)"
-              : "rgba(255,210,0,0.3)",
-            color: copied ? "#4ade80" : "#ffd200",
-          }}
+          className={`
+            px-5 rounded-xl font-bold text-sm transition-all border cursor-pointer
+            ${copied
+              ? "bg-green-500/20 border-green-500/50 text-green-400"
+              : "bg-gold/15 border-gold/30 text-gold hover:bg-gold/25"}
+          `}
         >
           {copied ? "✓ Copied!" : "Copy"}
         </button>
       </div>
-    </div>
+    </Card>
   );
 }
-
-const wrapper: React.CSSProperties = {
-  background: "rgba(255,210,0,0.06)",
-  border: "1px solid rgba(255,210,0,0.2)",
-  borderRadius: 16,
-  padding: "18px 20px",
-  display: "flex",
-  flexDirection: "column",
-  gap: 12,
-};
-
-const labelRow: React.CSSProperties = {
-  display: "flex",
-  alignItems: "center",
-  justifyContent: "space-between",
-  flexWrap: "wrap",
-  gap: 6,
-};
-
-const label: React.CSSProperties = {
-  fontSize: 13,
-  fontWeight: 700,
-  color: "#ffd200",
-  letterSpacing: "0.3px",
-};
-
-const hint: React.CSSProperties = {
-  fontSize: 12,
-  color: "rgba(240,235,227,0.4)",
-};
-
-const linkRow: React.CSSProperties = {
-  display: "flex",
-  gap: 10,
-  alignItems: "stretch",
-};
-
-const urlBox: React.CSSProperties = {
-  flex: 1,
-  background: "rgba(0,0,0,0.25)",
-  border: "1px solid rgba(255,255,255,0.1)",
-  borderRadius: 10,
-  padding: "10px 14px",
-  overflow: "hidden",
-};
-
-const urlText: React.CSSProperties = {
-  fontSize: 12,
-  color: "rgba(240,235,227,0.6)",
-  whiteSpace: "nowrap",
-  overflow: "hidden",
-  textOverflow: "ellipsis",
-  display: "block",
-  fontFamily: "monospace",
-};
-
-const copyBtn: React.CSSProperties = {
-  border: "1px solid",
-  borderRadius: 10,
-  padding: "10px 18px",
-  fontWeight: 700,
-  fontSize: 14,
-  cursor: "pointer",
-  transition: "all 0.2s",
-  whiteSpace: "nowrap",
-};

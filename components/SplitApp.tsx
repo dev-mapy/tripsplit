@@ -8,9 +8,11 @@ import { saveTrip } from "@/lib/api";
 import TravelerSetup from "@/components/TravelerSetup";
 import ExpenseList from "@/components/ExpenseList";
 import Settlement from "@/components/Settlement";
-import UserNav from "@/components/UserNav";
+import { UserNav } from "@/components/UserNav";
 import SaveNudge from "@/components/SaveNudge";
-import styles from "./SplitApp.module.css";
+import { Layout } from "@/components/ui/Layout";
+import { Typography } from "@/components/ui/Typography";
+import { StarsBackground } from "@/components/ui/StarsBackground";
 
 const STEPS = ["setup", "expenses", "result"] as const;
 const STEP_LABELS = ["Trip Setup", "Expenses", "Settlement"];
@@ -18,103 +20,64 @@ const STEP_LABELS = ["Trip Setup", "Expenses", "Settlement"];
 export default function SplitApp() {
   const { user } = useAuth();
   const router = useRouter();
-  const { step, trip, isSharedView } = useTrip();
-  const savingRef = useRef(false);
-
-  // If a logged-in user hits /split with a ?trip= param (anonymous feature),
-  // auto-save it to their account and redirect to the clean URL.
-  useEffect(() => {
-    if (user && isSharedView && !savingRef.current) {
-      savingRef.current = true;
-      saveTrip({
-        name: trip.name || "My Trip",
-        slug: "",
-        currencyCode: trip.currency.code,
-        travelers: trip.travelers,
-        expenses: trip.expenses,
-      }).then(({ url }) => {
-        router.replace(url);
-      }).catch((err) => {
-        console.error("Auto-save failed:", err);
-        savingRef.current = false;
-      });
-    }
-  }, [user, isSharedView, trip, router]);
+  const { step } = useTrip();
 
   return (
-    <main style={{ minHeight: "100vh", padding: "0 0 80px", position: "relative", overflow: "hidden" }}>
+    <Layout variant="centered">
+      <StarsBackground count={40} />
 
-      {/* Stars background */}
-      <div style={{ position: "fixed", inset: 0, pointerEvents: "none", zIndex: 0 }}>
-        {Array.from({ length: 30 }).map((_, i) => (
-          <div key={i} style={{
-            position: "absolute",
-            width: i % 5 === 0 ? 3 : 2,
-            height: i % 5 === 0 ? 3 : 2,
-            borderRadius: "50%",
-            background: `rgba(255,255,255,${0.2 + (i % 5) * 0.1})`,
-            top: `${(i * 37) % 100}%`,
-            left: `${(i * 61) % 100}%`,
-            animation: `twinkle ${2 + (i % 3)}s ease-in-out infinite`,
-            animationDelay: `${(i % 4) * 0.7}s`,
-          }} />
-        ))}
-      </div>
+      <div className="text-center mb-16 relative">
+        <div className="absolute top-0 right-0 sm:-top-2">
+          <UserNav />
+        </div>
 
-      <div style={{ position: "relative", zIndex: 1, maxWidth: 680, margin: "0 auto", padding: "40px 20px 0" }}>
+        <div className="text-6xl mb-4 animate-bounce-slow">✈️</div>
+        <Typography variant="h1" className="text-[clamp(36px,8vw,56px)] bg-linear-to-br from-gold to-gold-warm bg-clip-text text-transparent mb-2">
+          TripSplit
+        </Typography>
+        <Typography variant="body" className="opacity-50 text-[16px]">
+          No login. No drama. Just fair splits.
+        </Typography>
+        <a
+          href="/home"
+          className="inline-block mt-4 text-[11px] font-bold text-text-faint hover:text-white uppercase tracking-widest no-underline transition-colors"
+        >
+          ← About TripSplit
+        </a>
 
-        {/* Header */}
-        <div style={{ textAlign: "center", marginBottom: 48 }}>
-          <div style={{ fontSize: 48, marginBottom: 12 }}>✈️</div>
-          <h1 style={{ fontSize: "clamp(32px, 6vw, 48px)", fontWeight: 700, background: "linear-gradient(135deg, #ffd200, #f7971e)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", margin: 0 }}>
-            TripSplit
-          </h1>
-          <p style={{ color: "var(--text-muted)", marginTop: 8, fontSize: 15 }}>
-            No login. No drama. Just fair splits.
-          </p>
-          <a
-            href="/home"
-            style={{
-              display: "inline-block",
-              marginTop: 10,
-              fontFamily: "'Lato', sans-serif",
-              fontSize: 12,
-              color: "rgba(240,235,227,0.3)",
-              textDecoration: "none",
-              letterSpacing: "0.3px",
-            }}
-          >
-            ← About TripSplit
-          </a>
-
-          {/* User nav — top right */}
-          <div className={styles.userNavContainer}>
-            <UserNav />
-          </div>
-
-          {/* Step indicator */}
-          <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 8, marginTop: 24 }}>
+        {/* Step indicator */}
+        <div className="flex flex-col items-center gap-4 mt-12">
+          <div className="flex items-center gap-8">
             {STEPS.map((s, i) => (
-              <div key={s} style={{ display: "flex", alignItems: "center", gap: 8 }}>
-                <div style={{
-                  borderRadius: "50%",
-                  transition: "all 0.3s",
-                  width: step === s ? 12 : 10,
-                  height: step === s ? 12 : 10,
-                  background: step === s ? "#ffd200" : STEPS.indexOf(step) > i ? "rgba(255,210,0,0.5)" : "rgba(255,255,255,0.2)",
-                }} />
-                {i < 2 && <div style={{ width: 32, height: 1, background: "rgba(255,255,255,0.15)" }} />}
+              <div key={s} className="flex items-center gap-8">
+                <div
+                  className={`
+                    rounded-full transition-all duration-500
+                    ${step === s ? "w-3 h-3 bg-gold shadow-[0_0_15px_rgba(247,151,30,0.6)]" :
+                      STEPS.indexOf(step) > i ? "w-2.5 h-2.5 bg-gold/40" : "w-2 h-2 bg-white/10"}
+                  `}
+                />
+                {i < 2 && <div className="w-10 h-px bg-white/5" />}
               </div>
             ))}
           </div>
-          <div style={{ display: "flex", justifyContent: "center", gap: 48, marginTop: 6, fontSize: 11, color: "var(--text-faint)", letterSpacing: "0.5px", textTransform: "uppercase" }}>
-            {STEP_LABELS.map((l) => <span key={l}>{l}</span>)}
+          <div className="flex justify-center gap-10 sm:gap-16 text-[10px] font-bold uppercase tracking-widest text-text-faint">
+            {STEP_LABELS.map((l, i) => (
+              <span
+                key={l}
+                className={STEPS[i] === step ? "text-gold" : ""}
+              >
+                {l}
+              </span>
+            ))}
           </div>
         </div>
+      </div>
 
-        {/* Step content */}
+      {/* Step content */}
+      <div className="relative z-10">
         {step === "setup" && (
-          <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
+          <div className="flex flex-col gap-4">
             <TravelerSetup />
             <SaveNudge />
           </div>
@@ -122,6 +85,6 @@ export default function SplitApp() {
         {step === "expenses" && <ExpenseList />}
         {step === "result"   && <Settlement />}
       </div>
-    </main>
+    </Layout>
   );
 }

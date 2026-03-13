@@ -6,6 +6,10 @@ import ExpenseForm from "@/components/ExpenseForm";
 import ShareButton from "@/components/ShareButton";
 import YesimCard from "@/components/YesimCard";
 import type { Expense } from "@/types";
+import { Button } from "@/components/ui/Button";
+import { Card } from "@/components/ui/Card";
+import { Typography } from "@/components/ui/Typography";
+import { formatAmount } from "@/lib/utils";
 
 export default function ExpenseList() {
   const { trip, setStep } = useTrip();
@@ -21,53 +25,50 @@ export default function ExpenseList() {
 
   return (
     <>
-      <div className="animate-fade-up" style={{ display: "flex", flexDirection: "column", gap: 16 }}>
-
+      <div className="animate-fade-up flex flex-col gap-4">
         {/* Summary bar */}
-        <div style={{ ...card, display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: 12, padding: "16px 24px" }}>
+        <Card className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 py-6 px-8">
           <div>
-            <div style={{ fontFamily: "'Playfair Display', serif", fontSize: 20, fontWeight: 600 }}>{trip.name}</div>
-            <div style={{ fontSize: 13, color: "var(--text-muted)", marginTop: 2 }}>
+            <Typography variant="h2" className="mb-1">{trip.name}</Typography>
+            <Typography variant="small" className="opacity-50">
               {trip.travelers.map((t) => t.name).join(" · ")} · {trip.currency.flag} {trip.currency.code}
-            </div>
+            </Typography>
           </div>
-          <div style={{ textAlign: "right" }}>
-            <div style={{ fontSize: 11, textTransform: "uppercase", letterSpacing: "0.5px", color: "var(--text-muted)" }}>Total Spent</div>
-            <div style={{ fontFamily: "'Playfair Display', serif", fontSize: 26, fontWeight: 700, color: "var(--gold)" }}>{sym}{total.toFixed(2)}</div>
+          <div className="sm:text-right">
+            <Typography variant="small" className="uppercase tracking-widest opacity-40 font-bold mb-1 block">Total Spent</Typography>
+            <Typography variant="h2" className="text-gold">{formatAmount(total, sym)}</Typography>
           </div>
-        </div>
+        </Card>
 
         {/* Expense rows */}
         {trip.expenses.length === 0 ? (
-          <div style={{ textAlign: "center", padding: "48px 0", color: "var(--text-muted)" }}>
-            <div style={{ fontSize: 40, marginBottom: 12 }}>🧾</div>
-            <div>No expenses yet. Add your first one!</div>
+          <div className="text-center py-20 opacity-40">
+            <div className="text-5xl mb-6">🧾</div>
+            <Typography variant="body">No expenses yet. Add your first one!</Typography>
           </div>
         ) : (
-          <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+          <div className="flex flex-col gap-3">
             {trip.expenses.map((exp, i) => (
               <div
                 key={exp.id}
-                className="animate-slide-in"
+                className="bg-white/5 border border-white/5 hover:border-white/20 hover:bg-white/8 rounded-2xl p-5 flex items-center justify-between gap-4 cursor-pointer transition-all animate-slide-in"
                 onClick={() => openEdit(exp)}
-                style={{ ...card, display: "flex", alignItems: "center", justifyContent: "space-between", gap: 12, cursor: "pointer", animationDelay: `${i * 0.05}s`, transition: "transform 0.2s" }}
-                onMouseEnter={(e) => (e.currentTarget.style.transform = "translateY(-2px)")}
-                onMouseLeave={(e) => (e.currentTarget.style.transform = "none")}
+                style={{ animationDelay: `${i * 0.05}s` }}
               >
-                <div style={{ display: "flex", alignItems: "center", gap: 14 }}>
-                  <div style={{ fontSize: 24, minWidth: 36, textAlign: "center" }}>
+                <div className="flex items-center gap-5">
+                  <div className="text-3xl w-10 text-center">
                     {exp.category.split(" ")[0]}
                   </div>
                   <div>
-                    <div style={{ fontWeight: 700, fontSize: 15 }}>{exp.desc}</div>
-                    <div style={{ fontSize: 13, color: "var(--text-muted)", marginTop: 2 }}>
-                      Paid by <span style={{ color: "var(--gold)" }}>{getName(exp.paidBy)}</span> · Split {exp.splitAmong.length} ways
-                    </div>
+                    <Typography variant="body" className="font-bold">{exp.desc}</Typography>
+                    <Typography variant="small" className="opacity-50 mt-1 block">
+                      Paid by <span className="text-gold opacity-100">{getName(exp.paidBy)}</span> · Split {exp.splitAmong.length} ways
+                    </Typography>
                   </div>
                 </div>
-                <div style={{ textAlign: "right", minWidth: 80 }}>
-                  <div style={{ fontFamily: "'Playfair Display', serif", fontSize: 20, fontWeight: 600 }}>{sym}{exp.amount.toFixed(2)}</div>
-                  <div style={{ fontSize: 12, color: "var(--text-faint)" }}>{sym}{(exp.amount / exp.splitAmong.length).toFixed(2)}/ea</div>
+                <div className="text-right">
+                  <Typography variant="h3">{formatAmount(exp.amount, sym)}</Typography>
+                  <Typography variant="small" className="opacity-30">{formatAmount(exp.amount / exp.splitAmong.length, sym)}/ea</Typography>
                 </div>
               </div>
             ))}
@@ -77,15 +78,19 @@ export default function ExpenseList() {
         {trip.expenses.length > 0 && <ShareButton />}
         <YesimCard />
 
-        <div style={{ display: "flex", gap: 10 }}>
-          <button style={{ ...btnGhost, flex: 1, fontSize: 15 }} onClick={openAdd}>+ Add Expense</button>
-          <button style={btnGhost} onClick={() => setStep("setup")}>← Back</button>
+        <div className="flex gap-2 mt-4">
+          <Button variant="secondary" className="flex-1" size="md" onClick={openAdd}>
+            + Add Expense
+          </Button>
+          <Button variant="ghost" size="md" onClick={() => setStep("setup")}>
+            ← Back
+          </Button>
         </div>
 
         {trip.expenses.length > 0 && (
-          <button style={btnPrimary} onClick={() => setStep("result")}>
+          <Button size="lg" className="w-full" onClick={() => setStep("result")}>
             Calculate Settlement 🧮
-          </button>
+          </Button>
         )}
       </div>
 
@@ -93,7 +98,3 @@ export default function ExpenseList() {
     </>
   );
 }
-
-const card: React.CSSProperties = { background: "var(--glass)", backdropFilter: "blur(12px)", border: "1px solid var(--glass-border)", borderRadius: 16, padding: 16 };
-const btnPrimary: React.CSSProperties = { width: "100%", background: "linear-gradient(135deg, #f7971e, #ffd200)", color: "#1a1a2e", border: "none", borderRadius: 12, padding: "16px", fontWeight: 700, fontSize: 16, cursor: "pointer" };
-const btnGhost: React.CSSProperties = { background: "rgba(255,255,255,0.08)", color: "var(--text)", border: "1px solid rgba(255,255,255,0.15)", borderRadius: 10, padding: "10px 18px", fontSize: 14, cursor: "pointer" };

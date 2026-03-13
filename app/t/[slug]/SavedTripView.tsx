@@ -11,7 +11,12 @@ import AffiliateCard from "@/components/AffiliateCard";
 import ExpenseForm from "@/components/ExpenseForm";
 import Link from "next/link";
 import type { Currency, Traveler, Expense, Trip } from "@/types";
-import styles from "./SavedTripView.module.css";
+import { Button } from "@/components/ui/Button";
+import { Card } from "@/components/ui/Card";
+import { Typography } from "@/components/ui/Typography";
+import { Badge } from "@/components/ui/Badge";
+import { StarsBackground } from "@/components/ui/StarsBackground";
+import { Layout } from "@/components/ui/Layout";
 
 // Minimal TripProvider override for this page
 import { TripProvider, TripContext } from "@/lib/trip-context";
@@ -29,6 +34,9 @@ interface Props {
 }
 
 export default function SavedTripView(props: Props) {
+  const { user } = useAuth();
+  const isOwner = user?.id === props.userId;
+
   return (
     <TripProvider
       initialTrip={{
@@ -37,8 +45,9 @@ export default function SavedTripView(props: Props) {
         travelers: props.travelers,
         expenses: props.expenses,
       }}
+      isReadOnly={!isOwner}
     >
-      <SavedTripContent {...props} />
+      <SavedTripContent {...props} isOwner={isOwner} />
     </TripProvider>
   );
 }
@@ -51,9 +60,8 @@ function SavedTripContent({
   travelers: initialTravelers,
   expenses: initialExpenses,
   updatedAt,
-}: Props) {
-  const { user } = useAuth();
-  const isOwner = user?.id === userId;
+  isOwner,
+}: Props & { isOwner: boolean }) {
 
   const [travelers, setTravelers] = useState<Traveler[]>(initialTravelers);
   const [expenses, setExpenses] = useState<Expense[]>(initialExpenses);
@@ -102,642 +110,238 @@ function SavedTripContent({
   });
 
   return (
-    <main
-      style={{
-        minHeight: "100vh",
-        padding: "0 0 80px",
-        position: "relative",
-        overflow: "hidden",
-      }}
-    >
-      {/* Stars */}
-      <div
-        style={{ position: "fixed", inset: 0, pointerEvents: "none", zIndex: 0 }}
-      >
-        {Array.from({ length: 30 }).map((_, i) => (
-          <div
-            key={i}
-            style={{
-              position: "absolute",
-              width: i % 5 === 0 ? 3 : 2,
-              height: i % 5 === 0 ? 3 : 2,
-              borderRadius: "50%",
-              background: `rgba(255,255,255,${0.2 + (i % 5) * 0.1})`,
-              top: `${(i * 37) % 100}%`,
-              left: `${(i * 61) % 100}%`,
-              animation: `twinkle ${2 + (i % 3)}s ease-in-out infinite`,
-              animationDelay: `${(i % 4) * 0.7}s`,
-            }}
-          />
-        ))}
+    <Layout variant="centered">
+      <StarsBackground count={30} />
+
+      <div className="flex items-center justify-between mb-10">
+        <Link href="/split" className="text-xl font-serif font-bold text-gold hover:opacity-80 transition-opacity">
+          ✈️ TripSplit
+        </Link>
+        <div className="flex items-center gap-4">
+          {isOwner && (
+            <Button variant="ghost" size="sm" href="/dashboard">
+              My Trips
+            </Button>
+          )}
+          <Button variant="ghost" size="sm" href="/split">
+            New Trip ✈️
+          </Button>
+        </div>
       </div>
 
-      <div
-        style={{
-          position: "relative",
-          zIndex: 1,
-          maxWidth: 680,
-          margin: "0 auto",
-          padding: "40px 20px 0",
-        }}
-      >
-        {/* Nav */}
-        <div className={styles.header}>
-          <Link href="/split" className={styles.logo}>
-            ✈️ TripSplit
-          </Link>
-          <div className={styles.right}>
-            {isOwner && (
-              <Link href="/dashboard" className={styles.myTrips}>
-                My Trips
-              </Link>
-            )}
-            <Link href="/split" className={styles.newTrip}>
-              New Trip ✈️
-            </Link>
-          </div>
-        </div>
-
-        <div
-          className="animate-fade-up"
-          style={{ display: "flex", flexDirection: "column", gap: 20 }}
-        >
-          {/* Read-only banner for non-owners */}
-          {!isOwner && (
-            <div
-              style={{
-                background: "rgba(99,102,241,0.12)",
-                border: "1px solid rgba(99,102,241,0.35)",
-                borderRadius: 16,
-                padding: "16px 20px",
-                display: "flex",
-                alignItems: "flex-start",
-                gap: 14,
-              }}
-            >
-              <span style={{ fontSize: 22, flexShrink: 0 }}>👀</span>
-              <div>
-                <div
-                  style={{
-                    fontFamily: "'Lato', sans-serif",
-                    fontWeight: 700,
-                    color: "#a5b4fc",
-                    fontSize: 14,
-                    marginBottom: 4,
-                  }}
-                >
-                  You&apos;re viewing a shared trip — read only.
-                </div>
-                <div
-                  style={{
-                    fontFamily: "'Lato', sans-serif",
-                    fontSize: 13,
-                    color: "rgba(240,235,227,0.45)",
-                  }}
-                >
-                  This is{" "}
-                  <strong style={{ color: "rgba(240,235,227,0.7)" }}>
-                    {name}
-                  </strong>
-                  . You can view the settlement but cannot make changes.
-                </div>
-              </div>
-            </div>
-          )}
-
-          {/* Owner: unsaved changes bar */}
-          {isOwner && (
-            <div
-              style={{
-                background: "rgba(255,210,0,0.06)",
-                border: "1px solid rgba(255,210,0,0.2)",
-                borderRadius: 12,
-                padding: "12px 18px",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "space-between",
-                gap: 12,
-                flexWrap: "wrap",
-              }}
-            >
-              <div
-                style={{
-                  fontFamily: "'Lato', sans-serif",
-                  fontSize: 13,
-                  color: "rgba(240,235,227,0.45)",
-                }}
-              >
-                {saved ? (
-                  <span style={{ color: "#4ade80" }}>✓ Changes saved</span>
-                ) : (
-                  <>Last updated {lastUpdated}</>
-                )}
-                {saveError && (
-                  <span style={{ color: "#f87171", marginLeft: 8 }}>
-                    ⚠️ {saveError}
-                  </span>
-                )}
-              </div>
-              <button
-                onClick={handleSaveChanges}
-                disabled={saving}
-                style={{
-                  background: saved
-                    ? "rgba(74,222,128,0.2)"
-                    : "linear-gradient(135deg, #f7971e, #ffd200)",
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  gap: 8,
-                  color: saved ? "#4ade80" : "#1a1a2e",
-                  border: saved ? "1px solid rgba(74,222,128,0.4)" : "none",
-                  borderRadius: 8,
-                  padding: "8px 18px",
-                  fontFamily: "'Lato', sans-serif",
-                  fontWeight: 700,
-                  fontSize: 13,
-                  cursor: saving ? "not-allowed" : "pointer",
-                  opacity: saving ? 0.7 : 1,
-                  whiteSpace: "nowrap",
-                }}
-              >
-                {saving ? (
-                  <>
-                    <span className="animate-spin">🌀</span> Saving...
-                  </>
-                ) : saved ? (
-                  "✓ Saved"
-                ) : (
-                  "Save changes"
-                )}
-              </button>
-            </div>
-          )}
-
-          {/* Trip header */}
-          <div style={{ ...card, textAlign: "center", padding: 28 }}>
-            <h1
-              style={{
-                fontFamily: "'Playfair Display', serif",
-                fontSize: 28,
-                color: "var(--gold)",
-                marginBottom: 4,
-              }}
-            >
-              {name}
-            </h1>
-            <div
-              style={{
-                fontSize: 14,
-                color: "var(--text-muted)",
-                fontFamily: "'Lato', sans-serif",
-                marginBottom: 20,
-              }}
-            >
-              {expenses.length} expenses · {travelers.length} travelers ·{" "}
-              {currency.flag} {currency.code}
-            </div>
-            <div
-              style={{
-                display: "flex",
-                justifyContent: "center",
-                gap: 40,
-                flexWrap: "wrap",
-              }}
-            >
-              <div>
-                <div style={statLabel}>Total Spent</div>
-                <div style={statValue}>
-                  {sym}
-                  {total.toFixed(2)}
-                </div>
-              </div>
-              <div>
-                <div style={statLabel}>Per Person</div>
-                <div style={statValue}>
-                  {sym}
-                  {(total / travelers.length).toFixed(2)}
-                </div>
-              </div>
+      <div className="flex flex-col gap-6">
+        {/* Read-only banner for non-owners */}
+        {!isOwner && (
+          <div className="bg-blue-500/10 border border-blue-500/20 rounded-2xl p-5 flex items-start gap-4 animate-fade-up">
+            <span className="text-2xl flex-shrink-0">👀</span>
+            <div>
+              <Typography variant="small" className="font-bold text-blue-300 mb-1">
+                You&apos;re viewing a shared trip — read only.
+              </Typography>
+              <Typography variant="small" className="opacity-60">
+                This is <strong className="opacity-100">{name}</strong>&apos;s trip split. You can view the settlement but cannot make changes.
+              </Typography>
             </div>
           </div>
+        )}
 
-          {/* Share link */}
-          <ShareButton overrideUrl={`${getBaseUrl()}/t/${slug}`} />
-
-          {/* Affiliate: Klook */}
-          <AffiliateCard
-            name="Klook"
-            emoji="🎟️"
-            tagline="Tours & Activities"
-            description="Book tours, activities, and experiences at the best price."
-            cta="Book on Klook"
-            href={process.env.NEXT_PUBLIC_KLOOK_URL!}
-            qrCode="/affiliates/klook-qr-code.jpeg"
-            accentColor="#FF5722"
-          />
-
-          {/* Balances */}
-          <div style={card}>
-            <div style={sectionLabel}>Who Paid What</div>
-            <div
-              style={{ display: "flex", flexDirection: "column", gap: 10 }}
-            >
-              {travelers.map((t, i) => {
-                const paid = expenses
-                  .filter((e) => e.paidBy === t.id)
-                  .reduce((s, e) => s + e.amount, 0);
-                const bal = balances[t.id] ?? 0;
-                const isPos = bal > 0.01;
-                const isNeg = bal < -0.01;
-                return (
-                  <div
-                    key={t.id}
-                    className="animate-slide-in"
-                    style={{
-                      ...row,
-                      animationDelay: `${i * 0.08}s`,
-                    }}
-                  >
-                    <div
-                      style={{ display: "flex", alignItems: "center", gap: 12 }}
-                    >
-                      <div
-                        style={{
-                          ...avatar,
-                          background: avatarColor(i),
-                        }}
-                      >
-                        {getInitial(t.name)}
-                      </div>
-                      <div>
-                        <div style={{ fontWeight: 700 }}>{t.name}</div>
-                        <div
-                          style={{
-                            fontSize: 13,
-                            color: "var(--text-muted)",
-                            fontFamily: "'Lato', sans-serif",
-                          }}
-                        >
-                          paid {sym}
-                          {paid.toFixed(2)}
-                        </div>
-                      </div>
-                    </div>
-                    <div style={{ textAlign: "right" }}>
-                      <div
-                        style={{
-                          fontFamily: "'Playfair Display', serif",
-                          fontSize: 18,
-                          fontWeight: 700,
-                          color: isPos
-                            ? "var(--success)"
-                            : isNeg
-                            ? "var(--danger)"
-                            : "var(--text-muted)",
-                        }}
-                      >
-                        {isPos
-                          ? `+${sym}${bal.toFixed(2)}`
-                          : isNeg
-                          ? `-${sym}${(-bal).toFixed(2)}`
-                          : `${sym}0.00`}
-                      </div>
-                      <div
-                        style={{
-                          fontSize: 11,
-                          color: "var(--text-faint)",
-                          fontFamily: "'Lato', sans-serif",
-                        }}
-                      >
-                        {isPos ? "gets back" : isNeg ? "owes" : "settled ✓"}
-                      </div>
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
-          </div>
-
-          {/* Settlement plan */}
-          <div style={card}>
-            <div style={sectionLabel}>💸 Settlement Plan</div>
-            {transactions.length === 0 ? (
-              <div
-                style={{
-                  textAlign: "center",
-                  padding: "20px 0",
-                  color: "var(--text-muted)",
-                  fontFamily: "'Lato', sans-serif",
-                }}
-              >
-                🎉 Everyone is already settled up!
-              </div>
-            ) : (
-              <div
-                style={{ display: "flex", flexDirection: "column", gap: 12 }}
-              >
-                {transactions.map((tx, i) => (
-                  <div
-                    key={i}
-                    className="animate-slide-in"
-                    style={{
-                      display: "flex",
-                      alignItems: "center",
-                      gap: 12,
-                      padding: "16px 20px",
-                      background: "rgba(255,210,0,0.08)",
-                      border: "1px solid rgba(255,210,0,0.2)",
-                      borderRadius: 14,
-                      animationDelay: `${0.3 + i * 0.1}s`,
-                    }}
-                  >
-                    <div
-                      style={{
-                        flex: 1,
-                        fontSize: 15,
-                        fontFamily: "'Lato', sans-serif",
-                      }}
-                    >
-                      <span
-                        style={{
-                          fontWeight: 700,
-                          color: "var(--danger)",
-                        }}
-                      >
-                        {getName(tx.from)}
-                      </span>
-                      <span
-                        style={{
-                          color: "var(--text-muted)",
-                          margin: "0 10px",
-                        }}
-                      >
-                        → pays →
-                      </span>
-                      <span
-                        style={{
-                          fontWeight: 700,
-                          color: "var(--success)",
-                        }}
-                      >
-                        {getName(tx.to)}
-                      </span>
-                    </div>
-                    <div
-                      style={{
-                        fontFamily: "'Playfair Display', serif",
-                        fontSize: 22,
-                        fontWeight: 700,
-                        color: "var(--gold)",
-                      }}
-                    >
-                      {sym}
-                      {tx.amount.toFixed(2)}
-                    </div>
-                  </div>
-                ))}
-              </div>
-            )}
-          </div>
-
-          {/* Expenses list (owner can edit) */}
-          <div style={card}>
-            <div
-              style={{
-                display: "flex",
-                justifyContent: "space-between",
-                alignItems: "center",
-                marginBottom: 16,
-              }}
-            >
-              <div style={sectionLabel}>All Expenses</div>
-              {isOwner && (
-                <button
-                  onClick={() => {
-                    setEditingExpense(null);
-                    setShowExpenseForm(true);
-                  }}
-                  style={{
-                    background: "rgba(255,210,0,0.15)",
-                    border: "1px solid rgba(255,210,0,0.3)",
-                    borderRadius: 8,
-                    padding: "6px 14px",
-                    fontFamily: "'Lato', sans-serif",
-                    fontSize: 13,
-                    fontWeight: 700,
-                    color: "#ffd200",
-                    cursor: "pointer",
-                  }}
-                >
-                  + Add
-                </button>
+        {/* Owner: unsaved changes bar */}
+        {isOwner && (
+          <div className="bg-gold/5 border border-gold/10 rounded-2xl p-4 flex items-center justify-between gap-4 flex-wrap animate-fade-up">
+            <Typography variant="small" className="opacity-50">
+              {saved ? (
+                <span className="text-green-400 font-bold">✓ Changes saved</span>
+              ) : (
+                <>Last updated {lastUpdated}</>
               )}
-            </div>
+              {saveError && (
+                <span className="text-red-400 ml-2">⚠️ {saveError}</span>
+              )}
+            </Typography>
+            <Button
+              variant={saved ? "secondary" : "primary"}
+              size="sm"
+              onClick={handleSaveChanges}
+              disabled={saving}
+              className={saved ? "text-green-400 border-green-400/30" : ""}
+            >
+              {saving ? "Saving..." : saved ? "✓ Saved" : "Save changes"}
+            </Button>
+          </div>
+        )}
 
-            {expenses.length === 0 ? (
-              <div
-                style={{
-                  textAlign: "center",
-                  padding: "24px 0",
-                  color: "var(--text-muted)",
-                  fontFamily: "'Lato', sans-serif",
-                  fontSize: 14,
-                }}
-              >
-                No expenses yet.
-              </div>
-            ) : (
-              <div
-                style={{ display: "flex", flexDirection: "column", gap: 10 }}
-              >
-                {expenses.map((exp, i) => (
-                  <div
-                    key={exp.id}
-                    className="animate-slide-in"
-                    onClick={() => {
-                      if (!isOwner) return;
-                      setEditingExpense(exp);
-                      setShowExpenseForm(true);
-                    }}
-                    style={{
-                      display: "flex",
-                      alignItems: "center",
-                      justifyContent: "space-between",
-                      gap: 12,
-                      background: "rgba(255,255,255,0.04)",
-                      borderRadius: 12,
-                      padding: "12px 16px",
-                      cursor: isOwner ? "pointer" : "default",
-                      animationDelay: `${i * 0.04}s`,
-                      transition: "background 0.15s",
-                    }}
-                  >
-                    <div
-                      style={{
-                        display: "flex",
-                        alignItems: "center",
-                        gap: 12,
-                      }}
-                    >
-                      <span style={{ fontSize: 20 }}>
-                        {exp.category.split(" ")[0]}
-                      </span>
-                      <div>
-                        <div
-                          style={{
-                            fontFamily: "'Lato', sans-serif",
-                            fontWeight: 700,
-                            fontSize: 14,
-                          }}
-                        >
-                          {exp.desc}
-                        </div>
-                        <div
-                          style={{
-                            fontFamily: "'Lato', sans-serif",
-                            fontSize: 12,
-                            color: "var(--text-muted)",
-                          }}
-                        >
-                          Paid by{" "}
-                          <span style={{ color: "var(--gold)" }}>
-                            {getName(exp.paidBy)}
-                          </span>{" "}
-                          · {exp.splitAmong.length} ways
-                        </div>
-                      </div>
+        {/* Trip header */}
+        <Card className="text-center py-8 px-6 animate-fade-up">
+          <Typography variant="h1" className="text-gold mb-2">{name}</Typography>
+          <Typography variant="small" className="opacity-50 mb-8">
+            {expenses.length} expenses · {travelers.length} travelers · {currency.flag} {currency.code}
+          </Typography>
+
+          <div className="flex justify-center gap-12 sm:gap-20 flex-wrap">
+            <div>
+              <Typography variant="small" className="uppercase tracking-widest opacity-40 font-bold mb-1">Total Spent</Typography>
+              <Typography variant="h2">{sym}{total.toFixed(2)}</Typography>
+            </div>
+            <div>
+              <Typography variant="small" className="uppercase tracking-widest opacity-40 font-bold mb-1">Per Person</Typography>
+              <Typography variant="h2">{sym}{(total / travelers.length).toFixed(2)}</Typography>
+            </div>
+          </div>
+        </Card>
+
+        {/* Share link */}
+        <ShareButton overrideUrl={`${getBaseUrl()}/t/${slug}`} />
+
+        {/* Affiliate: Klook */}
+        <AffiliateCard
+          name="Klook"
+          emoji="🎟️"
+          tagline="Tours & Activities"
+          description="Book tours, activities, and experiences at the best price."
+          cta="Book on Klook"
+          href={process.env.NEXT_PUBLIC_KLOOK_URL!}
+          qrCode="/affiliates/klook-qr-code.jpeg"
+          accentColor="#FF5722"
+        />
+
+        {/* Balances */}
+        <Card className="animate-fade-up">
+          <Typography variant="small" className="uppercase tracking-widest opacity-40 font-bold mb-6 block">Who Paid What</Typography>
+          <div className="flex flex-col gap-3">
+            {travelers.map((t, i) => {
+              const paid = expenses
+                .filter((e) => e.paidBy === t.id)
+                .reduce((s, e) => s + e.amount, 0);
+              const bal = balances[t.id] ?? 0;
+              const isPos = bal > 0.01;
+              const isNeg = bal < -0.01;
+              return (
+                <div key={t.id} className="flex items-center justify-between bg-white/5 rounded-xl p-4 animate-fade-up" style={{ animationDelay: `${i * 0.05}s` }}>
+                  <div className="flex items-center gap-4">
+                    <div className="w-10 h-10 rounded-full flex items-center justify-center text-white font-bold" style={{ background: avatarColor(i) }}>
+                      {getInitial(t.name)}
                     </div>
-                    <div style={{ textAlign: "right" }}>
-                      <div
-                        style={{
-                          fontFamily: "'Playfair Display', serif",
-                          fontSize: 18,
-                          fontWeight: 600,
-                        }}
-                      >
-                        {sym}
-                        {exp.amount.toFixed(2)}
-                      </div>
-                      <div
-                        style={{
-                          fontSize: 11,
-                          color: "var(--text-faint)",
-                          fontFamily: "'Lato', sans-serif",
-                        }}
-                      >
-                        {sym}
-                        {(exp.amount / exp.splitAmong.length).toFixed(2)}/ea
-                      </div>
+                    <div>
+                      <Typography variant="body" className="font-bold">{t.name}</Typography>
+                      <Typography variant="small" className="opacity-50">paid {sym}{paid.toFixed(2)}</Typography>
                     </div>
                   </div>
-                ))}
-              </div>
+                  <div className="text-right">
+                    <Typography variant="h3" className={isPos ? "text-green-400" : isNeg ? "text-red-400" : "opacity-40"}>
+                      {isPos ? `+${sym}${bal.toFixed(2)}` : isNeg ? `-${sym}${(-bal).toFixed(2)}` : `${sym}0.00`}
+                    </Typography>
+                    <Typography variant="small" className="opacity-40 uppercase tracking-tighter text-[10px] font-bold">
+                      {isPos ? "gets back" : isNeg ? "owes" : "settled ✓"}
+                    </Typography>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </Card>
+
+        {/* Settlement plan */}
+        <Card className="animate-fade-up">
+          <Typography variant="small" className="uppercase tracking-widest opacity-40 font-bold mb-6 block">💸 Settlement Plan</Typography>
+          {transactions.length === 0 ? (
+            <div className="text-center py-6 opacity-40">
+              🎉 Everyone is already settled up!
+            </div>
+          ) : (
+            <div className="flex flex-col gap-3">
+              {transactions.map((tx, i) => (
+                <div key={i} className="flex items-center justify-between p-5 bg-gold/10 border border-gold/20 rounded-2xl animate-fade-up" style={{ animationDelay: `${0.2 + i * 0.05}s` }}>
+                  <div className="flex-1">
+                    <span className="font-bold text-red-400">{getName(tx.from)}</span>
+                    <span className="mx-3 opacity-40">→ pays →</span>
+                    <span className="font-bold text-green-400">{getName(tx.to)}</span>
+                  </div>
+                  <Typography variant="h2" className="text-gold">
+                    {sym}{tx.amount.toFixed(2)}
+                  </Typography>
+                </div>
+              ))}
+            </div>
+          )}
+        </Card>
+
+        {/* Expenses list (owner can edit) */}
+        <Card className="animate-fade-up">
+          <div className="flex justify-between items-center mb-6">
+            <Typography variant="small" className="uppercase tracking-widest opacity-40 font-bold">All Expenses</Typography>
+            {isOwner && (
+              <Button variant="secondary" size="sm" onClick={() => { setEditingExpense(null); setShowExpenseForm(true); }}>
+                + Add
+              </Button>
             )}
           </div>
 
-          {/* Category breakdown */}
-          {byCategory.length > 0 && (
-            <div style={card}>
-              <div style={sectionLabel}>Spending Breakdown</div>
-              <div
-                style={{ display: "flex", flexDirection: "column", gap: 12 }}
-              >
-                {byCategory.map(({ cat, total: catTotal }, i) => (
-                  <div
-                    key={cat}
-                    className="animate-slide-in"
-                    style={{ animationDelay: `${0.5 + i * 0.07}s` }}
-                  >
-                    <div
-                      style={{
-                        display: "flex",
-                        justifyContent: "space-between",
-                        fontSize: 14,
-                        marginBottom: 6,
-                        fontFamily: "'Lato', sans-serif",
-                      }}
-                    >
-                      <span>{cat}</span>
-                      <span style={{ fontWeight: 700 }}>
-                        {sym}
-                        {catTotal.toFixed(2)} ·{" "}
-                        {((catTotal / total) * 100).toFixed(0)}%
-                      </span>
-                    </div>
-                    <div
-                      style={{
-                        height: 6,
-                        background: "rgba(255,255,255,0.1)",
-                        borderRadius: 3,
-                        overflow: "hidden",
-                      }}
-                    >
-                      <div
-                        style={{
-                          height: "100%",
-                          width: `${(catTotal / total) * 100}%`,
-                          background: `hsl(${i * 40 + 30},80%,60%)`,
-                          borderRadius: 3,
-                        }}
-                      />
+          {expenses.length === 0 ? (
+            <div className="text-center py-8 opacity-40">No expenses yet.</div>
+          ) : (
+            <div className="flex flex-col gap-3">
+              {expenses.map((exp, i) => (
+                <div
+                  key={exp.id}
+                  className={`flex items-center justify-between bg-white/5 rounded-xl p-4 transition-colors ${isOwner ? "cursor-pointer hover:bg-white/10" : ""}`}
+                  onClick={() => { if (!isOwner) return; setEditingExpense(exp); setShowExpenseForm(true); }}
+                  style={{ animationDelay: `${i * 0.03}s` }}
+                >
+                  <div className="flex items-center gap-4">
+                    <span className="text-2xl">{exp.category.split(" ")[0]}</span>
+                    <div>
+                      <Typography variant="body" className="font-bold">{exp.desc}</Typography>
+                      <Typography variant="small" className="opacity-50">
+                        Paid by <span className="text-gold opacity-100">{getName(exp.paidBy)}</span> · {exp.splitAmong.length} ways
+                      </Typography>
                     </div>
                   </div>
-                ))}
-              </div>
+                  <div className="text-right">
+                    <Typography variant="h3">{sym}{exp.amount.toFixed(2)}</Typography>
+                    <Typography variant="small" className="opacity-40">{sym}{(exp.amount / exp.splitAmong.length).toFixed(2)}/ea</Typography>
+                  </div>
+                </div>
+              ))}
             </div>
           )}
+        </Card>
 
-          {/* Non-owner CTA */}
-          {!isOwner && (
-            <div
-              style={{
-                ...card,
-                textAlign: "center",
-                padding: "28px 24px",
-                background: "rgba(255,210,0,0.05)",
-                border: "1px solid rgba(255,210,0,0.15)",
-              }}
-            >
-              <div
-                style={{
-                  fontSize: 13,
-                  color: "var(--text-muted)",
-                  fontFamily: "'Lato', sans-serif",
-                  marginBottom: 16,
-                }}
-              >
-                Planning your own trip?
-              </div>
-              <Link
-                href="/split"
-                style={{
-                  display: "inline-block",
-                  background: "linear-gradient(135deg, #f7971e, #ffd200)",
-                  color: "#1a1a2e",
-                  borderRadius: 12,
-                  padding: "14px 32px",
-                  fontWeight: 700,
-                  fontSize: 15,
-                  textDecoration: "none",
-                  fontFamily: "'Lato', sans-serif",
-                }}
-              >
-                Start your own trip ✈️
-              </Link>
-              <div
-                style={{
-                  fontSize: 12,
-                  color: "var(--text-faint)",
-                  marginTop: 12,
-                  fontFamily: "'Lato', sans-serif",
-                }}
-              >
-                Free · No login required
-              </div>
+        {/* Category breakdown */}
+        {byCategory.length > 0 && (
+          <Card className="animate-fade-up">
+            <Typography variant="small" className="uppercase tracking-widest opacity-40 font-bold mb-6 block">Spending Breakdown</Typography>
+            <div className="flex flex-col gap-5">
+              {byCategory.map(({ cat, total: catTotal }, i) => (
+                <div key={cat} className="animate-fade-up" style={{ animationDelay: `${0.3 + i * 0.05}s` }}>
+                  <div className="flex justify-between mb-2">
+                    <Typography variant="small">{cat}</Typography>
+                    <Typography variant="small" className="font-bold">
+                      {sym}{catTotal.toFixed(2)} · {((catTotal / total) * 100).toFixed(0)}%
+                    </Typography>
+                  </div>
+                  <div className="h-1.5 bg-white/10 rounded-full overflow-hidden">
+                    <div
+                      className="h-full rounded-full"
+                      style={{
+                        width: `${(catTotal / total) * 100}%`,
+                        backgroundColor: `hsl(${i * 40 + 30}, 80%, 60%)`
+                      }}
+                    />
+                  </div>
+                </div>
+              ))}
             </div>
-          )}
-        </div>
+          </Card>
+        )}
+
+        {/* Non-owner CTA */}
+        {!isOwner && (
+          <Card className="text-center py-10 bg-gold/5 border-gold/20 animate-fade-up">
+            <Typography variant="small" className="opacity-50 mb-6 block">Planning your own trip?</Typography>
+            <Button href="/split" size="lg">Start your own trip ✈️</Button>
+            <Typography variant="small" className="opacity-30 mt-4 block">Free · No login required</Typography>
+          </Card>
+        )}
       </div>
 
       {/* Expense form modal (owner only) */}
@@ -763,7 +367,7 @@ function SavedTripContent({
           onClose={() => setShowExpenseForm(false)}
         />
       )}
-    </main>
+    </Layout>
   );
 }
 
@@ -806,59 +410,10 @@ function ExpenseFormAdapter({
         resetTrip: () => {},
         shareUrl: "",
         isSharedView: false,
+        isReadOnly: false,
       }}
     >
       <ExpenseForm editing={editing} onClose={onClose} />
     </TripContext.Provider>
   );
 }
-
-// Styles
-const card: React.CSSProperties = {
-  background: "var(--glass)",
-  backdropFilter: "blur(12px)",
-  border: "1px solid var(--glass-border)",
-  borderRadius: 20,
-  padding: 24,
-};
-const row: React.CSSProperties = {
-  display: "flex",
-  alignItems: "center",
-  justifyContent: "space-between",
-  background: "rgba(255,255,255,0.05)",
-  borderRadius: 12,
-  padding: "14px 18px",
-};
-const avatar: React.CSSProperties = {
-  width: 38,
-  height: 38,
-  borderRadius: "50%",
-  display: "flex",
-  alignItems: "center",
-  justifyContent: "center",
-  fontSize: 16,
-  fontWeight: 700,
-  color: "#fff",
-  flexShrink: 0,
-};
-const sectionLabel: React.CSSProperties = {
-  fontSize: 11,
-  fontWeight: 700,
-  letterSpacing: "1px",
-  textTransform: "uppercase",
-  color: "var(--text-muted)",
-  marginBottom: 16,
-  fontFamily: "'Lato', sans-serif",
-};
-const statLabel: React.CSSProperties = {
-  fontSize: 11,
-  textTransform: "uppercase",
-  letterSpacing: "1px",
-  color: "var(--text-muted)",
-  fontFamily: "'Lato', sans-serif",
-};
-const statValue: React.CSSProperties = {
-  fontFamily: "'Playfair Display', serif",
-  fontSize: 36,
-  fontWeight: 700,
-};
