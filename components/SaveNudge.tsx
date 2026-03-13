@@ -6,14 +6,15 @@ import SignInModal from "@/components/SignInModal";
 import { Typography } from "@/components/ui/Typography";
 import { Button } from "@/components/ui/Button";
 import { getCleanBaseUrl } from "@/lib/utils";
+import { ENABLE_AUTH } from "@/lib/constants";
 
 export default function SaveNudge() {
   const { user } = useAuth();
   const [dismissed, setDismissed] = useState(false);
   const [showSignIn, setShowSignIn] = useState(false);
 
-  // Don't show if already signed in or dismissed
-  if (user || dismissed) return null;
+  // Don't show if auth is disabled, already signed in or dismissed
+  if (!ENABLE_AUTH || user || dismissed) return null;
 
   return (
     <>

@@ -7,6 +7,7 @@ import { CATEGORIES, MAX_EXPENSES } from "@/lib/constants";
 import { avatarColor, getInitial, getBaseUrl, formatAmount } from "@/lib/utils";
 import { updateTrip } from "@/lib/api";
 import { useTrip } from "@/lib/swr";
+import { ENABLE_AUTH } from "@/lib/constants";
 import ShareButton from "@/components/ShareButton";
 import AffiliateCard from "@/components/AffiliateCard";
 import ExpenseForm from "@/components/ExpenseForm";
@@ -173,7 +174,7 @@ function SavedTripContent({
           ✈️ TripSplit
         </Link>
         <div className="flex items-center gap-4">
-          {isOwner && (
+          {ENABLE_AUTH && isOwner && (
             <Button variant="ghost" size="sm" href="/dashboard">
               My Trips
             </Button>
@@ -201,7 +202,7 @@ function SavedTripContent({
         )}
 
         {/* Owner: unsaved changes bar */}
-        {isOwner && (
+        {ENABLE_AUTH && isOwner && (
           <div className="bg-gold/5 border border-gold/10 rounded-2xl p-4 flex items-center justify-between gap-4 flex-wrap animate-fade-up">
             <Typography variant="small" className="opacity-50">
               {saved ? (

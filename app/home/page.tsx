@@ -8,6 +8,7 @@ import { Badge } from "@/components/ui/Badge";
 import { Typography } from "@/components/ui/Typography";
 import { StarsBackground } from "@/components/ui/StarsBackground";
 import { Container, Section } from "@/components/ui/Layout";
+import { ENABLE_AUTH } from "@/lib/constants";
 
 export const metadata: Metadata = {
   title: "TripSplit — No login. No drama. Just fair splits.",
@@ -74,15 +75,17 @@ function Hero() {
             "✓ No login required",
             "✓ No app to download",
             "✓ Free to use",
-            "✓ Save trips with Google",
-          ].map((badge) => (
-            <span
-              key={badge}
-              className="font-sans text-sm text-text-faint/70"
-            >
-              {badge}
-            </span>
-          ))}
+            ENABLE_AUTH ? "✓ Save trips with Google" : null,
+          ]
+            .filter(Boolean)
+            .map((badge) => (
+              <span
+                key={badge as string}
+                className="font-sans text-sm text-text-faint/70"
+              >
+                {badge}
+              </span>
+            ))}
         </div>
 
         {/* Floating preview card */}
@@ -133,30 +136,33 @@ function Hero() {
               title: "Instant share link",
               desc: "Share a link immediately — no account needed.",
             },
-            {
+            ENABLE_AUTH ? {
               icon: "💾",
               title: "Save permanently",
-              desc: "Sign in with Google to get a clean link like /t/bali-2026.",
-            },
-            {
+              desc: `Sign in with Google to get a clean link like ${getCleanBaseUrl()}/t/bali-2026.`,
+            } : null,
+            ENABLE_AUTH ? {
               icon: "📋",
               title: "Trip history",
               desc: "Access and edit all your saved trips anytime.",
-            },
-          ].map((f) => (
-            <div
-              key={f.title}
-              className="bg-white/4 border border-white/8 rounded-2xl p-5 text-left"
-            >
-              <div className="text-[28px] mb-2.5">{f.icon}</div>
-              <Typography variant="h3" className="mb-1.5 leading-tight">
-                {f.title}
-              </Typography>
-              <p className="font-sans text-[13px] text-text-muted leading-relaxed">
-                {f.desc}
-              </p>
-            </div>
-          ))}
+            } : null,
+          ].filter(Boolean).map((f) => {
+            const feature = f as { icon: string; title: string; desc: string };
+            return (
+              <div
+                key={feature.title}
+                className="bg-white/4 border border-white/8 rounded-2xl p-5 text-left"
+              >
+                <div className="text-[28px] mb-2.5">{feature.icon}</div>
+                <Typography variant="h3" className="mb-1.5 leading-tight">
+                  {feature.title}
+                </Typography>
+                <p className="font-sans text-[13px] text-text-muted leading-relaxed">
+                  {feature.desc}
+                </p>
+              </div>
+            );
+          })}
         </div>
       </Container>
     </Section>
@@ -184,13 +190,13 @@ function HowItWorks() {
       title: "Share one link",
       desc: "Your entire trip is encoded into a single URL. Share it and everyone sees exactly who owes what.",
     },
-    {
+    ENABLE_AUTH ? {
       number: "04",
       emoji: "💾",
       title: "Save & revisit",
       desc: `Sign in with Google to save your trip permanently and get a clean link like ${getCleanBaseUrl()}/t/bali-2026.`,
-    },
-  ];
+    } : null,
+  ].filter(Boolean) as { number: string; emoji: string; title: string; desc: string }[];
 
   return (
     <Section>

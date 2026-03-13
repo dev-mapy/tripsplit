@@ -16,6 +16,7 @@ import { UserNav } from "@/components/UserNav";
 import { Toast } from "@/components/ui/Toast";
 import { formatAmount } from "@/lib/utils";
 import { getCleanBaseUrl } from "@/lib/utils";
+import { ENABLE_AUTH } from "@/lib/constants";
 
 interface TripSummary {
   id: string;
@@ -45,6 +46,8 @@ export default function DashboardView({
   const { signOut } = useAuth();
   const { count, limit, isFull, refresh: refreshLimit } = useTripLimit();
   const router = useRouter();
+
+  if (!ENABLE_AUTH) return null;
   const { trips: fetchedTrips, mutate } = useUserTrips();
   const [deletingSlug, setDeletingSlug] = useState<string | null>(null);
   const [confirmSlug, setConfirmSlug] = useState<string | null>(null);
