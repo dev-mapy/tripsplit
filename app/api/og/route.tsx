@@ -1,3 +1,4 @@
+import { getCleanBaseUrl } from "@/lib/utils";
 import { ImageResponse } from "next/og";
 import { NextRequest } from "next/server";
 
@@ -124,7 +125,7 @@ export async function GET(req: NextRequest) {
               fontFamily: "monospace",
             }}
           >
-            tripsplit.app
+            { getCleanBaseUrl() }
           </div>
         </div>
       ),
