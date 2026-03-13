@@ -3,7 +3,7 @@
 import { useState, useCallback } from "react";
 import { useAuth } from "@/lib/auth-context";
 import { calcSettlement } from "@/lib/calculator";
-import { CATEGORIES } from "@/lib/constants";
+import { CATEGORIES, MAX_EXPENSES } from "@/lib/constants";
 import { avatarColor, getInitial, getBaseUrl, formatAmount } from "@/lib/utils";
 import { updateTrip } from "@/lib/api";
 import ShareButton from "@/components/ShareButton";
@@ -274,8 +274,17 @@ function SavedTripContent({
           <div className="flex justify-between items-center mb-6">
             <Typography variant="small" className="uppercase tracking-widest opacity-40 font-bold">All Expenses</Typography>
             {isOwner && (
-              <Button variant="secondary" size="sm" onClick={() => { setEditingExpense(null); setShowExpenseForm(true); }}>
-                + Add
+              <Button
+                variant="secondary"
+                size="sm"
+                onClick={() => {
+                  if (expenses.length >= MAX_EXPENSES) return;
+                  setEditingExpense(null);
+                  setShowExpenseForm(true);
+                }}
+                disabled={expenses.length >= MAX_EXPENSES}
+              >
+                {expenses.length >= MAX_EXPENSES ? "Limit Reached" : "+ Add"}
               </Button>
             )}
           </div>

@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useTrip } from "@/lib/trip-context";
+import { MAX_EXPENSES } from "@/lib/constants";
 import ExpenseForm from "@/components/ExpenseForm";
 import ShareButton from "@/components/ShareButton";
 import YesimCard from "@/components/YesimCard";
@@ -20,7 +21,11 @@ export default function ExpenseList() {
   const total = trip.expenses.reduce((s, e) => s + e.amount, 0);
   const getName = (id: string) => trip.travelers.find((t) => t.id === id)?.name ?? "?";
 
-  const openAdd = () => { setEditing(null); setShowForm(true); };
+  const openAdd = () => {
+    if (trip.expenses.length >= MAX_EXPENSES) return;
+    setEditing(null);
+    setShowForm(true);
+  };
   const openEdit = (exp: Expense) => { setEditing(exp); setShowForm(true); };
 
   return (
@@ -79,13 +84,24 @@ export default function ExpenseList() {
         <YesimCard />
 
         <div className="flex gap-2 mt-4">
-          <Button variant="secondary" className="flex-1" size="md" onClick={openAdd}>
-            + Add Expense
+          <Button
+            variant="secondary"
+            className="flex-1"
+            size="md"
+            onClick={openAdd}
+            disabled={trip.expenses.length >= MAX_EXPENSES}
+          >
+            {trip.expenses.length >= MAX_EXPENSES ? "Limit Reached" : "+ Add Expense"}
           </Button>
           <Button variant="ghost" size="md" onClick={() => setStep("setup")}>
             ← Back
           </Button>
         </div>
+        {trip.expenses.length >= MAX_EXPENSES && (
+          <Typography variant="small" className="text-red-400/60 text-[11px] text-center block">
+            Maximum of {MAX_EXPENSES} expenses reached.
+          </Typography>
+        )}
 
         {trip.expenses.length > 0 && (
           <Button size="lg" className="w-full" onClick={() => setStep("result")}>
