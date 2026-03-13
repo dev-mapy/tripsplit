@@ -1,4 +1,6 @@
 import Image from "next/image";
+import { Card } from "@/components/ui/Card";
+import { Typography } from "@/components/ui/Typography";
 
 interface AffiliateCardProps {
   emoji: string;
@@ -22,166 +24,63 @@ export default function AffiliateCard({
   accentColor,
 }: AffiliateCardProps) {
   return (
-    <div
-      style={{
-        background: "var(--glass)",
-        backdropFilter: "blur(12px)",
-        border: "1px solid var(--glass-border)",
-        borderRadius: 20,
-        padding: "20px 24px",
-        display: "flex",
-        gap: 20,
-        alignItems: "center",
-        flexWrap: "wrap",
-        position: "relative",
-        overflow: "hidden",
-      }}
-    >
+    <Card className="p-7 md:p-8 flex flex-col sm:flex-row gap-8 items-center relative overflow-hidden group">
       {/* Accent glow */}
       <div
-        style={{
-          position: "absolute",
-          top: -40,
-          left: -40,
-          width: 120,
-          height: 120,
-          borderRadius: "50%",
-          background: accentColor,
-          opacity: 0.07,
-          pointerEvents: "none",
-          filter: "blur(30px)",
-        }}
+        className="absolute -top-10 -left-10 w-32 h-32 rounded-full opacity-10 pointer-events-none blur-3xl transition-opacity group-hover:opacity-15"
+        style={{ backgroundColor: accentColor }}
       />
 
       {/* Left: info */}
-      <div style={{ flex: 1, minWidth: 200 }}>
+      <div className="flex-1 min-w-0">
         {/* Sponsored label */}
-        <div
-          style={{
-            fontSize: 10,
-            fontFamily: "'Lato', sans-serif",
-            fontWeight: 700,
-            letterSpacing: "1.5px",
-            textTransform: "uppercase",
-            color: "rgba(240,235,227,0.25)",
-            marginBottom: 10,
-          }}
-        >
+        <Typography variant="small" className="uppercase tracking-[2px] opacity-25 font-bold mb-4 block text-[9px]">
           Sponsored
-        </div>
+        </Typography>
 
         {/* Logo + Name */}
-        <div
-          style={{
-            display: "flex",
-            alignItems: "center",
-            gap: 10,
-            marginBottom: 8,
-          }}
-        >
-          <span style={{ fontSize: 24 }}>{emoji}</span>
+        <div className="flex items-center gap-4 mb-3">
+          <span className="text-3xl">{emoji}</span>
           <div>
-            <div
-              style={{
-                fontFamily: "'Playfair Display', serif",
-                fontSize: 17,
-                fontWeight: 700,
-                color: "var(--text)",
-              }}
-            >
-              {name}
-            </div>
-            <div
-              style={{
-                fontFamily: "'Lato', sans-serif",
-                fontSize: 12,
-                color: accentColor,
-                fontWeight: 700,
-                letterSpacing: "0.3px",
-              }}
-            >
+            <Typography variant="h3" className="font-bold">{name}</Typography>
+            <Typography variant="small" className="font-bold tracking-wide" style={{ color: accentColor }}>
               {tagline}
-            </div>
+            </Typography>
           </div>
         </div>
 
         {/* Description */}
-        <p
-          style={{
-            fontFamily: "'Lato', sans-serif",
-            fontSize: 13,
-            color: "rgba(240,235,227,0.5)",
-            lineHeight: 1.6,
-            margin: "0 0 16px",
-          }}
-        >
+        <Typography variant="body" className="opacity-50 mb-6 leading-relaxed">
           {description}
-        </p>
+        </Typography>
 
         {/* CTA Button */}
         <a
           href={href}
           target="_blank"
           rel="noopener noreferrer sponsored"
-          style={{
-            display: "inline-block",
-            background: accentColor,
-            color: "#fff",
-            borderRadius: 10,
-            padding: "10px 20px",
-            fontFamily: "'Lato', sans-serif",
-            fontWeight: 700,
-            fontSize: 13,
-            textDecoration: "none",
-            letterSpacing: "0.3px",
-          }}
+          className="inline-flex items-center justify-center rounded-xl px-5 py-2.5 text-sm font-bold text-white transition-all hover:scale-105 active:scale-95 no-underline shadow-lg"
+          style={{ backgroundColor: accentColor }}
         >
           {cta} →
         </a>
       </div>
 
       {/* Right: QR Code */}
-      <div
-        style={{
-          display: "flex",
-          flexDirection: "column",
-          alignItems: "center",
-          gap: 8,
-          flexShrink: 0,
-        }}
-      >
-        <div
-          style={{
-            background: "#fff",
-            borderRadius: 12,
-            padding: 8,
-            width: 96,
-            height: 96,
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-          }}
-        >
+      <div className="flex flex-col items-center gap-3 flex-shrink-0">
+        <div className="bg-white rounded-2xl p-2.5 shadow-2xl flex items-center justify-center">
           <Image
             src={qrCode}
             alt={`${name} QR code`}
-            width={80}
-            height={80}
-            style={{ borderRadius: 6 }}
+            width={84}
+            height={84}
+            className="rounded-lg"
           />
         </div>
-        <div
-          style={{
-            fontFamily: "'Lato', sans-serif",
-            fontSize: 10,
-            color: "rgba(240,235,227,0.3)",
-            textAlign: "center",
-            letterSpacing: "0.3px",
-          }}
-        >
+        <Typography variant="small" className="opacity-30 tracking-tight text-[10px] font-bold">
           Scan to open
-        </div>
+        </Typography>
       </div>
-    </div>
+    </Card>
   );
 }

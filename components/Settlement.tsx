@@ -8,6 +8,9 @@ import ShareButton from "@/components/ShareButton";
 import SaveTripButton from "@/components/SaveTripButton";
 import KlookCard from "@/components/KlookCard";
 import Link from "next/link";
+import { Button } from "@/components/ui/Button";
+import { Card } from "@/components/ui/Card";
+import { Typography } from "@/components/ui/Typography";
 
 export default function Settlement() {
   const { trip, setStep, resetTrip, isSharedView } = useTrip();
@@ -26,48 +29,40 @@ export default function Settlement() {
     .sort((a, b) => b.total - a.total);
 
   return (
-    <div className="animate-fade-up" style={{ display: "flex", flexDirection: "column", gap: 20 }}>
+    <div className="animate-fade-up flex flex-col gap-5">
 
       {/* ── Read-only banner (shared view) ── */}
       {isSharedView && (
-        <div style={{
-          background: "rgba(99,102,241,0.12)",
-          border: "1px solid rgba(99,102,241,0.35)",
-          borderRadius: 16,
-          padding: "16px 20px",
-          display: "flex",
-          alignItems: "flex-start",
-          gap: 14,
-        }}>
-          <span style={{ fontSize: 22, flexShrink: 0 }}>👀</span>
+        <div className="bg-blue-500/10 border border-blue-500/20 rounded-2xl p-5 flex items-start gap-4 animate-fade-up">
+          <span className="text-2xl flex-shrink-0">👀</span>
           <div>
-            <div style={{ fontFamily: "'Lato', sans-serif", fontWeight: 700, color: "#a5b4fc", fontSize: 14, marginBottom: 4 }}>
+            <Typography variant="small" className="font-bold text-blue-300 mb-1">
               You&apos;re viewing a shared trip — read only.
-            </div>
-            <div style={{ fontFamily: "'Lato', sans-serif", fontSize: 13, color: "rgba(240,235,227,0.45)", lineHeight: 1.6 }}>
-              This is {trip.name ? <><strong style={{ color: "rgba(240,235,227,0.7)" }}>{trip.name}</strong>&apos;s</> : "someone else's"} trip split. You can view the settlement but cannot make changes.
-            </div>
+            </Typography>
+            <Typography variant="small" className="opacity-60 leading-relaxed">
+              This is {trip.name ? <><strong className="opacity-100">{trip.name}</strong>&apos;s</> : "someone else's"} trip split. You can view the settlement but cannot make changes.
+            </Typography>
           </div>
         </div>
       )}
 
       {/* ── Trip header ── */}
-      <div style={{ ...card, textAlign: "center", padding: 28 }}>
-        <h2 style={{ fontSize: 28, color: "var(--gold)", marginBottom: 4 }}>{trip.name}</h2>
-        <div style={{ fontSize: 14, color: "var(--text-muted)", marginBottom: 20 }}>
+      <Card className="text-center py-8 px-6 animate-fade-up">
+        <Typography variant="h1" className="text-gold mb-2">{trip.name}</Typography>
+        <Typography variant="small" className="opacity-50 mb-8 block">
           {trip.expenses.length} expenses · {trip.travelers.length} travelers · {trip.currency.flag} {trip.currency.code}
-        </div>
-        <div style={{ display: "flex", justifyContent: "center", gap: 40, flexWrap: "wrap" }}>
+        </Typography>
+        <div className="flex justify-center gap-12 sm:gap-20 flex-wrap">
           <div>
-            <div style={statLabel}>Total Spent</div>
-            <div style={statValue}>{sym}{total.toFixed(2)}</div>
+            <Typography variant="small" className="uppercase tracking-widest opacity-40 font-bold mb-1 block">Total Spent</Typography>
+            <Typography variant="h2">{sym}{total.toFixed(2)}</Typography>
           </div>
           <div>
-            <div style={statLabel}>Per Person</div>
-            <div style={statValue}>{sym}{(total / trip.travelers.length).toFixed(2)}</div>
+            <Typography variant="small" className="uppercase tracking-widest opacity-40 font-bold mb-1 block">Per Person</Typography>
+            <Typography variant="h2">{sym}{(total / trip.travelers.length).toFixed(2)}</Typography>
           </div>
         </div>
-      </div>
+      </Card>
 
       {/* ── Share link ── */}
       <ShareButton />
@@ -76,9 +71,9 @@ export default function Settlement() {
       {!isSharedView && <SaveTripButton />}
 
       {/* ── Balances ── */}
-      <div style={card}>
-        <div style={sectionLabel}>Who Paid What</div>
-        <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+      <Card className="animate-fade-up">
+        <Typography variant="small" className="uppercase tracking-widest opacity-40 font-bold mb-6 block">Who Paid What</Typography>
+        <div className="flex flex-col gap-3">
           {trip.travelers.map((t, i) => {
             const paid = trip.expenses
               .filter((e) => e.paidBy === t.id)
@@ -89,234 +84,130 @@ export default function Settlement() {
             return (
               <div
                 key={t.id}
-                className="animate-slide-in"
-                style={{ ...row, animationDelay: `${i * 0.08}s` }}
+                className="flex items-center justify-between bg-white/5 rounded-xl p-4 animate-slide-in"
+                style={{ animationDelay: `${i * 0.08}s` }}
               >
-                <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
-                  <div style={{ ...avatar, background: avatarColor(i) }}>
+                <div className="flex items-center gap-4">
+                  <div
+                    className="w-10 h-10 rounded-full flex items-center justify-center text-white font-bold"
+                    style={{ background: avatarColor(i) }}
+                  >
                     {getInitial(t.name)}
                   </div>
                   <div>
-                    <div style={{ fontWeight: 700 }}>{t.name}</div>
-                    <div style={{ fontSize: 13, color: "var(--text-muted)" }}>
+                    <Typography variant="body" className="font-bold">{t.name}</Typography>
+                    <Typography variant="small" className="opacity-50">
                       paid {sym}{paid.toFixed(2)}
-                    </div>
+                    </Typography>
                   </div>
                 </div>
-                <div style={{ textAlign: "right" }}>
-                  <div style={{
-                    fontFamily: "'Playfair Display', serif",
-                    fontSize: 18,
-                    fontWeight: 700,
-                    color: isPos ? "var(--success)" : isNeg ? "var(--danger)" : "var(--text-muted)",
-                  }}>
+                <div className="text-right">
+                  <Typography
+                    variant="h3"
+                    className={isPos ? "text-green-400" : isNeg ? "text-red-400" : "opacity-40"}
+                  >
                     {isPos
                       ? `+${sym}${bal.toFixed(2)}`
                       : isNeg
                       ? `-${sym}${(-bal).toFixed(2)}`
                       : `${sym}0.00`}
-                  </div>
-                  <div style={{ fontSize: 11, color: "var(--text-faint)" }}>
+                  </Typography>
+                  <Typography variant="small" className="opacity-40 uppercase tracking-tighter text-[10px] font-bold">
                     {isPos ? "gets back" : isNeg ? "owes" : "settled ✓"}
-                  </div>
+                  </Typography>
                 </div>
               </div>
             );
           })}
         </div>
-      </div>
+      </Card>
 
       {/* ── Settlement plan ── */}
-      <div style={card}>
-        <div style={sectionLabel}>💸 Settlement Plan</div>
+      <Card className="animate-fade-up">
+        <Typography variant="small" className="uppercase tracking-widest opacity-40 font-bold mb-6 block">💸 Settlement Plan</Typography>
         {transactions.length === 0 ? (
-          <div style={{ textAlign: "center", padding: "20px 0", color: "var(--text-muted)" }}>
+          <div className="text-center py-6 opacity-40">
             🎉 Everyone is already settled up!
           </div>
         ) : (
-          <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
+          <div className="flex flex-col gap-3">
             {transactions.map((tx, i) => (
               <div
                 key={i}
-                className="animate-slide-in"
-                style={{
-                  display: "flex",
-                  alignItems: "center",
-                  gap: 12,
-                  padding: "16px 20px",
-                  background: "rgba(255,210,0,0.08)",
-                  border: "1px solid rgba(255,210,0,0.2)",
-                  borderRadius: 14,
-                  animationDelay: `${0.3 + i * 0.1}s`,
-                }}
+                className="flex items-center justify-between p-5 bg-gold/10 border border-gold/20 rounded-2xl animate-fade-up"
+                style={{ animationDelay: `${0.3 + i * 0.1}s` }}
               >
-                <div style={{ flex: 1, fontSize: 15, fontFamily: "'Lato', sans-serif" }}>
-                  <span style={{ fontWeight: 700, color: "var(--danger)" }}>{getName(tx.from)}</span>
-                  <span style={{ color: "var(--text-muted)", margin: "0 10px" }}>→ pays →</span>
-                  <span style={{ fontWeight: 700, color: "var(--success)" }}>{getName(tx.to)}</span>
+                <div className="flex-1">
+                  <span className="font-bold text-red-400">{getName(tx.from)}</span>
+                  <span className="mx-3 opacity-40">→ pays →</span>
+                  <span className="font-bold text-green-400">{getName(tx.to)}</span>
                 </div>
-                <div style={{
-                  fontFamily: "'Playfair Display', serif",
-                  fontSize: 22,
-                  fontWeight: 700,
-                  color: "var(--gold)",
-                }}>
+                <Typography variant="h2" className="text-gold">
                   {sym}{tx.amount.toFixed(2)}
-                </div>
+                </Typography>
               </div>
             ))}
           </div>
         )}
-      </div>
+      </Card>
 
       <KlookCard />
 
       {/* ── Category breakdown ── */}
       {byCategory.length > 0 && (
-        <div style={card}>
-          <div style={sectionLabel}>Spending Breakdown</div>
-          <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
+        <Card className="animate-fade-up">
+          <Typography variant="small" className="uppercase tracking-widest opacity-40 font-bold mb-6 block">Spending Breakdown</Typography>
+          <div className="flex flex-col gap-5">
             {byCategory.map(({ cat, total: catTotal }, i) => (
               <div
                 key={cat}
-                className="animate-slide-in"
+                className="animate-fade-up"
                 style={{ animationDelay: `${0.5 + i * 0.07}s` }}
               >
-                <div style={{ display: "flex", justifyContent: "space-between", fontSize: 14, marginBottom: 6, fontFamily: "'Lato', sans-serif" }}>
-                  <span>{cat}</span>
-                  <span style={{ fontWeight: 700 }}>
+                <div className="flex justify-between mb-2">
+                  <Typography variant="small">{cat}</Typography>
+                  <Typography variant="small" className="font-bold">
                     {sym}{catTotal.toFixed(2)} · {((catTotal / total) * 100).toFixed(0)}%
-                  </span>
+                  </Typography>
                 </div>
-                <div style={{ height: 6, background: "rgba(255,255,255,0.1)", borderRadius: 3, overflow: "hidden" }}>
-                  <div style={{
-                    height: "100%",
-                    width: `${(catTotal / total) * 100}%`,
-                    background: `hsl(${i * 40 + 30},80%,60%)`,
-                    borderRadius: 3,
-                  }} />
+                <div className="h-1.5 bg-white/10 rounded-full overflow-hidden">
+                  <div
+                    className="h-full rounded-full"
+                    style={{
+                      width: `${(catTotal / total) * 100}%`,
+                      backgroundColor: `hsl(${i * 40 + 30},80%,60%)`,
+                    }}
+                  />
                 </div>
               </div>
             ))}
           </div>
-        </div>
+        </Card>
       )}
 
       {/* ── Action buttons ── */}
       {isSharedView ? (
-        /* Read-only CTA — can't edit, can start their own trip */
-        <div style={{
-          ...card,
-          textAlign: "center",
-          padding: "28px 24px",
-          background: "rgba(255,210,0,0.05)",
-          border: "1px solid rgba(255,210,0,0.15)",
-        }}>
-          <div style={{ fontSize: 13, color: "var(--text-muted)", fontFamily: "'Lato', sans-serif", marginBottom: 16 }}>
-            Planning your own trip?
-          </div>
-          <Link
-            href="/split"
-            style={{
-              display: "inline-block",
-              background: "linear-gradient(135deg, #f7971e, #ffd200)",
-              color: "#1a1a2e",
-              borderRadius: 12,
-              padding: "14px 32px",
-              fontWeight: 700,
-              fontSize: 15,
-              textDecoration: "none",
-              fontFamily: "'Lato', sans-serif",
-            }}
-          >
-            Start your own trip ✈️
-          </Link>
-          <div style={{ fontSize: 12, color: "var(--text-faint)", marginTop: 12, fontFamily: "'Lato', sans-serif" }}>
-            Free · No login required
-          </div>
-        </div>
+        <Card className="text-center py-10 bg-gold/5 border-gold/20 animate-fade-up">
+          <Typography variant="small" className="opacity-50 mb-6 block">Planning your own trip?</Typography>
+          <Button href="/split" size="lg">Start your own trip ✈️</Button>
+          <Typography variant="small" className="opacity-30 mt-4 block">Free · No login required</Typography>
+        </Card>
       ) : (
-        /* Owner CTA — can edit or start new */
-        <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
-          <div style={{ display: "flex", gap: 10 }}>
-            <button
-              style={{ ...btnGhost, flex: 1 }}
+        <div className="flex flex-col gap-3">
+          <div className="flex gap-2">
+            <Button
+              variant="secondary"
+              className="flex-1"
               onClick={() => setStep("expenses")}
             >
               ← Edit Expenses
-            </button>
-            <button style={{ ...btnPrimary, flex: 1 }} onClick={resetTrip}>
+            </Button>
+            <Button className="flex-1" onClick={resetTrip}>
               New Trip ✈️
-            </button>
+            </Button>
           </div>
         </div>
       )}
     </div>
   );
 }
-
-const card: React.CSSProperties = {
-  background: "var(--glass)",
-  backdropFilter: "blur(12px)",
-  border: "1px solid var(--glass-border)",
-  borderRadius: 20,
-  padding: 24,
-};
-const row: React.CSSProperties = {
-  display: "flex",
-  alignItems: "center",
-  justifyContent: "space-between",
-  background: "rgba(255,255,255,0.05)",
-  borderRadius: 12,
-  padding: "14px 18px",
-};
-const avatar: React.CSSProperties = {
-  width: 38,
-  height: 38,
-  borderRadius: "50%",
-  display: "flex",
-  alignItems: "center",
-  justifyContent: "center",
-  fontSize: 16,
-  fontWeight: 700,
-  color: "#fff",
-  flexShrink: 0,
-};
-const sectionLabel: React.CSSProperties = {
-  fontSize: 11,
-  fontWeight: 700,
-  letterSpacing: "1px",
-  textTransform: "uppercase",
-  color: "var(--text-muted)",
-  marginBottom: 16,
-};
-const statLabel: React.CSSProperties = {
-  fontSize: 11,
-  textTransform: "uppercase",
-  letterSpacing: "1px",
-  color: "var(--text-muted)",
-};
-const statValue: React.CSSProperties = {
-  fontFamily: "'Playfair Display', serif",
-  fontSize: 36,
-  fontWeight: 700,
-};
-const btnPrimary: React.CSSProperties = {
-  background: "linear-gradient(135deg, #f7971e, #ffd200)",
-  color: "#1a1a2e",
-  border: "none",
-  borderRadius: 12,
-  padding: "14px 28px",
-  fontWeight: 700,
-  fontSize: 15,
-  cursor: "pointer",
-};
-const btnGhost: React.CSSProperties = {
-  background: "rgba(255,255,255,0.08)",
-  color: "var(--text)",
-  border: "1px solid rgba(255,255,255,0.15)",
-  borderRadius: 10,
-  padding: "10px 18px",
-  fontSize: 14,
-  cursor: "pointer",
-};

@@ -7,6 +7,9 @@ import { saveTrip } from "@/lib/api";
 import { useTrip } from "@/lib/trip-context";
 import { CURRENCIES } from "@/lib/constants";
 import { avatarColor, getInitial } from "@/lib/utils";
+import { Button } from "@/components/ui/Button";
+import { Card } from "@/components/ui/Card";
+import { Typography } from "@/components/ui/Typography";
 
 export default function TravelerSetup() {
   const { user } = useAuth();
@@ -50,180 +53,104 @@ export default function TravelerSetup() {
   };
 
   return (
-    <div className="animate-fade-up" style={{ display: "flex", flexDirection: "column", gap: 20 }}>
-
+    <div className="animate-fade-up flex flex-col gap-5">
       {/* Trip name */}
-      <div style={styles.card}>
-        <label style={styles.label}>Trip Name</label>
+      <Card className="p-7 md:p-8">
+        <Typography variant="small" className="uppercase tracking-widest opacity-40 font-bold mb-3 block">
+          Trip Name
+        </Typography>
         <input
-          style={styles.input}
+          className="w-full bg-white/8 border border-white/15 rounded-xl px-4 py-3 text-[15px] text-text outline-none focus:border-gold/50 focus:bg-white/12 transition-all"
           placeholder="e.g. Bali Summer 2026 🌴"
           value={trip.name}
           onChange={(e) => updateTripName(e.target.value)}
         />
 
-        <label style={{ ...styles.label, marginTop: 24 }}>Currency</label>
-        <div style={{ display: "flex", flexWrap: "wrap", gap: 8 }}>
+        <Typography variant="small" className="uppercase tracking-widest opacity-40 font-bold mb-3 mt-8 block">
+          Currency
+        </Typography>
+        <div className="flex flex-wrap gap-2">
           {CURRENCIES.map((c) => {
             const active = trip.currency.code === c.code;
             return (
               <button
                 key={c.code}
                 onClick={() => updateCurrency(c)}
-                style={{
-                  ...styles.pill,
-                  background: active ? "rgba(255,210,0,0.2)" : "rgba(255,255,255,0.06)",
-                  border: active ? "1px solid #ffd200" : "1px solid rgba(255,255,255,0.12)",
-                  color: active ? "#ffd200" : "var(--text)",
-                }}
+                className={`
+                  px-4 py-2 rounded-xl text-sm font-medium transition-all cursor-pointer
+                  ${active
+                    ? "bg-gold/15 border border-gold text-gold"
+                    : "bg-white/8 border border-white/12 text-text opacity-70 hover:opacity-100 hover:bg-white/12"}
+                `}
               >
                 {c.flag} {c.code}
               </button>
             );
           })}
         </div>
-      </div>
+      </Card>
 
       {/* Travelers */}
-      <div style={styles.card}>
-        <label style={styles.label}>Travelers</label>
-        <div style={{ display: "flex", flexDirection: "column", gap: 10, marginBottom: 16 }}>
+      <Card className="p-7 md:p-8">
+        <Typography variant="small" className="uppercase tracking-widest opacity-40 font-bold mb-4 block">
+          Travelers
+        </Typography>
+        <div className="flex flex-col gap-3 mb-5">
           {trip.travelers.map((t, i) => (
-            <div key={t.id} className="animate-slide-in" style={styles.travelerRow}>
-              <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-                <div style={{ ...styles.avatar, background: avatarColor(i) }}>
+            <div
+              key={t.id}
+              className="flex items-center justify-between bg-white/5 rounded-xl px-4 py-3 animate-slide-in"
+              style={{ animationDelay: `${i * 0.05}s` }}
+            >
+              <div className="flex items-center gap-3">
+                <div
+                  className="w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold text-white shadow-lg"
+                  style={{ background: avatarColor(i) }}
+                >
                   {getInitial(t.name)}
                 </div>
-                <span>{t.name}</span>
+                <Typography variant="body" className="font-medium">{t.name}</Typography>
               </div>
               {trip.travelers.length > 2 && (
-                <button onClick={() => removeTraveler(t.id)} style={styles.removeBtn}>
+                <button
+                  onClick={() => removeTraveler(t.id)}
+                  className="w-6 h-6 flex items-center justify-center text-text-faint hover:text-red-400 transition-colors text-2xl cursor-pointer"
+                >
                   ×
                 </button>
               )}
             </div>
           ))}
         </div>
-        <div style={{ display: "flex", gap: 10 }}>
+
+        <div className="flex gap-2">
           <input
-            style={styles.input}
+            className="flex-1 bg-white/8 border border-white/15 rounded-xl px-4 py-3 text-[15px] text-text outline-none focus:border-gold/50 focus:bg-white/12 transition-all"
             placeholder="Add traveler name..."
             value={newName}
             onChange={(e) => setNewName(e.target.value)}
             onKeyDown={(e) => e.key === "Enter" && handleAdd()}
           />
-          <button style={styles.btnGhost} onClick={handleAdd}>
+          <Button variant="secondary" onClick={handleAdd}>
             + Add
-          </button>
+          </Button>
         </div>
-      </div>
+      </Card>
 
-      <button
-        style={{
-          ...styles.btnPrimary,
-          opacity: canContinue && !loading ? 1 : 0.5,
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-          gap: 8,
-        }}
+      <Button
+        className="w-full mt-2"
+        size="lg"
         disabled={!canContinue || loading}
         onClick={handleContinue}
       >
         {loading ? (
           <>
-            <span className="animate-spin">🌀</span> Saving...
+            <span className="animate-spin mr-2">🌀</span> Saving...
           </>
         ) : (
           "Continue to Expenses →"
         )}
-      </button>
+      </Button>
     </div>
   );
 }
-
-const styles = {
-  card: {
-    background: "var(--glass)",
-    backdropFilter: "blur(12px)",
-    border: "1px solid var(--glass-border)",
-    borderRadius: 20,
-    padding: 28,
-  } as React.CSSProperties,
-  label: {
-    display: "block",
-    fontSize: 11,
-    fontWeight: 700,
-    letterSpacing: "1px",
-    textTransform: "uppercase" as const,
-    color: "var(--text-muted)",
-    marginBottom: 10,
-  } as React.CSSProperties,
-  input: {
-    width: "100%",
-    background: "rgba(255,255,255,0.08)",
-    border: "1px solid rgba(255,255,255,0.15)",
-    borderRadius: 10,
-    color: "var(--text)",
-    padding: "12px 16px",
-    fontSize: 15,
-    outline: "none",
-  } as React.CSSProperties,
-  pill: {
-    border: "none",
-    borderRadius: 10,
-    padding: "8px 14px",
-    cursor: "pointer",
-    fontSize: 14,
-    transition: "all 0.2s",
-  } as React.CSSProperties,
-  travelerRow: {
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "space-between",
-    background: "rgba(255,255,255,0.06)",
-    borderRadius: 10,
-    padding: "12px 16px",
-  } as React.CSSProperties,
-  avatar: {
-    width: 32,
-    height: 32,
-    borderRadius: "50%",
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "center",
-    fontSize: 14,
-    fontWeight: 700,
-    color: "#fff",
-  } as React.CSSProperties,
-  removeBtn: {
-    background: "none",
-    border: "none",
-    color: "var(--text-faint)",
-    cursor: "pointer",
-    fontSize: 20,
-    lineHeight: 1,
-  } as React.CSSProperties,
-  btnPrimary: {
-    width: "100%",
-    background: "linear-gradient(135deg, #f7971e, #ffd200)",
-    color: "#1a1a2e",
-    border: "none",
-    borderRadius: 12,
-    padding: "16px 28px",
-    fontWeight: 700,
-    fontSize: 16,
-    cursor: "pointer",
-    transition: "all 0.2s",
-  } as React.CSSProperties,
-  btnGhost: {
-    background: "rgba(255,255,255,0.08)",
-    color: "var(--text)",
-    border: "1px solid rgba(255,255,255,0.15)",
-    borderRadius: 10,
-    padding: "10px 18px",
-    fontSize: 14,
-    cursor: "pointer",
-    whiteSpace: "nowrap" as const,
-  } as React.CSSProperties,
-};
