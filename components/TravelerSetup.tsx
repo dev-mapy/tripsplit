@@ -57,10 +57,10 @@ export default function TravelerSetup() {
         </div>
         <input
           className="w-full bg-white/8 border border-white/15 rounded-xl px-4 py-3 text-[15px] text-text outline-none focus:border-gold/50 focus:bg-white/12 transition-all"
-          placeholder="e.g. Bali Summer 2026 🌴"
+          placeholder="e.g. Bali Summer Trip 🌴"
           value={trip.name}
           maxLength={MAX_TRIP_NAME}
-          onChange={(e) => updateTripName(e.target.value)}
+          onChange={(e) => updateTripName(e.target.value.replace(/[0-9]/g, ""))}
         />
 
         <Typography variant="small" className="uppercase tracking-widest opacity-40 font-bold mb-3 mt-8 block">
@@ -128,7 +128,7 @@ export default function TravelerSetup() {
             placeholder={trip.travelers.length >= MAX_TRAVELERS ? "Limit reached" : "Add traveler name..."}
             value={newName}
             maxLength={MAX_TRAVELER_NAME}
-            onChange={(e) => setNewName(e.target.value)}
+            onChange={(e) => setNewName(e.target.value.replace(/[0-9]/g, ""))}
             onKeyDown={(e) => e.key === "Enter" && handleAdd()}
             disabled={trip.travelers.length >= MAX_TRAVELERS}
           />
