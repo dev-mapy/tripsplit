@@ -4,7 +4,7 @@ import { CURRENCIES } from "@/lib/constants";
 import { DEFAULT_CURRENCY } from "@/lib/constants";
 import type { Metadata } from "next";
 import type { Traveler, Expense } from "@/types";
-import { getBaseUrl } from "@/lib/utils";
+import { getBaseUrl, formatAmount } from "@/lib/utils";
 import SavedTripView from "./SavedTripView";
 
 interface Props {
@@ -34,22 +34,25 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   }
 
   const expenses = (trip.expenses as unknown) as Expense[];
-  const total = expenses.reduce((s, e) => s + e.amount, 0).toFixed(2);
+  const totalNum = expenses.reduce((s, e) => s + e.amount, 0);
   const travelers = (trip.travelers as unknown) as Traveler[];
   const currency =
     CURRENCIES.find((c) => c.code === trip.currencyCode) ?? DEFAULT_CURRENCY;
 
+  const total = totalNum.toFixed(2);
   const ogImageUrl = new URL(
     `/api/og?name=${encodeURIComponent(trip.name)}&total=${total}&symbol=${encodeURIComponent(currency.symbol)}&travelers=${travelers.length}&expenses=${expenses.length}`,
     getBaseUrl()
   ).toString();
 
+  const formattedTotal = formatAmount(totalNum, currency.symbol);
+
   return {
     title: `${trip.name} — TripSplit`,
-    description: `${travelers.length} travelers · ${expenses.length} expenses · ${currency.symbol}${total} total. See who owes what.`,
+    description: `${travelers.length} travelers · ${expenses.length} expenses · ${formattedTotal} total. See who owes what.`,
     openGraph: {
       title: `${trip.name} — TripSplit`,
-      description: `See who owes what for ${trip.name}. ${travelers.length} travelers · ${currency.symbol}${total} total spent.`,
+      description: `See who owes what for ${trip.name}. ${travelers.length} travelers · ${formattedTotal} total spent.`,
       images: [{ url: ogImageUrl, width: 1200, height: 630 }],
     },
     twitter: {

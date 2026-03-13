@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { useAuth } from "@/lib/auth-context";
 import { saveTrip } from "@/lib/api";
 import { useTrip } from "@/lib/trip-context";
-import { CURRENCIES } from "@/lib/constants";
+import { CURRENCIES, MAX_TRAVELERS } from "@/lib/constants";
 import { avatarColor, getInitial } from "@/lib/utils";
 import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
@@ -20,7 +20,7 @@ export default function TravelerSetup() {
   const [loading, setLoading] = useState(false);
 
   const handleAdd = () => {
-    if (!newName.trim()) return;
+    if (!newName.trim() || trip.travelers.length >= MAX_TRAVELERS) return;
     addTraveler(newName.trim());
     setNewName("");
   };
@@ -106,15 +106,21 @@ export default function TravelerSetup() {
         <div className="flex gap-2">
           <input
             className="flex-1 bg-white/8 border border-white/15 rounded-xl px-4 py-3 text-[15px] text-text outline-none focus:border-gold/50 focus:bg-white/12 transition-all"
-            placeholder="Add traveler name..."
+            placeholder={trip.travelers.length >= MAX_TRAVELERS ? "Limit reached" : "Add traveler name..."}
             value={newName}
             onChange={(e) => setNewName(e.target.value)}
             onKeyDown={(e) => e.key === "Enter" && handleAdd()}
+            disabled={trip.travelers.length >= MAX_TRAVELERS}
           />
-          <Button variant="secondary" onClick={handleAdd}>
+          <Button variant="secondary" onClick={handleAdd} disabled={trip.travelers.length >= MAX_TRAVELERS}>
             + Add
           </Button>
         </div>
+        {trip.travelers.length >= MAX_TRAVELERS && (
+          <Typography variant="small" className="text-red-400/60 text-[11px] mt-2 block">
+            Maximum of {MAX_TRAVELERS} travelers reached.
+          </Typography>
+        )}
       </Card>
 
       <Button
