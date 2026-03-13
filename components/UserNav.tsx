@@ -3,6 +3,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import { useAuth } from "@/lib/auth-context";
+import { useTripLimit } from "@/lib/trip-limit-context";
 import SignInModal from "@/components/SignInModal";
 import { Button } from "@/components/ui/Button";
 
@@ -14,6 +15,7 @@ interface UserNavProps {
 
 export function UserNav({ userName, userAvatar, onSignOut }: UserNavProps) {
   const { user, loading, signOut } = useAuth();
+  const { count, limit, isFull } = useTripLimit();
   const [showMenu, setShowMenu] = useState(false);
   const [showSignIn, setShowSignIn] = useState(false);
 
@@ -72,9 +74,16 @@ export function UserNav({ userName, userAvatar, onSignOut }: UserNavProps) {
             {initials}
           </div>
         )}
-        <span className="hidden sm:inline text-sm font-medium text-text-muted group-hover:text-white transition-colors">
-          {displayUser.user_metadata?.full_name?.split(" ")[0] ?? "Account"}
-        </span>
+        <div className="hidden sm:flex flex-col items-start leading-tight">
+          <span className="text-sm font-medium text-text-muted group-hover:text-white transition-colors">
+            {displayUser.user_metadata?.full_name?.split(" ")[0] ?? "Account"}
+          </span>
+          {user && (
+            <span className={`text-[10px] font-bold font-mono ${isFull ? "text-red-400" : "text-gold/70"}`}>
+              {count}/{limit} trips
+            </span>
+          )}
+        </div>
         <span className="text-text-faint text-[10px] group-hover:text-white transition-colors">
           ▾
         </span>
