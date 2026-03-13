@@ -200,11 +200,12 @@ export default function ExpenseForm({ editing, onClose }: Props) {
                     key={t.id}
                     onClick={() => setPaidBy(t.id)}
                     className={`
-                      px-4 py-2 rounded-xl text-sm font-medium transition-all cursor-pointer
+                      px-4 py-2 rounded-xl text-sm font-medium transition-all cursor-pointer max-w-[120px] truncate
                       ${active
                         ? "bg-gold/15 border border-gold text-gold"
                         : "bg-white/8 border border-white/12 text-text opacity-70 hover:opacity-100 hover:bg-white/12"}
                     `}
+                    title={t.name}
                   >
                     {t.name}
                   </button>
@@ -225,11 +226,12 @@ export default function ExpenseForm({ editing, onClose }: Props) {
                     key={t.id}
                     onClick={() => toggleSplit(t.id)}
                     className={`
-                      px-4 py-2 rounded-xl text-sm font-medium transition-all cursor-pointer
+                      px-4 py-2 rounded-xl text-sm font-medium transition-all cursor-pointer max-w-[140px] truncate
                       ${active
                         ? "bg-gold/15 border border-gold text-gold"
                         : "bg-white/8 border border-white/12 text-text opacity-70 hover:opacity-100 hover:bg-white/12"}
                     `}
+                    title={t.name}
                   >
                     {active ? "✓ " : ""}{t.name}
                   </button>

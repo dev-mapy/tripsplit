@@ -33,8 +33,8 @@ export default function Settlement() {
     <div className="animate-fade-up flex flex-col gap-5">
 
       {/* ── Trip header ── */}
-      <Card className="text-center py-8 px-6 animate-fade-up">
-        <Typography variant="h1" className="text-gold mb-2">{trip.name}</Typography>
+      <Card className="text-center py-8 px-6 animate-fade-up min-w-0">
+        <Typography variant="h1" className="text-gold mb-2 truncate" title={trip.name}>{trip.name}</Typography>
         <Typography variant="small" className="opacity-50 mb-8 block">
           {trip.expenses.length} expenses · {trip.travelers.length} travelers · {trip.currency.flag} {trip.currency.code}
         </Typography>
@@ -70,12 +70,12 @@ export default function Settlement() {
             return (
               <div
                 key={t.id}
-                className="flex items-center justify-between bg-white/5 rounded-xl p-4 animate-slide-in"
+                className="flex flex-col sm:flex-row sm:items-center justify-between bg-white/5 rounded-xl p-4 animate-slide-in gap-3 sm:gap-4"
                 style={{ animationDelay: `${i * 0.08}s` }}
               >
                 <div className="flex items-center gap-4">
                   <div
-                    className="w-10 h-10 rounded-full flex items-center justify-center text-white font-bold"
+                    className="w-10 h-10 rounded-full flex-shrink-0 flex items-center justify-center text-white font-bold"
                     style={{ background: avatarColor(i) }}
                   >
                     {getInitial(t.name)}
@@ -87,7 +87,7 @@ export default function Settlement() {
                     </Typography>
                   </div>
                 </div>
-                <div className="text-right">
+                <div className="flex flex-col items-start sm:items-end">
                   <Typography
                     variant="h3"
                     className={isPos ? "text-green-400" : isNeg ? "text-red-400" : "opacity-40"}
@@ -120,15 +120,20 @@ export default function Settlement() {
             {transactions.map((tx, i) => (
               <div
                 key={i}
-                className="flex items-center justify-between p-5 bg-gold/10 border border-gold/20 rounded-2xl animate-fade-up"
+                className="flex flex-col sm:flex-row sm:items-center justify-between p-5 bg-gold/10 border border-gold/20 rounded-2xl animate-fade-up gap-4"
                 style={{ animationDelay: `${0.3 + i * 0.1}s` }}
               >
-                <div className="flex-1">
-                  <span className="font-bold text-red-400">{getName(tx.from)}</span>
-                  <span className="mx-3 opacity-40">→ pays →</span>
-                  <span className="font-bold text-green-400">{getName(tx.to)}</span>
+                <div className="flex flex-col sm:flex-row items-start sm:items-center gap-1 sm:gap-0 min-w-0 flex-1">
+                  <span className="font-bold text-red-400 truncate max-w-[120px] sm:max-w-none" title={getName(tx.from)}>{getName(tx.from)}</span>
+                  <div className="flex flex-col items-center sm:flex-row sm:mx-3 opacity-40 text-[10px] sm:text-base leading-none">
+                    <span className="sm:hidden">↓</span>
+                    <span className="uppercase sm:normal-case font-bold sm:font-normal">pays</span>
+                    <span className="sm:hidden">↓</span>
+                    <span className="hidden sm:inline">→</span>
+                  </div>
+                  <span className="font-bold text-green-400 truncate max-w-[120px] sm:max-w-none" title={getName(tx.to)}>{getName(tx.to)}</span>
                 </div>
-                <Typography variant="h2" className="text-gold">
+                <Typography variant="h2" className="text-gold text-left sm:text-right">
                   {formatAmount(tx.amount, sym)}
                 </Typography>
               </div>

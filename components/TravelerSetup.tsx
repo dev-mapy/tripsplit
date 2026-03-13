@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { useAuth } from "@/lib/auth-context";
 import { saveTrip } from "@/lib/api";
 import { useTrip } from "@/lib/trip-context";
-import { CURRENCIES, MAX_TRAVELERS } from "@/lib/constants";
+import { CURRENCIES, MAX_TRAVELERS, MAX_TRAVELER_NAME, MAX_TRIP_NAME } from "@/lib/constants";
 import { avatarColor, getInitial } from "@/lib/utils";
 import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
@@ -20,8 +20,19 @@ export default function TravelerSetup() {
   const [loading, setLoading] = useState(false);
 
   const handleAdd = () => {
-    if (!newName.trim() || trip.travelers.length >= MAX_TRAVELERS) return;
-    addTraveler(newName.trim());
+    const trimmed = newName.trim();
+    if (!trimmed || trip.travelers.length >= MAX_TRAVELERS) return;
+
+    // Prevent duplicates
+    const isDuplicate = trip.travelers.some(
+      (t) => t.name.toLowerCase() === trimmed.toLowerCase()
+    );
+    if (isDuplicate) {
+      alert("This traveler is already added.");
+      return;
+    }
+
+    addTraveler(trimmed);
     setNewName("");
   };
 
@@ -36,14 +47,20 @@ export default function TravelerSetup() {
     <div className="animate-fade-up flex flex-col gap-5">
       {/* Trip name */}
       <Card className="p-7 md:p-8">
-        <Typography variant="small" className="uppercase tracking-widest opacity-40 font-bold mb-3 block">
-          Trip Name
-        </Typography>
+        <div className="flex justify-between items-center mb-3">
+          <Typography variant="small" className="uppercase tracking-widest opacity-40 font-bold block">
+            Trip Name
+          </Typography>
+          <Typography variant="small" className="text-[10px] opacity-30">
+            {trip.name.length}/{MAX_TRIP_NAME}
+          </Typography>
+        </div>
         <input
           className="w-full bg-white/8 border border-white/15 rounded-xl px-4 py-3 text-[15px] text-text outline-none focus:border-gold/50 focus:bg-white/12 transition-all"
-          placeholder="e.g. Bali Summer 2026 🌴"
+          placeholder="e.g. Bali Summer Trip 🌴"
           value={trip.name}
-          onChange={(e) => updateTripName(e.target.value)}
+          maxLength={MAX_TRIP_NAME}
+          onChange={(e) => updateTripName(e.target.value.replace(/[0-9]/g, ""))}
         />
 
         <Typography variant="small" className="uppercase tracking-widest opacity-40 font-bold mb-3 mt-8 block">
@@ -89,7 +106,9 @@ export default function TravelerSetup() {
                 >
                   {getInitial(t.name)}
                 </div>
-                <Typography variant="body" className="font-medium">{t.name}</Typography>
+                <Typography variant="body" className="font-medium truncate max-w-[150px] sm:max-w-[250px]" title={t.name}>
+                  {t.name}
+                </Typography>
               </div>
               {trip.travelers.length > 2 && (
                 <button
@@ -103,16 +122,29 @@ export default function TravelerSetup() {
           ))}
         </div>
 
-        <div className="flex gap-2">
-          <input
-            className="flex-1 bg-white/8 border border-white/15 rounded-xl px-4 py-3 text-[15px] text-text outline-none focus:border-gold/50 focus:bg-white/12 transition-all"
-            placeholder={trip.travelers.length >= MAX_TRAVELERS ? "Limit reached" : "Add traveler name..."}
-            value={newName}
-            onChange={(e) => setNewName(e.target.value)}
-            onKeyDown={(e) => e.key === "Enter" && handleAdd()}
+        <div className="flex flex-col sm:flex-row gap-2">
+          <div className="relative flex-1">
+            <input
+              className="w-full bg-white/8 border border-white/15 rounded-xl px-4 py-3 pr-14 text-[15px] text-text outline-none focus:border-gold/50 focus:bg-white/12 transition-all"
+              placeholder={trip.travelers.length >= MAX_TRAVELERS ? "Limit reached" : "Add traveler name..."}
+              value={newName}
+              maxLength={MAX_TRAVELER_NAME}
+              onChange={(e) => setNewName(e.target.value.replace(/[0-9]/g, ""))}
+              onKeyDown={(e) => e.key === "Enter" && handleAdd()}
+              disabled={trip.travelers.length >= MAX_TRAVELERS}
+            />
+            <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none">
+              <Typography variant="small" className="text-[10px] opacity-30">
+                {newName.length}/{MAX_TRAVELER_NAME}
+              </Typography>
+            </div>
+          </div>
+          <Button
+            variant="secondary"
+            onClick={handleAdd}
             disabled={trip.travelers.length >= MAX_TRAVELERS}
-          />
-          <Button variant="secondary" onClick={handleAdd} disabled={trip.travelers.length >= MAX_TRAVELERS}>
+            className="w-full sm:w-auto"
+          >
             + Add
           </Button>
         </div>
