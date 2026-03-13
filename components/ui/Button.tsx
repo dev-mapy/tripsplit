@@ -18,7 +18,6 @@ export function Button({
   ...props
 }: ButtonProps) {
   const isLink = typeof href === "string";
-  const Comp = asChild ? Slot : isLink ? "a" : "button";
 
   const baseStyles =
     "inline-flex items-center justify-center rounded-xl font-bold font-sans transition-all cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed";
@@ -48,6 +47,8 @@ export function Button({
       </Link>
     );
   }
+
+  const Comp = asChild ? Slot : "button";
 
   return <Comp className={combinedClasses} {...props} />;
 }
