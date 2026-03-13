@@ -122,22 +122,29 @@ export default function TravelerSetup() {
           ))}
         </div>
 
-        <div className="flex gap-2 relative">
-          <input
-            className="flex-1 bg-white/8 border border-white/15 rounded-xl px-4 py-3 pr-14 text-[15px] text-text outline-none focus:border-gold/50 focus:bg-white/12 transition-all"
-            placeholder={trip.travelers.length >= MAX_TRAVELERS ? "Limit reached" : "Add traveler name..."}
-            value={newName}
-            maxLength={MAX_TRAVELER_NAME}
-            onChange={(e) => setNewName(e.target.value.replace(/[0-9]/g, ""))}
-            onKeyDown={(e) => e.key === "Enter" && handleAdd()}
-            disabled={trip.travelers.length >= MAX_TRAVELERS}
-          />
-          <div className="absolute right-[92px] top-1/2 -translate-y-1/2 pointer-events-none">
-            <Typography variant="small" className="text-[10px] opacity-30">
-              {newName.length}/{MAX_TRAVELER_NAME}
-            </Typography>
+        <div className="flex flex-col sm:flex-row gap-2">
+          <div className="relative flex-1">
+            <input
+              className="w-full bg-white/8 border border-white/15 rounded-xl px-4 py-3 pr-14 text-[15px] text-text outline-none focus:border-gold/50 focus:bg-white/12 transition-all"
+              placeholder={trip.travelers.length >= MAX_TRAVELERS ? "Limit reached" : "Add traveler name..."}
+              value={newName}
+              maxLength={MAX_TRAVELER_NAME}
+              onChange={(e) => setNewName(e.target.value.replace(/[0-9]/g, ""))}
+              onKeyDown={(e) => e.key === "Enter" && handleAdd()}
+              disabled={trip.travelers.length >= MAX_TRAVELERS}
+            />
+            <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none">
+              <Typography variant="small" className="text-[10px] opacity-30">
+                {newName.length}/{MAX_TRAVELER_NAME}
+              </Typography>
+            </div>
           </div>
-          <Button variant="secondary" onClick={handleAdd} disabled={trip.travelers.length >= MAX_TRAVELERS}>
+          <Button
+            variant="secondary"
+            onClick={handleAdd}
+            disabled={trip.travelers.length >= MAX_TRAVELERS}
+            className="w-full sm:w-auto"
+          >
             + Add
           </Button>
         </div>
