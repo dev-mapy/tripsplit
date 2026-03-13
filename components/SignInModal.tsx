@@ -55,7 +55,7 @@ export default function SignInModal({
 
   return (
     <div
-      className="fixed inset-0 bg-black/70 backdrop-blur-md z-200 flex items-center justify-center p-5"
+      className="fixed inset-0 bg-black/70 backdrop-blur-md z-100 flex items-center justify-center p-5"
       onClick={(e) => e.target === e.currentTarget && onClose()}
     >
       <Card className="relative p-9 max-w-[420px] w-full animate-pop-in">
