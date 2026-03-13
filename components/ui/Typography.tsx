@@ -1,17 +1,16 @@
 import React from "react";
 
-interface TypographyProps {
+interface TypographyProps extends React.HTMLAttributes<HTMLElement> {
   as?: "h1" | "h2" | "h3" | "p" | "span" | "div";
   variant?: "h1" | "h2" | "h3" | "body" | "small" | "sub" | "eyebrow";
-  className?: string;
-  children: React.ReactNode;
 }
 
 export function Typography({
-  as: Component = "p",
+  as: Component = "p" as any,
   variant = "body",
   className = "",
   children,
+  ...props
 }: TypographyProps) {
   const styles = {
     h1: "font-serif text-[clamp(40px,7vw,72px)] font-bold leading-[1.1]",
@@ -23,5 +22,9 @@ export function Typography({
     eyebrow: "font-sans text-[11px] font-bold tracking-[2px] uppercase text-text-muted",
   };
 
-  return <Component className={`${styles[variant]} ${className}`}>{children}</Component>;
+  return (
+    <Component className={`${styles[variant]} ${className}`} {...props}>
+      {children}
+    </Component>
+  );
 }
