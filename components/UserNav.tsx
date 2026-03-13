@@ -18,6 +18,7 @@ export function UserNav({ userName, userAvatar, onSignOut }: UserNavProps) {
   const { count, limit, isFull } = useTripLimit();
   const [showMenu, setShowMenu] = useState(false);
   const [showSignIn, setShowSignIn] = useState(false);
+  const [imageError, setImageError] = useState(false);
 
   if (loading) return null;
 
@@ -62,12 +63,13 @@ export function UserNav({ userName, userAvatar, onSignOut }: UserNavProps) {
         onClick={() => setShowMenu((v) => !v)}
         className="flex items-center gap-2 hover:opacity-80 transition-opacity cursor-pointer group"
       >
-        {avatarUrl ? (
+        {avatarUrl && !imageError ? (
           // eslint-disable-next-line @next/next/no-img-element
           <img
             src={avatarUrl}
             alt="avatar"
             className="w-8 h-8 rounded-full object-cover border border-white/10"
+            onError={() => setImageError(true)}
           />
         ) : (
           <div className="w-8 h-8 rounded-full bg-linear-to-br from-gold-warm to-gold flex items-center justify-center text-[13px] font-bold text-bg-deep">
