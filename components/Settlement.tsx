@@ -14,7 +14,7 @@ import { Typography } from "@/components/ui/Typography";
 import { formatAmount } from "@/lib/utils";
 
 export default function Settlement() {
-  const { trip, setStep, resetTrip, isSharedView } = useTrip();
+  const { trip, setStep, resetTrip, isReadOnly } = useTrip();
   const sym = trip.currency.symbol;
   const { balances, transactions } = calcSettlement(trip.travelers, trip.expenses);
   const total = trip.expenses.reduce((s, e) => s + e.amount, 0);
@@ -31,21 +31,6 @@ export default function Settlement() {
 
   return (
     <div className="animate-fade-up flex flex-col gap-5">
-
-      {/* ── Read-only banner (shared view) ── */}
-      {isSharedView && (
-        <div className="bg-blue-500/10 border border-blue-500/20 rounded-2xl p-5 flex items-start gap-4 animate-fade-up">
-          <span className="text-2xl flex-shrink-0">👀</span>
-          <div>
-            <Typography variant="small" className="font-bold text-blue-300 mb-1">
-              You&apos;re viewing a shared trip — read only.
-            </Typography>
-            <Typography variant="small" className="opacity-60 leading-relaxed">
-              This is {trip.name ? <><strong className="opacity-100">{trip.name}</strong>&apos;s</> : "someone else's"} trip split. You can view the settlement but cannot make changes.
-            </Typography>
-          </div>
-        </div>
-      )}
 
       {/* ── Trip header ── */}
       <Card className="text-center py-8 px-6 animate-fade-up">
@@ -68,8 +53,8 @@ export default function Settlement() {
       {/* ── Share link ── */}
       <ShareButton />
 
-      {/* ── Save trip (owner only, not shown in shared view) ── */}
-      {!isSharedView && <SaveTripButton />}
+      {/* ── Save trip ── */}
+      {!isReadOnly && <SaveTripButton />}
 
       {/* ── Balances ── */}
       <Card className="animate-fade-up">
@@ -187,13 +172,7 @@ export default function Settlement() {
       )}
 
       {/* ── Action buttons ── */}
-      {isSharedView ? (
-        <Card className="text-center py-10 bg-gold/5 border-gold/20 animate-fade-up">
-          <Typography variant="small" className="opacity-50 mb-6 block">Planning your own trip?</Typography>
-          <Button href="/split" size="lg">Start your own trip ✈️</Button>
-          <Typography variant="small" className="opacity-30 mt-4 block">Free · No login required</Typography>
-        </Card>
-      ) : (
+      {!isReadOnly && (
         <div className="flex flex-col gap-3">
           <div className="flex gap-2">
             <Button
