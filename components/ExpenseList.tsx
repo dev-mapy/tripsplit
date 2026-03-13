@@ -56,12 +56,12 @@ export default function ExpenseList() {
             {trip.expenses.map((exp, i) => (
               <div
                 key={exp.id}
-                className="bg-white/5 border border-white/5 hover:border-white/20 hover:bg-white/8 rounded-2xl p-5 flex items-center justify-between gap-4 cursor-pointer transition-all animate-slide-in"
+                className="bg-white/5 border border-white/5 hover:border-white/20 hover:bg-white/8 rounded-2xl p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4 cursor-pointer transition-all animate-slide-in"
                 onClick={() => openEdit(exp)}
                 style={{ animationDelay: `${i * 0.05}s` }}
               >
                 <div className="flex items-center gap-5">
-                  <div className="text-3xl w-10 text-center">
+                  <div className="text-3xl w-10 text-center flex-shrink-0">
                     {exp.category.split(" ")[0]}
                   </div>
                   <div>
@@ -71,7 +71,7 @@ export default function ExpenseList() {
                     </Typography>
                   </div>
                 </div>
-                <div className="text-right">
+                <div className="flex flex-col items-start sm:items-end pl-14 sm:pl-0">
                   <Typography variant="h3">{formatAmount(exp.amount, sym)}</Typography>
                   <Typography variant="small" className="opacity-30">{formatAmount(exp.amount / exp.splitAmong.length, sym)}/ea</Typography>
                 </div>
