@@ -20,28 +20,7 @@ const STEP_LABELS = ["Trip Setup", "Expenses", "Settlement"];
 export default function SplitApp() {
   const { user } = useAuth();
   const router = useRouter();
-  const { step, trip, isSharedView } = useTrip();
-  const savingRef = useRef(false);
-
-  // If a logged-in user hits /split with a ?trip= param (anonymous feature),
-  // auto-save it to their account and redirect to the clean URL.
-  useEffect(() => {
-    if (user && isSharedView && !savingRef.current) {
-      savingRef.current = true;
-      saveTrip({
-        name: trip.name || "My Trip",
-        slug: "",
-        currencyCode: trip.currency.code,
-        travelers: trip.travelers,
-        expenses: trip.expenses,
-      }).then(({ url }) => {
-        router.replace(url);
-      }).catch((err) => {
-        console.error("Auto-save failed:", err);
-        savingRef.current = false;
-      });
-    }
-  }, [user, isSharedView, trip, router]);
+  const { step } = useTrip();
 
   return (
     <Layout variant="centered">

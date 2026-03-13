@@ -27,29 +27,9 @@ export default function TravelerSetup() {
 
   const canContinue = trip.name.trim().length > 0 && trip.travelers.length >= 2;
 
-  const handleContinue = async () => {
-    if (!canContinue || loading) return;
-
-    if (user) {
-      setLoading(true);
-      try {
-        const { url } = await saveTrip({
-          name: trip.name,
-          slug: "",
-          currencyCode: trip.currency.code,
-          travelers: trip.travelers,
-          expenses: trip.expenses,
-        });
-        router.push(`${url}?edit=1`);
-      } catch (err) {
-        console.error("Failed to auto-save trip:", err);
-        setStep("expenses");
-      } finally {
-        setLoading(false);
-      }
-    } else {
-      setStep("expenses");
-    }
+  const handleContinue = () => {
+    if (!canContinue) return;
+    setStep("expenses");
   };
 
   return (

@@ -34,6 +34,9 @@ interface Props {
 }
 
 export default function SavedTripView(props: Props) {
+  const { user } = useAuth();
+  const isOwner = user?.id === props.userId;
+
   return (
     <TripProvider
       initialTrip={{
@@ -42,8 +45,9 @@ export default function SavedTripView(props: Props) {
         travelers: props.travelers,
         expenses: props.expenses,
       }}
+      isReadOnly={!isOwner}
     >
-      <SavedTripContent {...props} />
+      <SavedTripContent {...props} isOwner={isOwner} />
     </TripProvider>
   );
 }
@@ -56,9 +60,8 @@ function SavedTripContent({
   travelers: initialTravelers,
   expenses: initialExpenses,
   updatedAt,
-}: Props) {
-  const { user } = useAuth();
-  const isOwner = user?.id === userId;
+  isOwner,
+}: Props & { isOwner: boolean }) {
 
   const [travelers, setTravelers] = useState<Traveler[]>(initialTravelers);
   const [expenses, setExpenses] = useState<Expense[]>(initialExpenses);
@@ -136,7 +139,7 @@ function SavedTripContent({
                 You&apos;re viewing a shared trip — read only.
               </Typography>
               <Typography variant="small" className="opacity-60">
-                This is <strong className="opacity-100">{name}</strong>. You can view the settlement but cannot make changes.
+                This is <strong className="opacity-100">{name}</strong>&apos;s trip split. You can view the settlement but cannot make changes.
               </Typography>
             </div>
           </div>
@@ -407,6 +410,7 @@ function ExpenseFormAdapter({
         resetTrip: () => {},
         shareUrl: "",
         isSharedView: false,
+        isReadOnly: false,
       }}
     >
       <ExpenseForm editing={editing} onClose={onClose} />
