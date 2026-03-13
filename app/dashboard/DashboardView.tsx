@@ -12,6 +12,7 @@ import { Typography } from "@/components/ui/Typography";
 import { StarsBackground } from "@/components/ui/StarsBackground";
 import { Layout } from "@/components/ui/Layout";
 import { UserNav } from "@/components/UserNav";
+import { formatAmount } from "@/lib/utils";
 
 interface TripSummary {
   id: string;
@@ -196,7 +197,7 @@ export default function DashboardView({
                       Total
                     </Typography>
                     <Typography variant="h2" className="text-gold">
-                      {trip.currencySymbol}{trip.total.toFixed(2)}
+                      {formatAmount(trip.total, trip.currencySymbol)}
                     </Typography>
                   </div>
 

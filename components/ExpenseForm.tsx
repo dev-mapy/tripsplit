@@ -7,7 +7,7 @@ import type { Expense } from "@/types";
 import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
 import { Typography } from "@/components/ui/Typography";
-import { formatCurrency } from "@/lib/utils";
+import { formatCurrency, formatAmount } from "@/lib/utils";
 
 interface Props {
   editing: Expense | null;
@@ -241,7 +241,7 @@ export default function ExpenseForm({ editing, onClose }: Props) {
           {perPerson && (
             <div className="bg-gold/10 border border-gold/20 rounded-xl p-4 text-sm">
               <span className="opacity-60">Each person pays: </span>
-              <span className="text-gold font-bold">{sym}{new Intl.NumberFormat("en-US").format(parseFloat(perPerson))}</span>
+              <span className="text-gold font-bold">{formatAmount(parseFloat(perPerson), sym)}</span>
             </div>
           )}
 
