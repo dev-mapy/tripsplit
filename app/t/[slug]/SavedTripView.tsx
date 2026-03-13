@@ -55,12 +55,14 @@ export default function SavedTripView(props: Props) {
 }
 
 function SavedTripContent({
+  tripId,
   slug,
   userId,
   name: initialName,
   currency,
   travelers: initialTravelers,
   expenses: initialExpenses,
+  createdAt,
   updatedAt: initialUpdatedAt,
   isOwner,
 }: Props & { isOwner: boolean }) {
@@ -78,6 +80,19 @@ function SavedTripContent({
   const [editingExpense, setEditingExpense] = useState<Expense | null>(null);
   const [showExpenseForm, setShowExpenseForm] = useState(false);
   const hasUnsavedChanges = useRef(false);
+
+  // Reconstruct a full SavedTrip for mutator fallbacks
+  const baselineTrip = useMemo(() => ({
+    id: tripId,
+    slug,
+    userId,
+    name: initialName,
+    currencyCode: currency.code,
+    travelers: initialTravelers,
+    expenses: initialExpenses,
+    createdAt,
+    updatedAt: initialUpdatedAt,
+  }), [tripId, slug, userId, initialName, currency.code, initialTravelers, initialExpenses, createdAt, initialUpdatedAt]);
 
   // Sync with fetched data when it arrives, but only if no unsaved changes
   useEffect(() => {
@@ -114,15 +129,17 @@ function SavedTripContent({
       updatedAt: new Date().toISOString(),
     };
 
+    const currentTrip = fetchedTrip || baselineTrip;
+
     try {
       await mutate(
         async () => {
           const res = await updateTrip(slug, { travelers, expenses });
           hasUnsavedChanges.current = false;
-          return { ...fetchedTrip, ...updatedData, updatedAt: res.updatedAt };
+          return { ...currentTrip, ...updatedData, updatedAt: res.updatedAt };
         },
         {
-          optimisticData: { ...fetchedTrip, ...updatedData },
+          optimisticData: { ...currentTrip, ...updatedData },
           rollbackOnError: true,
           populateCache: true,
           revalidate: false,
@@ -139,7 +156,7 @@ function SavedTripContent({
     } finally {
       setSaving(false);
     }
-  }, [slug, travelers, expenses, mutate, fetchedTrip]);
+  }, [slug, travelers, expenses, mutate, fetchedTrip, baselineTrip]);
 
   const lastUpdated = new Date(updatedAt).toLocaleDateString("en-US", {
     month: "short",
