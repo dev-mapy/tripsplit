@@ -6,6 +6,7 @@ import { useAuth } from "@/lib/auth-context";
 import { useTripLimit } from "@/lib/trip-limit-context";
 import SignInModal from "@/components/SignInModal";
 import { Button } from "@/components/ui/Button";
+import { ENABLE_AUTH } from "@/lib/constants";
 
 interface UserNavProps {
   userName?: string;
@@ -20,7 +21,7 @@ export function UserNav({ userName, userAvatar, onSignOut }: UserNavProps) {
   const [showSignIn, setShowSignIn] = useState(false);
   const [imageError, setImageError] = useState(false);
 
-  if (loading) return null;
+  if (!ENABLE_AUTH || loading) return null;
 
   // If props are provided, use them (legacy/direct usage in Dashboard)
   const displayUser = user || (userName ? { user_metadata: { full_name: userName, avatar_url: userAvatar }, email: "" } : null);

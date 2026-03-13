@@ -11,6 +11,7 @@ import SignInModal from "@/components/SignInModal";
 import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
 import { Typography } from "@/components/ui/Typography";
+import { ENABLE_AUTH } from "@/lib/constants";
 
 export default function SaveTripButton() {
   const { user } = useAuth();
@@ -21,6 +22,8 @@ export default function SaveTripButton() {
   const [showSignIn, setShowSignIn] = useState(false);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
+  if (!ENABLE_AUTH) return null;
 
   const handleSave = async () => {
     // Not signed in — show sign in modal

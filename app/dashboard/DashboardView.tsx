@@ -1,19 +1,22 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/lib/auth-context";
 import { useTripLimit } from "@/lib/trip-limit-context";
 import { deleteTrip } from "@/lib/api";
+import { useUserTrips } from "@/lib/swr";
 import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
 import { Typography } from "@/components/ui/Typography";
 import { StarsBackground } from "@/components/ui/StarsBackground";
 import { Layout } from "@/components/ui/Layout";
 import { UserNav } from "@/components/UserNav";
+import { Toast } from "@/components/ui/Toast";
 import { formatAmount } from "@/lib/utils";
 import { getCleanBaseUrl } from "@/lib/utils";
+import { ENABLE_AUTH } from "@/lib/constants";
 
 interface TripSummary {
   id: string;
@@ -43,21 +46,58 @@ export default function DashboardView({
   const { signOut } = useAuth();
   const { count, limit, isFull, refresh: refreshLimit } = useTripLimit();
   const router = useRouter();
-  const [trips, setTrips] = useState<TripSummary[]>(initialTrips);
+
+  if (!ENABLE_AUTH) return null;
+  const { trips: fetchedTrips, mutate } = useUserTrips();
   const [deletingSlug, setDeletingSlug] = useState<string | null>(null);
   const [confirmSlug, setConfirmSlug] = useState<string | null>(null);
+  const [error, setError] = useState<string | null>(null);
+  const [showToast, setShowToast] = useState(false);
 
-  const firstName = userName.split(" ")[0];
+  // Use fetched trips if available, otherwise fallback to initial server-side trips
+  const trips = useMemo(() => {
+    if (fetchedTrips) {
+      // Shape them to TripSummary format
+      return fetchedTrips.map((t: any) => ({
+        id: t.id,
+        slug: t.slug,
+        name: t.name,
+        currencyCode: t.currencyCode,
+        // We don't have currencySymbol/Flag easily here without importing CURRENCIES,
+        // but DashboardView props already gave them to us.
+        // Actually, it's better if we let DashboardView keep the enriched data.
+        ...initialTrips.find(it => it.slug === t.slug) || t
+      }));
+    }
+    return initialTrips;
+  }, [fetchedTrips, initialTrips]);
 
   const handleDelete = async (slug: string) => {
     setDeletingSlug(slug);
+    setError(null);
+
+    // Optimistic Update
+    const updatedTrips = trips.filter((t) => t.slug !== slug);
+
     try {
-      await deleteTrip(slug);
-      setTrips((prev) => prev.filter((t) => t.slug !== slug));
+      await mutate(
+        async () => {
+          await deleteTrip(slug);
+          return { trips: updatedTrips };
+        },
+        {
+          optimisticData: { trips: updatedTrips },
+          rollbackOnError: true,
+          populateCache: true,
+          revalidate: false,
+        }
+      );
       setConfirmSlug(null);
       refreshLimit();
     } catch (err) {
       console.error("Delete failed:", err);
+      setError("Failed to delete trip. Please try again.");
+      setShowToast(true);
     } finally {
       setDeletingSlug(null);
     }
@@ -122,6 +162,27 @@ export default function DashboardView({
           )}
         </div>
       </div>
+
+      {error && (
+        <div className="mb-6 bg-red-400/10 border border-red-400/20 rounded-xl p-4 flex justify-between items-center animate-in fade-in slide-in-from-top-2">
+          <Typography variant="small" className="text-red-400 font-bold">
+            ⚠️ {error}
+          </Typography>
+          <Button variant="ghost" size="sm" onClick={() => setError(null)}>Dismiss</Button>
+        </div>
+      )}
+
+      {showToast && error && (
+        <Toast
+          message={error}
+          type="error"
+          onClose={() => setShowToast(false)}
+          onRetry={() => {
+            setShowToast(false);
+            if (confirmSlug) handleDelete(confirmSlug);
+          }}
+        />
+      )}
 
       {trips.length === 0 ? (
         <Card className="text-center py-20 px-8">

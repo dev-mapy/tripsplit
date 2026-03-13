@@ -26,3 +26,5 @@ export const DEFAULT_CURRENCY = CURRENCIES[0];
 export const MAX_FREE_TRIPS = 3;
 export const MAX_TRAVELERS = 99;
 export const MAX_EXPENSES = 99;
+
+export const ENABLE_AUTH = process.env.NEXT_PUBLIC_ENABLE_AUTH !== "false";
