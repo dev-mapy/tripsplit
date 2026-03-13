@@ -1,7 +1,14 @@
 export const randomId = () => Math.random().toString(36).slice(2, 8);
 
+export const formatCurrency = (amount: number) => {
+  return new Intl.NumberFormat("en-US", {
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2,
+  }).format(amount);
+};
+
 export const formatAmount = (amount: number, symbol: string) =>
-  `${symbol}${amount.toFixed(2)}`;
+  `${symbol}${formatCurrency(amount)}`;
 
 export const getInitial = (name: string) => name[0].toUpperCase();
 

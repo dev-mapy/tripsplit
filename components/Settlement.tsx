@@ -11,6 +11,7 @@ import Link from "next/link";
 import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
 import { Typography } from "@/components/ui/Typography";
+import { formatAmount } from "@/lib/utils";
 
 export default function Settlement() {
   const { trip, setStep, resetTrip, isSharedView } = useTrip();
@@ -55,11 +56,11 @@ export default function Settlement() {
         <div className="flex justify-center gap-12 sm:gap-20 flex-wrap">
           <div>
             <Typography variant="small" className="uppercase tracking-widest opacity-40 font-bold mb-1 block">Total Spent</Typography>
-            <Typography variant="h2">{sym}{total.toFixed(2)}</Typography>
+            <Typography variant="h2">{formatAmount(total, sym)}</Typography>
           </div>
           <div>
             <Typography variant="small" className="uppercase tracking-widest opacity-40 font-bold mb-1 block">Per Person</Typography>
-            <Typography variant="h2">{sym}{(total / trip.travelers.length).toFixed(2)}</Typography>
+            <Typography variant="h2">{formatAmount(total / trip.travelers.length, sym)}</Typography>
           </div>
         </div>
       </Card>
@@ -97,7 +98,7 @@ export default function Settlement() {
                   <div>
                     <Typography variant="body" className="font-bold">{t.name}</Typography>
                     <Typography variant="small" className="opacity-50">
-                      paid {sym}{paid.toFixed(2)}
+                      paid {formatAmount(paid, sym)}
                     </Typography>
                   </div>
                 </div>
@@ -107,9 +108,9 @@ export default function Settlement() {
                     className={isPos ? "text-green-400" : isNeg ? "text-red-400" : "opacity-40"}
                   >
                     {isPos
-                      ? `+${sym}${bal.toFixed(2)}`
+                      ? `+${formatAmount(bal, sym)}`
                       : isNeg
-                      ? `-${sym}${(-bal).toFixed(2)}`
+                      ? `-${formatAmount(-bal, sym)}`
                       : `${sym}0.00`}
                   </Typography>
                   <Typography variant="small" className="opacity-40 uppercase tracking-tighter text-[10px] font-bold">
@@ -143,7 +144,7 @@ export default function Settlement() {
                   <span className="font-bold text-green-400">{getName(tx.to)}</span>
                 </div>
                 <Typography variant="h2" className="text-gold">
-                  {sym}{tx.amount.toFixed(2)}
+                  {formatAmount(tx.amount, sym)}
                 </Typography>
               </div>
             ))}
@@ -167,7 +168,7 @@ export default function Settlement() {
                 <div className="flex justify-between mb-2">
                   <Typography variant="small">{cat}</Typography>
                   <Typography variant="small" className="font-bold">
-                    {sym}{catTotal.toFixed(2)} · {((catTotal / total) * 100).toFixed(0)}%
+                    {formatAmount(catTotal, sym)} · {((catTotal / total) * 100).toFixed(0)}%
                   </Typography>
                 </div>
                 <div className="h-1.5 bg-white/10 rounded-full overflow-hidden">

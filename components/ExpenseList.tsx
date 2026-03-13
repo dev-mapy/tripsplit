@@ -9,6 +9,7 @@ import type { Expense } from "@/types";
 import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
 import { Typography } from "@/components/ui/Typography";
+import { formatAmount } from "@/lib/utils";
 
 export default function ExpenseList() {
   const { trip, setStep } = useTrip();
@@ -35,7 +36,7 @@ export default function ExpenseList() {
           </div>
           <div className="sm:text-right">
             <Typography variant="small" className="uppercase tracking-widest opacity-40 font-bold mb-1 block">Total Spent</Typography>
-            <Typography variant="h2" className="text-gold">{sym}{total.toFixed(2)}</Typography>
+            <Typography variant="h2" className="text-gold">{formatAmount(total, sym)}</Typography>
           </div>
         </Card>
 
@@ -66,8 +67,8 @@ export default function ExpenseList() {
                   </div>
                 </div>
                 <div className="text-right">
-                  <Typography variant="h3">{sym}{exp.amount.toFixed(2)}</Typography>
-                  <Typography variant="small" className="opacity-30">{sym}{(exp.amount / exp.splitAmong.length).toFixed(2)}/ea</Typography>
+                  <Typography variant="h3">{formatAmount(exp.amount, sym)}</Typography>
+                  <Typography variant="small" className="opacity-30">{formatAmount(exp.amount / exp.splitAmong.length, sym)}/ea</Typography>
                 </div>
               </div>
             ))}
