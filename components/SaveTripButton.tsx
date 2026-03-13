@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/lib/auth-context";
 import { useTrip } from "@/lib/trip-context";
+import { useTripLimit } from "@/lib/trip-limit-context";
 import { saveTrip } from "@/lib/api";
 import { getCleanBaseUrl } from "@/lib/utils";
 import SignInModal from "@/components/SignInModal";
@@ -14,6 +15,7 @@ import { Typography } from "@/components/ui/Typography";
 export default function SaveTripButton() {
   const { user } = useAuth();
   const { trip } = useTrip();
+  const { count, limit, isFull, refresh } = useTripLimit();
   const router = useRouter();
 
   const [showSignIn, setShowSignIn] = useState(false);
@@ -38,6 +40,9 @@ export default function SaveTripButton() {
         travelers: trip.travelers,
         expenses: trip.expenses,
       });
+
+      // Refresh the limit count before navigating
+      await refresh();
 
       // Redirect to the saved trip page
       router.push(url);
@@ -68,24 +73,37 @@ export default function SaveTripButton() {
                 <span>⚠️</span> {error}
               </Typography>
             )}
+
+            {user && isFull && (
+              <Typography variant="small" className="text-red-400 mt-3 flex items-center gap-2">
+                <span>⚠️</span> You've reached your limit of {limit} trips.
+              </Typography>
+            )}
           </div>
 
-          <Button
-            onClick={handleSave}
-            disabled={saving}
-            size="md"
-            className="w-full md:w-auto min-w-[180px]"
-          >
-            {saving ? (
-              <>
-                <span className="animate-spin mr-2">🌀</span> Saving...
-              </>
-            ) : user ? (
-              "Save trip →"
-            ) : (
-              "Sign in to save →"
+          <div className="flex flex-col items-center gap-2 w-full md:w-auto">
+            <Button
+              onClick={handleSave}
+              disabled={saving || (!!user && isFull)}
+              size="md"
+              className="w-full md:w-auto min-w-[180px]"
+            >
+              {saving ? (
+                <>
+                  <span className="animate-spin mr-2">🌀</span> Saving...
+                </>
+              ) : user ? (
+                isFull ? "Limit Reached" : "Save trip →"
+              ) : (
+                "Sign in to save →"
+              )}
+            </Button>
+            {user && (
+              <Typography variant="small" className={`font-mono font-bold text-[10px] ${isFull ? "text-red-400" : "text-gold/50"}`}>
+                {count}/{limit} trips used
+              </Typography>
             )}
-          </Button>
+          </div>
         </div>
       </Card>
 

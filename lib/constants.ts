@@ -22,3 +22,5 @@ export const CATEGORIES = [
 ];
 
 export const DEFAULT_CURRENCY = CURRENCIES[0];
+
+export const MAX_FREE_TRIPS = 3;

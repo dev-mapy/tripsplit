@@ -4,6 +4,7 @@ import { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/lib/auth-context";
+import { useTripLimit } from "@/lib/trip-limit-context";
 import { deleteTrip } from "@/lib/api";
 import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
@@ -38,6 +39,7 @@ export default function DashboardView({
   trips: initialTrips,
 }: Props) {
   const { signOut } = useAuth();
+  const { count, limit, isFull, refresh: refreshLimit } = useTripLimit();
   const router = useRouter();
   const [trips, setTrips] = useState<TripSummary[]>(initialTrips);
   const [deletingSlug, setDeletingSlug] = useState<string | null>(null);
@@ -51,6 +53,7 @@ export default function DashboardView({
       await deleteTrip(slug);
       setTrips((prev) => prev.filter((t) => t.slug !== slug));
       setConfirmSlug(null);
+      refreshLimit();
     } catch (err) {
       console.error("Delete failed:", err);
     } finally {
@@ -83,19 +86,39 @@ export default function DashboardView({
         />
       </div>
 
-      <div className="mb-10">
-        <Typography variant="h1" className="mb-2">Your Trips</Typography>
-        <Typography variant="body" className="opacity-50">
-          {trips.length === 0
-            ? "No saved trips yet."
-            : `${trips.length} saved trip${trips.length !== 1 ? "s" : ""}`}
-        </Typography>
-      </div>
+      <div className="mb-10 flex flex-col md:flex-row md:items-end justify-between gap-6">
+        <div>
+          <Typography variant="h1" className="mb-2">Your Trips</Typography>
+          <Typography variant="body" className="opacity-50">
+            {trips.length === 0
+              ? "No saved trips yet."
+              : `${trips.length} saved trip${trips.length !== 1 ? "s" : ""}`}
+          </Typography>
+        </div>
 
-      <div className="mb-12">
-        <Button href="/split" size="lg">
-          + New Trip
-        </Button>
+        <div className="flex flex-col items-end gap-3">
+          <div className="flex items-center gap-3 bg-white/5 border border-white/10 rounded-full px-4 py-1.5">
+            <div className="w-24 h-1.5 bg-white/10 rounded-full overflow-hidden">
+              <div
+                className={`h-full transition-all duration-500 ${isFull ? "bg-red-400" : "bg-gold"}`}
+                style={{ width: `${Math.min(100, (count / limit) * 100)}%` }}
+              />
+            </div>
+            <Typography variant="small" className={`font-mono font-bold ${isFull ? "text-red-400" : "text-gold"}`}>
+              {count}/{limit}
+            </Typography>
+          </div>
+
+          <Button href="/split" size="lg" disabled={isFull}>
+            {isFull ? "Limit Reached" : "+ New Trip"}
+          </Button>
+
+          {isFull && (
+            <Typography variant="small" className="text-red-400/60 text-[11px] max-w-[200px] text-right">
+              You've reached the free limit of {limit} trips. Delete one to create more.
+            </Typography>
+          )}
+        </div>
       </div>
 
       {trips.length === 0 ? (
