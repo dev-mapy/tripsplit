@@ -228,7 +228,7 @@ export default function DashboardView({
               <div className="p-6 md:p-8 flex flex-col md:flex-row justify-between gap-6">
                 <div className="flex-1 min-w-0">
                   <Link href={`/t/${trip.slug}`} className="block group/title">
-                    <Typography variant="h2" className="mb-2 group-hover/title:text-gold transition-colors truncate">
+                    <Typography variant="h2" className="mb-2 group-hover/title:text-gold transition-colors truncate" title={trip.name}>
                       {trip.name}
                     </Typography>
                   </Link>

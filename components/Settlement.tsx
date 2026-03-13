@@ -33,8 +33,8 @@ export default function Settlement() {
     <div className="animate-fade-up flex flex-col gap-5">
 
       {/* ── Trip header ── */}
-      <Card className="text-center py-8 px-6 animate-fade-up">
-        <Typography variant="h1" className="text-gold mb-2">{trip.name}</Typography>
+      <Card className="text-center py-8 px-6 animate-fade-up min-w-0">
+        <Typography variant="h1" className="text-gold mb-2 truncate" title={trip.name}>{trip.name}</Typography>
         <Typography variant="small" className="opacity-50 mb-8 block">
           {trip.expenses.length} expenses · {trip.travelers.length} travelers · {trip.currency.flag} {trip.currency.code}
         </Typography>
@@ -123,15 +123,15 @@ export default function Settlement() {
                 className="flex flex-col sm:flex-row sm:items-center justify-between p-5 bg-gold/10 border border-gold/20 rounded-2xl animate-fade-up gap-4"
                 style={{ animationDelay: `${0.3 + i * 0.1}s` }}
               >
-                <div className="flex flex-col sm:flex-row items-start sm:items-center gap-1 sm:gap-0">
-                  <span className="font-bold text-red-400">{getName(tx.from)}</span>
+                <div className="flex flex-col sm:flex-row items-start sm:items-center gap-1 sm:gap-0 min-w-0 flex-1">
+                  <span className="font-bold text-red-400 truncate max-w-[120px] sm:max-w-none" title={getName(tx.from)}>{getName(tx.from)}</span>
                   <div className="flex flex-col items-center sm:flex-row sm:mx-3 opacity-40 text-[10px] sm:text-base leading-none">
                     <span className="sm:hidden">↓</span>
                     <span className="uppercase sm:normal-case font-bold sm:font-normal">pays</span>
                     <span className="sm:hidden">↓</span>
                     <span className="hidden sm:inline">→</span>
                   </div>
-                  <span className="font-bold text-green-400">{getName(tx.to)}</span>
+                  <span className="font-bold text-green-400 truncate max-w-[120px] sm:max-w-none" title={getName(tx.to)}>{getName(tx.to)}</span>
                 </div>
                 <Typography variant="h2" className="text-gold text-left sm:text-right">
                   {formatAmount(tx.amount, sym)}

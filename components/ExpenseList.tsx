@@ -33,8 +33,8 @@ export default function ExpenseList() {
       <div className="animate-fade-up flex flex-col gap-4">
         {/* Summary bar */}
         <Card className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 py-6 px-8">
-          <div>
-            <Typography variant="h2" className="mb-1">{trip.name}</Typography>
+          <div className="min-w-0 flex-1">
+            <Typography variant="h2" className="mb-1 truncate" title={trip.name}>{trip.name}</Typography>
             <Typography variant="small" className="opacity-50">
               {trip.travelers.map((t) => t.name).join(" · ")} · {trip.currency.flag} {trip.currency.code}
             </Typography>

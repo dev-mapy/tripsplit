@@ -227,8 +227,8 @@ function SavedTripContent({
         )}
 
         {/* Trip header */}
-        <Card className="text-center py-8 px-6 animate-fade-up">
-          <Typography variant="h1" className="text-gold mb-2">{name}</Typography>
+        <Card className="text-center py-8 px-6 animate-fade-up min-w-0">
+          <Typography variant="h1" className="text-gold mb-2 truncate" title={name}>{name}</Typography>
           <Typography variant="small" className="opacity-50 mb-8">
             {expenses.length} expenses · {travelers.length} travelers · {currency.flag} {currency.code}
           </Typography>
