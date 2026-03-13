@@ -13,7 +13,11 @@ import { Typography } from "@/components/ui/Typography";
 import { StarsBackground } from "@/components/ui/StarsBackground";
 import { Layout } from "@/components/ui/Layout";
 import { UserNav } from "@/components/UserNav";
+<<<<<<< feature/swr-optimistic-mutations-8499914708661964157
 import { Toast } from "@/components/ui/Toast";
+=======
+import { formatAmount } from "@/lib/utils";
+>>>>>>> main
 import { getCleanBaseUrl } from "@/lib/utils";
 
 interface TripSummary {
@@ -255,7 +259,7 @@ export default function DashboardView({
                       Total
                     </Typography>
                     <Typography variant="h2" className="text-gold">
-                      {trip.currencySymbol}{trip.total.toFixed(2)}
+                      {formatAmount(trip.total, trip.currencySymbol)}
                     </Typography>
                   </div>
 

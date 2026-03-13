@@ -3,8 +3,8 @@
 import { useState, useCallback, useMemo, useEffect, useRef } from "react";
 import { useAuth } from "@/lib/auth-context";
 import { calcSettlement } from "@/lib/calculator";
-import { CATEGORIES } from "@/lib/constants";
-import { avatarColor, getInitial, getBaseUrl } from "@/lib/utils";
+import { CATEGORIES, MAX_EXPENSES } from "@/lib/constants";
+import { avatarColor, getInitial, getBaseUrl, formatAmount } from "@/lib/utils";
 import { updateTrip } from "@/lib/api";
 import { useTrip } from "@/lib/swr";
 import ShareButton from "@/components/ShareButton";
@@ -218,11 +218,11 @@ function SavedTripContent({
           <div className="flex justify-center gap-12 sm:gap-20 flex-wrap">
             <div>
               <Typography variant="small" className="uppercase tracking-widest opacity-40 font-bold mb-1">Total Spent</Typography>
-              <Typography variant="h2">{sym}{total.toFixed(2)}</Typography>
+              <Typography variant="h2">{formatAmount(total, sym)}</Typography>
             </div>
             <div>
               <Typography variant="small" className="uppercase tracking-widest opacity-40 font-bold mb-1">Per Person</Typography>
-              <Typography variant="h2">{sym}{(total / travelers.length).toFixed(2)}</Typography>
+              <Typography variant="h2">{formatAmount(total / travelers.length, sym)}</Typography>
             </div>
           </div>
         </Card>
@@ -261,12 +261,16 @@ function SavedTripContent({
                     </div>
                     <div>
                       <Typography variant="body" className="font-bold">{t.name}</Typography>
-                      <Typography variant="small" className="opacity-50">paid {sym}{paid.toFixed(2)}</Typography>
+                      <Typography variant="small" className="opacity-50">paid {formatAmount(paid, sym)}</Typography>
                     </div>
                   </div>
                   <div className="text-right">
                     <Typography variant="h3" className={isPos ? "text-green-400" : isNeg ? "text-red-400" : "opacity-40"}>
-                      {isPos ? `+${sym}${bal.toFixed(2)}` : isNeg ? `-${sym}${(-bal).toFixed(2)}` : `${sym}0.00`}
+                      {isPos
+                        ? `+${formatAmount(bal, sym)}`
+                        : isNeg
+                        ? `-${formatAmount(-bal, sym)}`
+                        : `${sym}0.00`}
                     </Typography>
                     <Typography variant="small" className="opacity-40 uppercase tracking-tighter text-[10px] font-bold">
                       {isPos ? "gets back" : isNeg ? "owes" : "settled ✓"}
@@ -295,7 +299,7 @@ function SavedTripContent({
                     <span className="font-bold text-green-400">{getName(tx.to)}</span>
                   </div>
                   <Typography variant="h2" className="text-gold">
-                    {sym}{tx.amount.toFixed(2)}
+                    {formatAmount(tx.amount, sym)}
                   </Typography>
                 </div>
               ))}
@@ -308,8 +312,17 @@ function SavedTripContent({
           <div className="flex justify-between items-center mb-6">
             <Typography variant="small" className="uppercase tracking-widest opacity-40 font-bold">All Expenses</Typography>
             {isOwner && (
-              <Button variant="secondary" size="sm" onClick={() => { setEditingExpense(null); setShowExpenseForm(true); }}>
-                + Add
+              <Button
+                variant="secondary"
+                size="sm"
+                onClick={() => {
+                  if (expenses.length >= MAX_EXPENSES) return;
+                  setEditingExpense(null);
+                  setShowExpenseForm(true);
+                }}
+                disabled={expenses.length >= MAX_EXPENSES}
+              >
+                {expenses.length >= MAX_EXPENSES ? "Limit Reached" : "+ Add"}
               </Button>
             )}
           </div>
@@ -335,8 +348,8 @@ function SavedTripContent({
                     </div>
                   </div>
                   <div className="text-right">
-                    <Typography variant="h3">{sym}{exp.amount.toFixed(2)}</Typography>
-                    <Typography variant="small" className="opacity-40">{sym}{(exp.amount / exp.splitAmong.length).toFixed(2)}/ea</Typography>
+                    <Typography variant="h3">{formatAmount(exp.amount, sym)}</Typography>
+                    <Typography variant="small" className="opacity-40">{formatAmount(exp.amount / exp.splitAmong.length, sym)}/ea</Typography>
                   </div>
                 </div>
               ))}
@@ -354,7 +367,7 @@ function SavedTripContent({
                   <div className="flex justify-between mb-2">
                     <Typography variant="small">{cat}</Typography>
                     <Typography variant="small" className="font-bold">
-                      {sym}{catTotal.toFixed(2)} · {((catTotal / total) * 100).toFixed(0)}%
+                      {formatAmount(catTotal, sym)} · {((catTotal / total) * 100).toFixed(0)}%
                     </Typography>
                   </div>
                   <div className="h-1.5 bg-white/10 rounded-full overflow-hidden">
