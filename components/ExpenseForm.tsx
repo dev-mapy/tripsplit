@@ -58,34 +58,45 @@ export default function ExpenseForm({ editing, onClose }: Props) {
   const isValid = desc.trim() && !isNaN(currentAmount) && currentAmount > 0 && splitAmong.length > 0;
 
   const handleAmountChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const val = e.target.value.replace(/[^0-9.]/g, "");
+    const raw = e.target.value;
 
-    // Max value check (99,999,999.99)
-    const num = parseFloat(val);
-    if (num > 99999999.99) return;
+    // 1. Extract digits and dots, removing commas
+    let clean = raw.replace(/,/g, "").replace(/[^0-9.]/g, "");
 
-    // Only allow one decimal point
-    const parts = val.split(".");
-    if (parts.length > 2) return;
-
-    // Limit decimal places to 2
-    if (parts[1] && parts[1].length > 2) return;
-
-    if (val === "") {
-      setAmount("");
-      return;
+    // 2. Handle multiple dots by keeping only the first one
+    const dotIndex = clean.indexOf(".");
+    if (dotIndex !== -1) {
+      const before = clean.slice(0, dotIndex);
+      const after = clean.slice(dotIndex + 1).replace(/\./g, "");
+      clean = `${before}.${after}`;
     }
 
-    // Format with commas for display
-    const formatted = val.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
-    // If it ends with a dot, keep it
-    if (val.endsWith(".")) {
-      setAmount(formatted + ".");
+    // 3. Split into parts
+    const [intPart, decPart] = clean.split(".");
+
+    // 4. Limit integer part to 8 digits and decimal to 2
+    let finalInt = intPart.slice(0, 8);
+    let finalDec = decPart !== undefined ? decPart.slice(0, 2) : undefined;
+
+    // 5. Format the integer part with commas
+    let formattedInt = "";
+    if (finalInt !== "") {
+      const n = parseInt(finalInt);
+      if (!isNaN(n)) {
+        formattedInt = n.toLocaleString("en-US");
+      }
+    }
+
+    // 6. Final assembly - setAmount ensures the input remains controlled and clean
+    if (finalDec !== undefined) {
+      setAmount(`${formattedInt}.${finalDec}`);
     } else {
-      // Re-format the base number correctly while preserving decimal
-      const [base, decimal] = val.split(".");
-      const formattedBase = new Intl.NumberFormat("en-US").format(parseInt(base || "0"));
-      setAmount(decimal !== undefined ? `${formattedBase}.${decimal}` : formattedBase);
+      // Check if it should have a trailing dot
+      if (clean.includes(".")) {
+        setAmount(`${formattedInt}.`);
+      } else {
+        setAmount(formattedInt);
+      }
     }
   };
 

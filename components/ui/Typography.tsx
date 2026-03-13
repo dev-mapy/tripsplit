@@ -2,7 +2,7 @@ import React from "react";
 
 interface TypographyProps {
   as?: "h1" | "h2" | "h3" | "p" | "span" | "div";
-  variant?: "h1" | "h2" | "h3" | "body" | "sub" | "eyebrow";
+  variant?: "h1" | "h2" | "h3" | "body" | "small" | "sub" | "eyebrow";
   className?: string;
   children: React.ReactNode;
 }
