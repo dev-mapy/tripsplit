@@ -3,20 +3,18 @@
 import {
   createContext,
   useContext,
-  useEffect,
-  useState,
-  useCallback,
+  useMemo,
   type ReactNode,
 } from "react";
 import { useAuth } from "./auth-context";
-import { fetchTripCount } from "./api";
+import { useTripCount } from "./swr";
 
 interface TripLimitContextValue {
   count: number;
   limit: number;
   remaining: number;
   loading: boolean;
-  refresh: () => Promise<void>;
+  refresh: () => void;
   isFull: boolean;
 }
 
@@ -24,36 +22,19 @@ const TripLimitContext = createContext<TripLimitContextValue | null>(null);
 
 export function TripLimitProvider({ children }: { children: ReactNode }) {
   const { user } = useAuth();
-  const [data, setData] = useState({ count: 0, limit: 3, remaining: 3 });
-  const [loading, setLoading] = useState(false);
+  const { tripCount, isLoading, mutate } = useTripCount();
 
-  const refresh = useCallback(async () => {
-    if (!user) return;
-    setLoading(true);
-    try {
-      const result = await fetchTripCount();
-      setData(result);
-    } catch (err) {
-      console.error("Failed to fetch trip count:", err);
-    } finally {
-      setLoading(false);
-    }
-  }, [user]);
-
-  useEffect(() => {
-    if (user) {
-      refresh();
-    } else {
-      setData({ count: 0, limit: 3, remaining: 3 });
-    }
-  }, [user, refresh]);
+  const data = useMemo(() => {
+    if (!user) return { count: 0, limit: 3, remaining: 3 };
+    return tripCount ?? { count: 0, limit: 3, remaining: 3 };
+  }, [user, tripCount]);
 
   return (
     <TripLimitContext.Provider
       value={{
         ...data,
-        loading,
-        refresh,
+        loading: isLoading,
+        refresh: () => mutate(),
         isFull: data.count >= data.limit,
       }}
     >

@@ -1,11 +1,12 @@
 "use client";
 
-import { useState, useCallback } from "react";
+import { useState, useCallback, useMemo, useEffect, useRef } from "react";
 import { useAuth } from "@/lib/auth-context";
 import { calcSettlement } from "@/lib/calculator";
 import { CATEGORIES } from "@/lib/constants";
 import { avatarColor, getInitial, getBaseUrl } from "@/lib/utils";
 import { updateTrip } from "@/lib/api";
+import { useTrip } from "@/lib/swr";
 import ShareButton from "@/components/ShareButton";
 import AffiliateCard from "@/components/AffiliateCard";
 import ExpenseForm from "@/components/ExpenseForm";
@@ -17,6 +18,7 @@ import { Typography } from "@/components/ui/Typography";
 import { Badge } from "@/components/ui/Badge";
 import { StarsBackground } from "@/components/ui/StarsBackground";
 import { Layout } from "@/components/ui/Layout";
+import { Toast } from "@/components/ui/Toast";
 
 // Minimal TripProvider override for this page
 import { TripProvider, TripContext } from "@/lib/trip-context";
@@ -59,18 +61,32 @@ function SavedTripContent({
   currency,
   travelers: initialTravelers,
   expenses: initialExpenses,
-  updatedAt,
+  updatedAt: initialUpdatedAt,
   isOwner,
 }: Props & { isOwner: boolean }) {
+  const { trip: fetchedTrip, mutate } = useTrip(slug);
 
   const [travelers, setTravelers] = useState<Traveler[]>(initialTravelers);
   const [expenses, setExpenses] = useState<Expense[]>(initialExpenses);
   const [name] = useState(initialName);
+  const [updatedAt, setUpdatedAt] = useState(initialUpdatedAt);
+
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
   const [saveError, setSaveError] = useState<string | null>(null);
+  const [showToast, setShowToast] = useState(false);
   const [editingExpense, setEditingExpense] = useState<Expense | null>(null);
   const [showExpenseForm, setShowExpenseForm] = useState(false);
+  const hasUnsavedChanges = useRef(false);
+
+  // Sync with fetched data when it arrives, but only if no unsaved changes
+  useEffect(() => {
+    if (fetchedTrip && !hasUnsavedChanges.current) {
+      setTravelers(fetchedTrip.travelers as unknown as Traveler[]);
+      setExpenses(fetchedTrip.expenses as unknown as Expense[]);
+      setUpdatedAt(fetchedTrip.updatedAt);
+    }
+  }, [fetchedTrip]);
 
   const sym = currency.symbol;
   const { balances, transactions } = calcSettlement(travelers, expenses);
@@ -90,18 +106,40 @@ function SavedTripContent({
   const handleSaveChanges = useCallback(async () => {
     setSaving(true);
     setSaveError(null);
+    setSaved(true); // Optimistic "Saved" state
+
+    const updatedData = {
+      travelers,
+      expenses,
+      updatedAt: new Date().toISOString(),
+    };
+
     try {
-      await updateTrip(slug, { travelers, expenses });
-      setSaved(true);
+      await mutate(
+        async () => {
+          const res = await updateTrip(slug, { travelers, expenses });
+          hasUnsavedChanges.current = false;
+          return { ...fetchedTrip, ...updatedData, updatedAt: res.updatedAt };
+        },
+        {
+          optimisticData: { ...fetchedTrip, ...updatedData },
+          rollbackOnError: true,
+          populateCache: true,
+          revalidate: false,
+        }
+      );
       setTimeout(() => setSaved(false), 3000);
     } catch (err) {
+      console.error("Update failed:", err);
+      setSaved(false);
       setSaveError(
         err instanceof Error ? err.message : "Failed to save changes"
       );
+      setShowToast(true);
     } finally {
       setSaving(false);
     }
-  }, [slug, travelers, expenses]);
+  }, [slug, travelers, expenses, mutate, fetchedTrip]);
 
   const lastUpdated = new Date(updatedAt).toLocaleDateString("en-US", {
     month: "short",
@@ -344,6 +382,18 @@ function SavedTripContent({
         )}
       </div>
 
+      {showToast && saveError && (
+        <Toast
+          message={saveError}
+          type="error"
+          onClose={() => setShowToast(false)}
+          onRetry={() => {
+            setShowToast(false);
+            handleSaveChanges();
+          }}
+        />
+      )}
+
       {/* Expense form modal (owner only) */}
       {showExpenseForm && isOwner && (
         <ExpenseFormAdapter
@@ -351,6 +401,7 @@ function SavedTripContent({
           travelers={travelers}
           currency={currency}
           onSave={(exp) => {
+            hasUnsavedChanges.current = true;
             if (editingExpense) {
               setExpenses((prev) =>
                 prev.map((e) => (e.id === editingExpense.id ? exp : e))
@@ -361,6 +412,7 @@ function SavedTripContent({
             setShowExpenseForm(false);
           }}
           onDelete={(id) => {
+            hasUnsavedChanges.current = true;
             setExpenses((prev) => prev.filter((e) => e.id !== id));
             setShowExpenseForm(false);
           }}
