@@ -47,7 +47,7 @@ function Hero() {
         </Badge>
 
         {/* Headline */}
-        <Typography as="h1" variant="h1">
+        <Typography as="h1" variant="h1" className="mb-7 animate-fade-up [animation-delay:0.1s]">
           Split trip expenses
           <br />
           <span className="bg-linear-to-br from-gold to-gold-warm bg-clip-text text-transparent">
@@ -56,7 +56,7 @@ function Hero() {
         </Typography>
 
         {/* Subheadline */}
-        <Typography variant="body" className="max-w-[520px] mx-auto">
+        <Typography variant="body" className="max-w-[520px] mx-auto mb-12 animate-fade-up [animation-delay:0.2s]">
           Add your group&apos;s expenses, and TripSplit calculates exactly who
           owes what. Share one link — no account needed.
         </Typography>
@@ -197,10 +197,10 @@ function HowItWorks() {
       <Container>
         {/* Section label */}
         <div className="text-center mb-16">
-          <Typography variant="eyebrow">
+          <Typography variant="eyebrow" className="mb-4 animate-fade-up">
             How it works
           </Typography>
-          <Typography as="h2" variant="h2" className="[animation-delay:0.1s]">
+          <Typography as="h2" variant="h2" className="animate-fade-up [animation-delay:0.1s] mb-0">
             From expenses to settled — in minutes
           </Typography>
         </div>

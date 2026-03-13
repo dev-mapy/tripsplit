@@ -1,20 +1,24 @@
 import React from "react";
+import Link from "next/link";
 import { Slot } from "@radix-ui/react-slot";
 
 interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   variant?: "primary" | "secondary" | "ghost" | "outline" | "danger";
   size?: "sm" | "md" | "lg";
   asChild?: boolean;
+  href?: string;
 }
 
 export function Button({
   variant = "primary",
   size = "md",
   asChild = false,
+  href,
   className = "",
   ...props
 }: ButtonProps) {
-  const Comp = asChild ? Slot : "button";
+  const isLink = typeof href === "string";
+  const Comp = asChild ? Slot : isLink ? "a" : "button";
 
   const baseStyles =
     "inline-flex items-center justify-center rounded-xl font-bold font-sans transition-all cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed";
@@ -36,6 +40,14 @@ export function Button({
   };
 
   const combinedClasses = `${baseStyles} ${variants[variant]} ${sizes[size]} ${className}`;
+
+  if (isLink && !asChild) {
+    return (
+      <Link href={href} className={combinedClasses}>
+        {props.children}
+      </Link>
+    );
+  }
 
   return <Comp className={combinedClasses} {...props} />;
 }
