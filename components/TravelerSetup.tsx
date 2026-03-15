@@ -10,6 +10,7 @@ import { avatarColor, getInitial } from "@/lib/utils";
 import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
 import { Typography } from "@/components/ui/Typography";
+import TravelerExpenseModal from "@/components/TravelerExpenseModal";
 
 export default function TravelerSetup() {
   const { user } = useAuth();
@@ -17,6 +18,7 @@ export default function TravelerSetup() {
   const { trip, updateTripName, updateOwnerName, updateCurrency, addTraveler, removeTraveler, setStep, isReadOnly } =
     useTrip();
   const [newName, setNewName] = useState("");
+  const [pendingName, setPendingName] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
 
   const handleAdd = () => {
@@ -32,8 +34,20 @@ export default function TravelerSetup() {
       return;
     }
 
-    addTraveler(trimmed);
-    setNewName("");
+    if (trip.expenses.length > 0) {
+      setPendingName(trimmed);
+    } else {
+      addTraveler(trimmed);
+      setNewName("");
+    }
+  };
+
+  const confirmAdd = (expenseIds: string[]) => {
+    if (pendingName) {
+      addTraveler(pendingName, expenseIds);
+      setPendingName(null);
+      setNewName("");
+    }
   };
 
   const canContinue = trip.name.trim().length > 0 && (trip.ownerName?.trim().length ?? 0) > 0 && trip.travelers.length >= 2;
@@ -45,6 +59,14 @@ export default function TravelerSetup() {
 
   return (
     <div className="animate-fade-up flex flex-col gap-5">
+      {pendingName && (
+        <TravelerExpenseModal
+          travelerName={pendingName}
+          expenses={trip.expenses}
+          onConfirm={confirmAdd}
+          onCancel={() => setPendingName(null)}
+        />
+      )}
       {/* Trip name */}
       <Card className="p-7 md:p-8">
         <div className="flex justify-between items-center mb-3">

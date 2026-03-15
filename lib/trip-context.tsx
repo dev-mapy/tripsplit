@@ -25,7 +25,7 @@ interface TripContextValue {
   updateOwnerName: (name: string) => void;
   updateIsEditable: (isEditable: boolean) => void;
   updateCurrency: (currency: Currency) => void;
-  addTraveler: (name: string) => void;
+  addTraveler: (name: string, includeInExpenseIds?: string[]) => void;
   removeTraveler: (id: string) => void;
   addExpense: (expense: Omit<Expense, "id">) => void;
   updateExpense: (id: string, expense: Omit<Expense, "id">) => void;
@@ -154,9 +154,21 @@ export function TripProvider({
     setHasBeenModified(true);
   }, []);
 
-  const addTraveler = useCallback((name: string) => {
+  const addTraveler = useCallback((name: string, includeInExpenseIds?: string[]) => {
     const traveler: Traveler = { id: randomId(), name: name.trim() };
-    setTrip((t) => ({ ...t, travelers: [...t.travelers, traveler] }));
+    setTrip((t) => {
+      const newExpenses = t.expenses.map((e) => {
+        if (includeInExpenseIds?.includes(e.id)) {
+          return { ...e, splitAmong: [...e.splitAmong, traveler.id] };
+        }
+        return e;
+      });
+      return {
+        ...t,
+        travelers: [...t.travelers, traveler],
+        expenses: newExpenses,
+      };
+    });
     setHasBeenModified(true);
   }, []);
 
