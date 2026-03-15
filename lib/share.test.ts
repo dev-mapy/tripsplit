@@ -49,14 +49,14 @@ describe("encodeTrip / decodeTrip", () => {
     expect(decodeTrip("aGVsbG8=")).toBeNull(); // valid base64 but not trip JSON
   });
 
-  it("preserves all expense fields", () => {
+  it("preserves relative traveler relationships in expenses", () => {
     const encoded = encodeTrip(mockTrip);
     const decoded = decodeTrip(encoded);
     const exp = decoded?.expenses[0];
+    const travelers = decoded?.travelers ?? [];
 
-    expect(exp?.id).toBe("exp001");
-    expect(exp?.paidBy).toBe("abc123");
-    expect(exp?.splitAmong).toEqual(["abc123", "def456"]);
+    expect(exp?.paidBy).toBe(travelers[0].id);
+    expect(exp?.splitAmong).toEqual([travelers[0].id, travelers[1].id]);
   });
 
   it("handles empty expenses array", () => {

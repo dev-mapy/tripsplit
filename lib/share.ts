@@ -1,25 +1,28 @@
-import type { Trip } from "@/types";
-import { CURRENCIES } from "@/lib/constants";
+import type { Trip, Traveler } from "@/types";
+import { CURRENCIES, CATEGORIES } from "@/lib/constants";
 import { DEFAULT_CURRENCY } from "@/lib/constants";
+import { randomId } from "@/lib/utils";
 
 /**
  * Encode trip state to a base64 URL-safe string.
- * We compress the keys to keep the URL short.
+ * We compress the keys and values to keep the URL as short as possible.
  */
 export function encodeTrip(trip: Trip): string {
+  // Map traveler IDs to their index for shorter storage
+  const travelerIdToIndex = new Map(trip.travelers.map((t, i) => [t.id, i]));
+
   const compressed = {
     n: trip.name,
     c: trip.currency.code,
     o: trip.ownerName,
     ie: trip.isEditable ? 1 : 0,
-    t: trip.travelers.map((t) => ({ i: t.id, n: t.name })),
+    t: trip.travelers.map((t) => t.name),
     e: trip.expenses.map((e) => ({
-      i: e.id,
       d: e.desc,
       a: e.amount,
-      c: e.category,
-      p: e.paidBy,
-      s: e.splitAmong,
+      c: CATEGORIES.indexOf(e.category),
+      p: travelerIdToIndex.get(e.paidBy) ?? 0,
+      s: e.splitAmong.map((id) => travelerIdToIndex.get(id) ?? 0),
     })),
   };
 
@@ -40,30 +43,32 @@ export function decodeTrip(encoded: string): Trip | null {
     const currency =
       CURRENCIES.find((c) => c.code === compressed.c) ?? DEFAULT_CURRENCY;
 
+    // Re-generate stable random IDs for travelers
+    const travelers: Traveler[] = (compressed.t ?? []).map((name: string) => ({
+      id: randomId(),
+      name,
+    }));
+
     return {
       name: compressed.n ?? "",
       currency,
       ownerName: compressed.o,
       isEditable: compressed.ie === 1,
-      travelers: (compressed.t ?? []).map((t: { i: string; n: string }) => ({
-        id: t.i,
-        name: t.n,
-      })),
+      travelers,
       expenses: (compressed.e ?? []).map(
         (e: {
-          i: string;
           d: string;
           a: number;
-          c: string;
-          p: string;
-          s: string[];
+          c: number;
+          p: number;
+          s: number[];
         }) => ({
-          id: e.i,
+          id: randomId(),
           desc: e.d,
           amount: e.a,
-          category: e.c,
-          paidBy: e.p,
-          splitAmong: e.s,
+          category: CATEGORIES[e.c] ?? CATEGORIES[0],
+          paidBy: travelers[e.p]?.id ?? travelers[0]?.id,
+          splitAmong: e.s.map((idx) => travelers[idx]?.id).filter(Boolean),
         })
       ),
     };
