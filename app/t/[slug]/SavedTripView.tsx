@@ -497,6 +497,7 @@ function ExpenseFormAdapter({
         shareUrl: "",
         isSharedView: false,
         isReadOnly: false,
+        hasBeenModified: true,
       }}
     >
       <ExpenseForm editing={editing} onClose={onClose} />

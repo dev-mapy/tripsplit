@@ -35,6 +35,7 @@ interface TripContextValue {
   shareUrl: string;
   isSharedView: boolean;
   isReadOnly: boolean;
+  hasBeenModified: boolean;
 }
 
 const makeDefaultTrip = (): Trip => ({
@@ -66,6 +67,12 @@ export function TripProvider({
   const [encodedTrip, setEncodedTrip] = useQueryState("trip", {
     defaultValue: "",
     shallow: false,
+  });
+
+  const [hasBeenModified, setHasBeenModified] = useState(() => {
+    if (typeof window === "undefined") return true;
+    const params = new URLSearchParams(window.location.search);
+    return !params.has("trip");
   });
 
   // On first load: if a ?trip= param exists, decode it. Otherwise use defaults.
@@ -123,6 +130,7 @@ export function TripProvider({
 
   const updateTripName = useCallback((name: string) => {
     setTrip((t) => ({ ...t, name }));
+    setHasBeenModified(true);
   }, []);
 
   const updateOwnerName = useCallback((name: string) => {
@@ -133,19 +141,23 @@ export function TripProvider({
       }
       return { ...t, ownerName: name, travelers: newTravelers };
     });
+    setHasBeenModified(true);
   }, []);
 
   const updateIsEditable = useCallback((isEditable: boolean) => {
     setTrip((t) => ({ ...t, isEditable }));
+    setHasBeenModified(true);
   }, []);
 
   const updateCurrency = useCallback((currency: Currency) => {
     setTrip((t) => ({ ...t, currency }));
+    setHasBeenModified(true);
   }, []);
 
   const addTraveler = useCallback((name: string) => {
     const traveler: Traveler = { id: randomId(), name: name.trim() };
     setTrip((t) => ({ ...t, travelers: [...t.travelers, traveler] }));
+    setHasBeenModified(true);
   }, []);
 
   const removeTraveler = useCallback((id: string) => {
@@ -154,6 +166,7 @@ export function TripProvider({
       travelers: t.travelers.filter((tr) => tr.id !== id),
       expenses: t.expenses.filter((e) => e.paidBy !== id),
     }));
+    setHasBeenModified(true);
   }, []);
 
   const addExpense = useCallback((expense: Omit<Expense, "id">) => {
@@ -161,6 +174,7 @@ export function TripProvider({
       ...t,
       expenses: [...t.expenses, { ...expense, id: randomId() }],
     }));
+    setHasBeenModified(true);
   }, []);
 
   const updateExpense = useCallback(
@@ -171,6 +185,7 @@ export function TripProvider({
           e.id === id ? { ...expense, id } : e
         ),
       }));
+      setHasBeenModified(true);
     },
     []
   );
@@ -180,27 +195,42 @@ export function TripProvider({
       ...t,
       expenses: t.expenses.filter((e) => e.id !== id),
     }));
+    setHasBeenModified(true);
   }, []);
 
   const makeItOwn = useCallback((name: string) => {
     setTrip((t) => {
-      const currentOwner = t.travelers[0];
-      const newOwner: Traveler = { id: randomId(), name: name.trim() };
+      const trimmed = name.trim();
+      const existingIdx = t.travelers.findIndex(
+        (tr) => tr.name.toLowerCase() === trimmed.toLowerCase()
+      );
+
+      let newTravelers: Traveler[];
+      if (existingIdx !== -1) {
+        // Move existing traveler to index 0
+        const found = t.travelers[existingIdx];
+        const others = t.travelers.filter((_, idx) => idx !== existingIdx);
+        newTravelers = [found, ...others];
+      } else {
+        // Add as new traveler at index 0
+        newTravelers = [{ id: randomId(), name: trimmed }, ...t.travelers];
+      }
 
       return {
         ...t,
-        ownerName: name.trim(),
+        ownerName: trimmed,
         isEditable: true,
-        travelers: [newOwner, ...t.travelers],
-        // Note: we keep the old owner in the list, they are now at index 1
+        travelers: newTravelers,
       };
     });
+    setHasBeenModified(true);
   }, []);
 
   const resetTrip = useCallback(() => {
     const fresh = makeDefaultTrip();
     setTrip(fresh);
     setEncodedTrip("");
+    setHasBeenModified(true);
     setStep("setup");
   }, [setEncodedTrip]);
 
@@ -224,6 +254,7 @@ export function TripProvider({
         shareUrl,
         isSharedView,
         isReadOnly,
+        hasBeenModified,
       }}
     >
       {children}

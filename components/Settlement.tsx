@@ -15,7 +15,8 @@ import { Typography } from "@/components/ui/Typography";
 import { formatAmount } from "@/lib/utils";
 
 export default function Settlement() {
-  const { trip, setStep, resetTrip, isReadOnly } = useTrip();
+  const { trip, setStep, resetTrip, isReadOnly, isSharedView, hasBeenModified } = useTrip();
+  const isViewer = isSharedView && !hasBeenModified;
   const sym = trip.currency.symbol;
   const { balances, transactions } = calcSettlement(trip.travelers, trip.expenses);
   const total = trip.expenses.reduce((s, e) => s + e.amount, 0);
@@ -52,10 +53,10 @@ export default function Settlement() {
       </Card>
 
       {/* ── Share link ── */}
-      <ShareButton />
+      {!isViewer && <ShareButton />}
 
       {/* ── Save trip ── */}
-      {!isReadOnly && <SaveTripButton />}
+      {!isReadOnly && !isViewer && <SaveTripButton />}
 
       {/* ── Balances ── */}
       <Card className="animate-fade-up">
@@ -145,7 +146,17 @@ export default function Settlement() {
 
       <KlookCard />
 
-      <MakeItOwn />
+      {isViewer && (
+        <div className="flex flex-col gap-4 animate-fade-up">
+          {isReadOnly ? (
+            <Button size="lg" onClick={resetTrip} className="w-full">
+              Create your own new trip ✈️
+            </Button>
+          ) : (
+            <MakeItOwn />
+          )}
+        </div>
+      )}
 
       {/* ── Category breakdown ── */}
       {byCategory.length > 0 && (
@@ -180,7 +191,7 @@ export default function Settlement() {
       )}
 
       {/* ── Action buttons ── */}
-      {!isReadOnly && (
+      {!isReadOnly && !isViewer && (
         <div className="flex flex-col gap-3">
           <div className="flex gap-2">
             <Button
