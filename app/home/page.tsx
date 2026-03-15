@@ -164,13 +164,8 @@ function HowItWorks() {
 function Footer() {
   return (
     <footer className="relative z-10 py-12 px-6 border-t border-white/5 font-sans text-[12px] text-text-faint">
-      <Container className="flex flex-col md:flex-row justify-between items-center gap-6">
+      <Container className="flex justify-between items-center gap-6">
         <div>© {new Date().getFullYear()} TripSplit</div>
-        <div className="flex gap-8 font-bold uppercase tracking-widest text-[10px]">
-          <Link href="#" className="hover:text-white transition-colors">Privacy</Link>
-          <Link href="#" className="hover:text-white transition-colors">Terms</Link>
-          <Link href="#" className="hover:text-white transition-colors">Support</Link>
-        </div>
       </Container>
     </footer>
   );

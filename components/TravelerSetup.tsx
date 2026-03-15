@@ -69,7 +69,7 @@ export default function TravelerSetup() {
       )}
       {/* Trip name */}
       <Card className="p-7 md:p-8 border-white/5 bg-white/[0.02]">
-        <Typography variant="h3" className="mb-6">Start a New Trip</Typography>
+        <Typography variant="h3" className="mb-6 text-white">Start a New Trip</Typography>
 
         <div className="bg-brand/10 border border-brand/20 rounded-xl px-4 py-3 mb-8 flex gap-3">
           <span className="text-brand">ℹ️</span>
@@ -126,7 +126,7 @@ export default function TravelerSetup() {
         >
           {CURRENCIES.map(c => (
             <option key={c.code} value={c.code} className="bg-bg-deep text-text">
-              {c.code} - {c.name} ({c.symbol})
+              {c.code} ({c.symbol})
             </option>
           ))}
         </select>
