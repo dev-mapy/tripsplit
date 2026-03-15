@@ -13,6 +13,7 @@ import SaveNudge from "@/components/SaveNudge";
 import { Layout } from "@/components/ui/Layout";
 import { Typography } from "@/components/ui/Typography";
 import { StarsBackground } from "@/components/ui/StarsBackground";
+import OwnerHeaderCard from "@/components/OwnerHeaderCard";
 
 const STEPS = ["setup", "expenses", "result"] as const;
 const STEP_LABELS = ["Trip Setup", "Expenses", "Settlement"];
@@ -76,6 +77,7 @@ export default function SplitApp() {
 
       {/* Step content */}
       <div className="relative z-10">
+        <OwnerHeaderCard />
         {step === "setup" && (
           <div className="flex flex-col gap-4">
             <TravelerSetup />

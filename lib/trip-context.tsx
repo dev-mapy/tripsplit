@@ -22,12 +22,15 @@ interface TripContextValue {
   step: Step;
   setStep: (step: Step) => void;
   updateTripName: (name: string) => void;
+  updateOwnerName: (name: string) => void;
+  updateIsEditable: (isEditable: boolean) => void;
   updateCurrency: (currency: Currency) => void;
   addTraveler: (name: string) => void;
   removeTraveler: (id: string) => void;
   addExpense: (expense: Omit<Expense, "id">) => void;
   updateExpense: (id: string, expense: Omit<Expense, "id">) => void;
   deleteExpense: (id: string) => void;
+  makeItOwn: (name: string) => void;
   resetTrip: () => void;
   shareUrl: string;
   isSharedView: boolean;
@@ -36,6 +39,8 @@ interface TripContextValue {
 
 const makeDefaultTrip = (): Trip => ({
   name: "",
+  ownerName: "",
+  isEditable: false,
   currency: DEFAULT_CURRENCY,
   travelers: [
     { id: randomId(), name: "You" },
@@ -118,6 +123,20 @@ export function TripProvider({
     setTrip((t) => ({ ...t, name }));
   }, []);
 
+  const updateOwnerName = useCallback((name: string) => {
+    setTrip((t) => {
+      const newTravelers = [...t.travelers];
+      if (newTravelers.length > 0) {
+        newTravelers[0] = { ...newTravelers[0], name };
+      }
+      return { ...t, ownerName: name, travelers: newTravelers };
+    });
+  }, []);
+
+  const updateIsEditable = useCallback((isEditable: boolean) => {
+    setTrip((t) => ({ ...t, isEditable }));
+  }, []);
+
   const updateCurrency = useCallback((currency: Currency) => {
     setTrip((t) => ({ ...t, currency }));
   }, []);
@@ -161,6 +180,20 @@ export function TripProvider({
     }));
   }, []);
 
+  const makeItOwn = useCallback((name: string) => {
+    setTrip((t) => {
+      const currentOwner = t.travelers[0];
+      const newOwner: Traveler = { id: randomId(), name: name.trim() };
+
+      return {
+        ...t,
+        ownerName: name.trim(),
+        travelers: [newOwner, ...t.travelers],
+        // Note: we keep the old owner in the list, they are now at index 1
+      };
+    });
+  }, []);
+
   const resetTrip = useCallback(() => {
     const fresh = makeDefaultTrip();
     setTrip(fresh);
@@ -175,12 +208,15 @@ export function TripProvider({
         step,
         setStep,
         updateTripName,
+        updateOwnerName,
+        updateIsEditable,
         updateCurrency,
         addTraveler,
         removeTraveler,
         addExpense,
         updateExpense,
         deleteExpense,
+        makeItOwn,
         resetTrip,
         shareUrl,
         isSharedView,

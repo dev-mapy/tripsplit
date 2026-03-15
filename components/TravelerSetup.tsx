@@ -14,7 +14,7 @@ import { Typography } from "@/components/ui/Typography";
 export default function TravelerSetup() {
   const { user } = useAuth();
   const router = useRouter();
-  const { trip, updateTripName, updateCurrency, addTraveler, removeTraveler, setStep } =
+  const { trip, updateTripName, updateOwnerName, updateCurrency, addTraveler, removeTraveler, setStep } =
     useTrip();
   const [newName, setNewName] = useState("");
   const [loading, setLoading] = useState(false);
@@ -36,7 +36,7 @@ export default function TravelerSetup() {
     setNewName("");
   };
 
-  const canContinue = trip.name.trim().length > 0 && trip.travelers.length >= 2;
+  const canContinue = trip.name.trim().length > 0 && trip.ownerName?.trim().length > 0 && trip.travelers.length >= 2;
 
   const handleContinue = () => {
     if (!canContinue) return;
@@ -60,7 +60,23 @@ export default function TravelerSetup() {
           placeholder="e.g. Bali Summer Trip 🌴"
           value={trip.name}
           maxLength={MAX_TRIP_NAME}
-          onChange={(e) => updateTripName(e.target.value.replace(/[0-9]/g, ""))}
+          onChange={(e) => updateTripName(e.target.value)}
+        />
+
+        <div className="flex justify-between items-center mb-3 mt-8">
+          <Typography variant="small" className="uppercase tracking-widest opacity-40 font-bold block">
+            Owner's Name
+          </Typography>
+          <Typography variant="small" className="text-[10px] opacity-30">
+            {(trip.ownerName ?? "").length}/{MAX_TRAVELER_NAME}
+          </Typography>
+        </div>
+        <input
+          className="w-full bg-white/8 border border-white/15 rounded-xl px-4 py-3 text-[15px] text-text outline-none focus:border-gold/50 focus:bg-white/12 transition-all"
+          placeholder="e.g. John Doe"
+          value={trip.ownerName ?? ""}
+          maxLength={MAX_TRAVELER_NAME}
+          onChange={(e) => updateOwnerName(e.target.value.replace(/[0-9]/g, ""))}
         />
 
         <Typography variant="small" className="uppercase tracking-widest opacity-40 font-bold mb-3 mt-8 block">
@@ -110,7 +126,7 @@ export default function TravelerSetup() {
                   {t.name}
                 </Typography>
               </div>
-              {trip.travelers.length > 2 && (
+              {trip.travelers.length > 2 && i !== 0 && (
                 <button
                   onClick={() => removeTraveler(t.id)}
                   className="w-6 h-6 flex items-center justify-center text-text-faint hover:text-red-400 transition-colors text-2xl cursor-pointer"

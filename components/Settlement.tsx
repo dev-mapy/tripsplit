@@ -7,6 +7,7 @@ import { avatarColor, getInitial } from "@/lib/utils";
 import ShareButton from "@/components/ShareButton";
 import SaveTripButton from "@/components/SaveTripButton";
 import KlookCard from "@/components/KlookCard";
+import MakeItOwn from "@/components/MakeItOwn";
 import Link from "next/link";
 import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
@@ -143,6 +144,8 @@ export default function Settlement() {
       </Card>
 
       <KlookCard />
+
+      <MakeItOwn />
 
       {/* ── Category breakdown ── */}
       {byCategory.length > 0 && (

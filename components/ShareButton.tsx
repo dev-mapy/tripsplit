@@ -10,7 +10,7 @@ interface Props {
 }
 
 export default function ShareButton({ overrideUrl }: Props = {}) {
-  const { shareUrl: contextUrl } = useTrip();
+  const { shareUrl: contextUrl, trip, updateIsEditable } = useTrip();
   const shareUrl = overrideUrl ?? contextUrl;
   const [copied, setCopied] = useState(false);
 
@@ -36,14 +36,33 @@ export default function ShareButton({ overrideUrl }: Props = {}) {
   if (!shareUrl) return null;
 
   return (
-    <Card className="bg-gold/5 border-gold/20 p-5 flex flex-col gap-3">
+    <Card className="bg-gold/5 border-gold/20 p-5 flex flex-col gap-4">
       <div className="flex items-center justify-between flex-wrap gap-2">
-        <Typography variant="small" className="font-bold text-gold tracking-wide">
-          🔗 Shareable Link
-        </Typography>
-        <Typography variant="small" className="opacity-40 text-[11px]">
-          Anyone with this link can view the split
-        </Typography>
+        <div className="flex flex-col">
+          <Typography variant="small" className="font-bold text-gold tracking-wide">
+            🔗 Shareable Link
+          </Typography>
+          <Typography variant="small" className="opacity-40 text-[11px]">
+            Anyone with this link can view the split
+          </Typography>
+        </div>
+
+        {!overrideUrl && (
+          <label className="flex items-center gap-2 cursor-pointer group">
+            <Typography variant="small" className="text-[10px] font-bold uppercase tracking-wider opacity-50 group-hover:opacity-100 transition-opacity">
+              Allow editing
+            </Typography>
+            <div className="relative inline-flex items-center">
+              <input
+                type="checkbox"
+                className="sr-only peer"
+                checked={!!trip.isEditable}
+                onChange={(e) => updateIsEditable(e.target.checked)}
+              />
+              <div className="w-9 h-5 bg-white/10 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-gold"></div>
+            </div>
+          </label>
+        )}
       </div>
 
       <div className="flex gap-2 items-stretch">

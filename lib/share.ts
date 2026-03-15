@@ -10,6 +10,8 @@ export function encodeTrip(trip: Trip): string {
   const compressed = {
     n: trip.name,
     c: trip.currency.code,
+    o: trip.ownerName,
+    ie: trip.isEditable ? 1 : 0,
     t: trip.travelers.map((t) => ({ i: t.id, n: t.name })),
     e: trip.expenses.map((e) => ({
       i: e.id,
@@ -41,6 +43,8 @@ export function decodeTrip(encoded: string): Trip | null {
     return {
       name: compressed.n ?? "",
       currency,
+      ownerName: compressed.o,
+      isEditable: compressed.ie === 1,
       travelers: (compressed.t ?? []).map((t: { i: string; n: string }) => ({
         id: t.i,
         name: t.n,
