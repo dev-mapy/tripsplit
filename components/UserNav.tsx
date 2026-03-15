@@ -73,16 +73,16 @@ export function UserNav({ userName, userAvatar, onSignOut }: UserNavProps) {
             onError={() => setImageError(true)}
           />
         ) : (
-          <div className="w-8 h-8 rounded-full bg-linear-to-br from-gold-warm to-gold flex items-center justify-center text-[13px] font-bold text-bg-deep">
+          <div className="w-8 h-8 rounded-full bg-brand flex items-center justify-center text-[13px] font-black text-white">
             {initials}
           </div>
         )}
         <div className="hidden sm:flex flex-col items-start leading-tight">
-          <span className="text-sm font-medium text-text-muted group-hover:text-white transition-colors">
+          <span className="text-sm font-bold text-text-muted group-hover:text-white transition-colors">
             {displayUser.user_metadata?.full_name?.split(" ")[0] ?? "Account"}
           </span>
           {user && (
-            <span className={`text-[10px] font-bold font-mono ${isFull ? "text-red-400" : "text-gold/70"}`}>
+            <span className={`text-[10px] font-black font-sans uppercase tracking-widest ${isFull ? "text-red-400" : "text-brand-light"}`}>
               {count}/{limit} trips
             </span>
           )}
@@ -97,14 +97,14 @@ export function UserNav({ userName, userAvatar, onSignOut }: UserNavProps) {
           <Link
             href="/dashboard"
             onClick={() => setShowMenu(false)}
-            className="flex items-center gap-2 px-4 py-2.5 text-sm font-medium text-text-muted hover:text-white hover:bg-white/5 rounded-xl transition-all"
+            className="flex items-center gap-2 px-4 py-2.5 text-sm font-bold text-text-muted hover:text-white hover:bg-white/5 rounded-xl transition-all"
           >
             📋 My Trips
           </Link>
           <Link
             href="/split"
             onClick={() => setShowMenu(false)}
-            className="flex items-center gap-2 px-4 py-2.5 text-sm font-medium text-text-muted hover:text-white hover:bg-white/5 rounded-xl transition-all"
+            className="flex items-center gap-2 px-4 py-2.5 text-sm font-bold text-text-muted hover:text-white hover:bg-white/5 rounded-xl transition-all"
           >
             ✈️ New Trip
           </Link>
@@ -118,7 +118,7 @@ export function UserNav({ userName, userAvatar, onSignOut }: UserNavProps) {
                 await signOut();
               }
             }}
-            className="w-full flex items-center gap-2 px-4 py-2.5 text-sm font-medium text-red-400 hover:text-red-300 hover:bg-red-400/10 rounded-xl transition-all text-left"
+            className="w-full flex items-center gap-2 px-4 py-2.5 text-sm font-bold text-red-400 hover:text-red-300 hover:bg-red-400/10 rounded-xl transition-all text-left"
           >
             Sign out
           </button>

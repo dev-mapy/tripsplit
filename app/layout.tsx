@@ -59,7 +59,7 @@ export default function RootLayout({
     <html lang="en">
       <head>
         <link
-          href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Lato:wght@300;400;700&display=swap"
+          href="https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700;900&display=swap"
           rel="stylesheet"
         />
       </head>
@@ -77,7 +77,7 @@ export default function RootLayout({
             <AuthProvider>
               <TripLimitProvider>
                 <NextTopLoader
-                color="#ffd200"
+                color="#2563eb"
                 initialPosition={0.08}
                 crawlSpeed={200}
                 height={3}
@@ -85,7 +85,7 @@ export default function RootLayout({
                 showSpinner={false}
                 easing="ease"
                 speed={200}
-                shadow="0 0 10px #ffd200,0 0 5px #ffd200"
+                shadow="0 0 10px #2563eb,0 0 5px #2563eb"
               />
                 <TripProvider>{children}</TripProvider>
               </TripLimitProvider>

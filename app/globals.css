@@ -1,20 +1,19 @@
 @import "tailwindcss";
 
 @theme {
-  --color-gold: #ffd200;
-  --color-gold-warm: #f7971e;
-  --color-bg-deep: #0f0c29;
-  --color-bg-mid: #302b63;
-  --color-bg-dark: #24243e;
-  --color-text: #f0ebe3;
-  --color-text-muted: rgba(240, 235, 227, 0.5);
-  --color-text-faint: rgba(240, 235, 227, 0.3);
-  --color-glass: rgba(255, 255, 255, 0.07);
-  --color-glass-border: rgba(255, 255, 255, 0.12);
-  --color-success: #4ade80;
-  --color-danger: #f87171;
+  --color-brand: #2563eb;
+  --color-brand-light: #3b82f6;
+  --color-bg-deep: #090e16;
+  --color-bg-mid: #0f172a;
+  --color-bg-dark: #1e293b;
+  --color-text: #f8fafc;
+  --color-text-muted: rgba(248, 250, 252, 0.6);
+  --color-text-faint: rgba(248, 250, 252, 0.4);
+  --color-glass: rgba(255, 255, 255, 0.05);
+  --color-glass-border: rgba(255, 255, 255, 0.1);
+  --color-success: #10b981;
+  --color-danger: #ef4444;
 
-  --font-serif: "Playfair Display", serif;
   --font-sans: "Lato", sans-serif;
 
   @keyframes fadeUp {
@@ -53,14 +52,15 @@
   }
 
   body {
-    background: linear-gradient(135deg, var(--color-bg-deep) 0%, var(--color-bg-mid) 40%, var(--color-bg-dark) 100%);
+    background: #090e16;
     color: var(--color-text);
     font-family: var(--font-sans);
     min-height: 100vh;
   }
 
   h1, h2, h3 {
-    font-family: var(--font-serif);
+    font-family: var(--font-sans);
+    font-weight: 800;
   }
 
   input, select, button {

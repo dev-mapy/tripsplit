@@ -13,13 +13,13 @@ export function Typography({
   ...props
 }: TypographyProps) {
   const styles = {
-    h1: "font-serif text-[clamp(40px,7vw,72px)] font-bold leading-[1.1]",
-    h2: "font-serif text-[clamp(20px,5vw,42px)] font-bold",
-    h3: "font-serif text-[clamp(18px,4.5vw,26px)] font-semibold",
-    body: "font-sans text-[clamp(16px,2.5vw,20px)] text-text-muted leading-relaxed",
+    h1: "font-sans text-[clamp(40px,7vw,72px)] font-black leading-[1.05] tracking-tight",
+    h2: "font-sans text-[clamp(24px,5vw,42px)] font-black tracking-tight",
+    h3: "font-sans text-[clamp(18px,4.5vw,24px)] font-bold tracking-tight",
+    body: "font-sans text-[clamp(16px,2.5vw,18px)] text-text-muted leading-relaxed",
     small: "font-sans text-sm text-text-muted leading-normal",
-    sub: "font-sans text-xs uppercase tracking-wider text-text-faint",
-    eyebrow: "font-sans text-[11px] font-bold tracking-[2px] uppercase text-text-muted",
+    sub: "font-sans text-xs uppercase tracking-widest text-text-faint font-bold",
+    eyebrow: "font-sans text-[11px] font-black tracking-[2px] uppercase text-brand",
   };
 
   return (

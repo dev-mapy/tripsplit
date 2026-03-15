@@ -32,16 +32,16 @@ export default function ExpenseList() {
     <>
       <div className="animate-fade-up flex flex-col gap-4">
         {/* Summary bar */}
-        <Card className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 py-6 px-8">
+        <Card className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 py-6 px-8 border-white/5 bg-white/[0.02]">
           <div className="min-w-0 flex-1">
-            <Typography variant="h2" className="mb-1 truncate" title={trip.name}>{trip.name}</Typography>
-            <Typography variant="small" className="opacity-50">
+            <Typography variant="h3" className="mb-1 truncate text-white" title={trip.name}>{trip.name}</Typography>
+            <Typography variant="small" className="opacity-50 text-[13px]">
               {trip.travelers.map((t) => t.name).join(" · ")} · {trip.currency.flag} {trip.currency.code}
             </Typography>
           </div>
           <div className="sm:text-right">
-            <Typography variant="small" className="uppercase tracking-widest opacity-40 font-bold mb-1 block">Total Spent</Typography>
-            <Typography variant="h2" className="text-gold">{formatAmount(total, sym)}</Typography>
+            <Typography variant="sub" className="text-text-faint mb-1 block">Total Spent</Typography>
+            <Typography variant="h3" className="text-brand-light">{formatAmount(total, sym)}</Typography>
           </div>
         </Card>
 
@@ -56,7 +56,7 @@ export default function ExpenseList() {
             {trip.expenses.map((exp, i) => (
               <div
                 key={exp.id}
-                className="bg-white/5 border border-white/5 hover:border-white/20 hover:bg-white/8 rounded-2xl p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4 cursor-pointer transition-all animate-slide-in"
+                className="bg-white/5 border border-white/5 hover:border-white/10 hover:bg-white/8 rounded-2xl p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4 cursor-pointer transition-all animate-slide-in"
                 onClick={() => openEdit(exp)}
                 style={{ animationDelay: `${i * 0.05}s` }}
               >
@@ -65,15 +65,15 @@ export default function ExpenseList() {
                     {exp.category.split(" ")[0]}
                   </div>
                   <div>
-                    <Typography variant="body" className="font-bold">{exp.desc}</Typography>
-                    <Typography variant="small" className="opacity-50 mt-1 block">
-                      Paid by <span className="text-gold opacity-100">{getName(exp.paidBy)}</span> · Split {exp.splitAmong.length} ways
+                    <Typography variant="body" className="font-black text-white text-[16px]">{exp.desc}</Typography>
+                    <Typography variant="small" className="opacity-50 mt-1 block text-[13px]">
+                      Paid by <span className="text-brand-light opacity-100 font-bold">{getName(exp.paidBy)}</span> · Split {exp.splitAmong.length} ways
                     </Typography>
                   </div>
                 </div>
                 <div className="flex flex-col items-start sm:items-end pl-14 sm:pl-0">
-                  <Typography variant="h3">{formatAmount(exp.amount, sym)}</Typography>
-                  <Typography variant="small" className="opacity-30">{formatAmount(exp.amount / exp.splitAmong.length, sym)}/ea</Typography>
+                  <Typography variant="h3" className="text-[20px]">{formatAmount(exp.amount, sym)}</Typography>
+                  <Typography variant="small" className="opacity-30 text-[12px]">{formatAmount(exp.amount / exp.splitAmong.length, sym)}/ea</Typography>
                 </div>
               </div>
             ))}
