@@ -71,18 +71,20 @@ function Hero() {
         </div>
 
         {/* Social Proof / Trusted By */}
-        <div className="mt-12 flex flex-col md:items-center gap-4 animate-fade-up [animation-delay:0.4s]">
+        <div className="mt-12 flex flex-col items-center md:items-center gap-4 animate-fade-up [animation-delay:0.4s]">
           <div className="flex -space-x-3 overflow-hidden">
             {[1, 2, 3, 4].map((i) => (
               <div
                 key={i}
-                className={`inline-block h-10 w-10 rounded-full ring-4 ring-bg-deep flex items-center justify-center text-xs font-bold text-white ${avatarColors[i-1]}`}
+                className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-full ring-4 ring-bg-deep text-[13px] font-black text-white ${avatarColors[i-1]}`}
               >
-                {String.fromCharCode(64 + i)}
+                <span className="mb-[1px]">{String.fromCharCode(64 + i)}</span>
               </div>
             ))}
-            <div className="flex items-center justify-center h-10 w-10 rounded-full ring-4 ring-bg-deep bg-bg-dark text-[10px] font-bold text-text-muted">
-              +12k
+            <div
+              className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full ring-4 ring-bg-deep bg-bg-dark text-[10px] font-black text-text-muted"
+            >
+              <span className="mb-[1px]">+12k</span>
             </div>
           </div>
           <Typography variant="sub" className="text-[11px] font-black uppercase tracking-[0.1em] text-text-faint">
@@ -93,7 +95,7 @@ function Hero() {
         {/* Floating preview card - simplified and theme-matched */}
         <Card animate className="max-w-[440px] md:mx-auto mt-20 text-left [animation-delay:0.5s] border-white/5 bg-white/[0.02]">
           <div className="flex items-center gap-3 mb-6">
-            <div className="w-10 h-10 rounded-full bg-brand/20 flex items-center justify-center text-brand">
+            <div className="w-10 h-10 rounded-full bg-brand/20 flex items-center justify-center text-brand leading-none">
               ✈️
             </div>
             <div>
@@ -102,7 +104,7 @@ function Hero() {
             </div>
           </div>
           <div className="flex items-center gap-3 mb-2">
-            <div className="w-10 h-10 rounded-full bg-success/20 flex items-center justify-center text-success">
+            <div className="w-10 h-10 rounded-full bg-success/20 flex items-center justify-center text-success leading-none">
               🍴
             </div>
             <div>

@@ -146,10 +146,10 @@ export default function TravelerSetup() {
             >
               <div className="flex items-center gap-3">
                 <div
-                  className="w-8 h-8 rounded-full flex items-center justify-center text-xs font-black text-white"
+                  className="w-8 h-8 rounded-full flex items-center justify-center text-[11px] font-black text-white"
                   style={{ background: i === 0 ? "var(--color-brand)" : "#475569" }}
                 >
-                  {getInitial(t.name)}
+                  <span className="mb-[1px]">{getInitial(t.name)}</span>
                 </div>
                 <Typography variant="body" className="font-bold text-[15px] text-white truncate max-w-[150px] sm:max-w-[250px]" title={t.name}>
                   {t.name} {i === 0 && <span className="text-[10px] text-brand-light ml-1 font-black uppercase">Owner</span>}

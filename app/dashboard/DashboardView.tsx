@@ -115,7 +115,7 @@ export default function DashboardView({
       <StarsBackground count={40} />
 
       <div className="flex items-center justify-between mb-12">
-        <Link href="/split" className="text-xl font-serif font-bold text-gold hover:opacity-80 transition-opacity">
+        <Link href="/split" className="text-xl font-sans font-black text-white hover:opacity-80 transition-opacity tracking-tight">
           ✈️ TripSplit
         </Link>
         <UserNav
@@ -142,11 +142,11 @@ export default function DashboardView({
           <div className="flex items-center gap-3 bg-white/5 border border-white/10 rounded-full px-4 py-1.5">
             <div className="w-24 h-1.5 bg-white/10 rounded-full overflow-hidden">
               <div
-                className={`h-full transition-all duration-500 ${isFull ? "bg-red-400" : "bg-gold"}`}
+                    className={`h-full transition-all duration-500 ${isFull ? "bg-red-400" : "bg-brand"}`}
                 style={{ width: `${Math.min(100, (count / limit) * 100)}%` }}
               />
             </div>
-            <Typography variant="small" className={`font-mono font-bold ${isFull ? "text-red-400" : "text-gold"}`}>
+                <Typography variant="small" className={`font-mono font-bold ${isFull ? "text-red-400" : "text-brand-light"}`}>
               {count}/{limit}
             </Typography>
           </div>
@@ -228,7 +228,7 @@ export default function DashboardView({
               <div className="p-6 md:p-8 flex flex-col md:flex-row justify-between gap-6">
                 <div className="flex-1 min-w-0">
                   <Link href={`/t/${trip.slug}`} className="block group/title">
-                    <Typography variant="h2" className="mb-2 group-hover/title:text-gold transition-colors truncate" title={trip.name}>
+                    <Typography variant="h2" className="mb-2 group-hover/title:text-brand-light transition-colors truncate" title={trip.name}>
                       {trip.name}
                     </Typography>
                   </Link>
@@ -258,7 +258,7 @@ export default function DashboardView({
                     <Typography variant="small" className="uppercase tracking-widest opacity-40 font-bold mb-1">
                       Total
                     </Typography>
-                    <Typography variant="h2" className="text-gold">
+                    <Typography variant="h2" className="text-brand-light">
                       {formatAmount(trip.total, trip.currencySymbol)}
                     </Typography>
                   </div>

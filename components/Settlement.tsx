@@ -80,7 +80,7 @@ export default function Settlement() {
                     className="w-10 h-10 rounded-full flex-shrink-0 flex items-center justify-center text-white text-xs font-black"
                     style={{ background: i === 0 ? "var(--color-brand)" : "#475569" }}
                   >
-                    {getInitial(t.name)}
+                    <span className="mb-[1px]">{getInitial(t.name)}</span>
                   </div>
                   <div>
                     <Typography variant="body" className="font-black text-white text-[15px]">{t.name}</Typography>

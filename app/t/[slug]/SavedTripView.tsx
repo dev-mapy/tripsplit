@@ -170,7 +170,7 @@ function SavedTripContent({
       <StarsBackground count={30} />
 
       <div className="flex items-center justify-between mb-10">
-        <Link href="/split" className="text-xl font-serif font-bold text-gold hover:opacity-80 transition-opacity">
+        <Link href="/split" className="text-xl font-sans font-black text-white hover:opacity-80 transition-opacity tracking-tight">
           ✈️ TripSplit
         </Link>
         <div className="flex items-center gap-4">
@@ -227,20 +227,20 @@ function SavedTripContent({
         )}
 
         {/* Trip header */}
-        <Card className="text-center py-8 px-6 animate-fade-up min-w-0">
-          <Typography variant="h1" className="text-gold mb-2 truncate" title={name}>{name}</Typography>
-          <Typography variant="small" className="opacity-50 mb-8">
+        <Card className="text-center py-8 px-6 animate-fade-up min-w-0 border-white/5 bg-white/[0.02]">
+          <Typography variant="h2" className="text-brand-light mb-2 truncate" title={name}>{name}</Typography>
+          <Typography variant="small" className="opacity-50 mb-8 block text-[13px]">
             {expenses.length} expenses · {travelers.length} travelers · {currency.flag} {currency.code}
           </Typography>
 
           <div className="flex justify-center gap-12 sm:gap-20 flex-wrap">
             <div>
-              <Typography variant="small" className="uppercase tracking-widest opacity-40 font-bold mb-1">Total Spent</Typography>
-              <Typography variant="h2">{formatAmount(total, sym)}</Typography>
+              <Typography variant="sub" className="text-text-faint mb-1 block">Total Spent</Typography>
+              <Typography variant="h2" className="text-[32px]">{formatAmount(total, sym)}</Typography>
             </div>
             <div>
-              <Typography variant="small" className="uppercase tracking-widest opacity-40 font-bold mb-1">Per Person</Typography>
-              <Typography variant="h2">{formatAmount(total / travelers.length, sym)}</Typography>
+              <Typography variant="sub" className="text-text-faint mb-1 block">Per Person</Typography>
+              <Typography variant="h2" className="text-[32px]">{formatAmount(total / travelers.length, sym)}</Typography>
             </div>
           </div>
         </Card>
@@ -275,7 +275,7 @@ function SavedTripContent({
                 <div key={t.id} className="flex items-center justify-between bg-white/5 rounded-xl p-4 animate-fade-up" style={{ animationDelay: `${i * 0.05}s` }}>
                   <div className="flex items-center gap-4">
                     <div className="w-10 h-10 rounded-full flex items-center justify-center text-white font-bold" style={{ background: avatarColor(i) }}>
-                      {getInitial(t.name)}
+                      <span className="mb-[1px]">{getInitial(t.name)}</span>
                     </div>
                     <div>
                       <Typography variant="body" className="font-bold">{t.name}</Typography>
@@ -310,13 +310,18 @@ function SavedTripContent({
           ) : (
             <div className="flex flex-col gap-3">
               {transactions.map((tx, i) => (
-                <div key={i} className="flex items-center justify-between p-5 bg-gold/10 border border-gold/20 rounded-2xl animate-fade-up" style={{ animationDelay: `${0.2 + i * 0.05}s` }}>
-                  <div className="flex-1">
-                    <span className="font-bold text-red-400">{getName(tx.from)}</span>
-                    <span className="mx-3 opacity-40">→ pays →</span>
-                    <span className="font-bold text-green-400">{getName(tx.to)}</span>
+                <div key={i} className="flex flex-col sm:flex-row sm:items-center justify-between p-5 bg-brand/10 border border-brand/20 rounded-2xl animate-fade-up gap-4" style={{ animationDelay: `${0.2 + i * 0.05}s` }}>
+                  <div className="flex flex-col sm:flex-row items-start sm:items-center gap-1 sm:gap-0 min-w-0 flex-1">
+                    <span className="font-black text-danger text-[16px] truncate max-w-[120px] sm:max-w-none" title={getName(tx.from)}>{getName(tx.from)}</span>
+                    <div className="flex flex-col items-center sm:flex-row sm:mx-3 opacity-40 text-[10px] sm:text-[13px] leading-none uppercase font-black tracking-widest">
+                      <span className="sm:hidden">↓</span>
+                      <span>pays</span>
+                      <span className="sm:hidden">↓</span>
+                      <span className="hidden sm:inline">→</span>
+                    </div>
+                    <span className="font-black text-success text-[16px] truncate max-w-[120px] sm:max-w-none" title={getName(tx.to)}>{getName(tx.to)}</span>
                   </div>
-                  <Typography variant="h2" className="text-gold">
+                  <Typography variant="h2" className="text-brand-light text-left sm:text-right text-[24px]">
                     {formatAmount(tx.amount, sym)}
                   </Typography>
                 </div>
@@ -361,7 +366,7 @@ function SavedTripContent({
                     <div>
                       <Typography variant="body" className="font-bold">{exp.desc}</Typography>
                       <Typography variant="small" className="opacity-50">
-                        Paid by <span className="text-gold opacity-100">{getName(exp.paidBy)}</span> · {exp.splitAmong.length} ways
+                        Paid by <span className="text-brand-light opacity-100">{getName(exp.paidBy)}</span> · {exp.splitAmong.length} ways
                       </Typography>
                     </div>
                   </div>
@@ -405,8 +410,8 @@ function SavedTripContent({
 
         {/* Non-owner CTA */}
         {!isOwner && (
-          <Card className="text-center py-10 bg-gold/5 border-gold/20 animate-fade-up">
-            <Typography variant="small" className="opacity-50 mb-6 block">Planning your own trip?</Typography>
+          <Card className="text-center py-10 bg-brand/5 border-white/5 animate-fade-up">
+            <Typography variant="sub" className="text-text-faint mb-6 block">Planning your own trip?</Typography>
             <Button href="/split" size="lg">Start your own trip ✈️</Button>
             <Typography variant="small" className="opacity-30 mt-4 block">Free · No login required</Typography>
           </Card>

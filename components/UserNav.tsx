@@ -74,7 +74,7 @@ export function UserNav({ userName, userAvatar, onSignOut }: UserNavProps) {
           />
         ) : (
           <div className="w-8 h-8 rounded-full bg-brand flex items-center justify-center text-[13px] font-black text-white">
-            {initials}
+            <span className="mb-[1px]">{initials}</span>
           </div>
         )}
         <div className="hidden sm:flex flex-col items-start leading-tight">

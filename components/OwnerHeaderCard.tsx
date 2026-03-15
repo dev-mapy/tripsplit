@@ -13,7 +13,7 @@ export default function OwnerHeaderCard() {
     <Card className="mb-6 p-4 border-brand/20 bg-brand/5 animate-fade-down rounded-2xl">
       <div className="flex items-center justify-between gap-4">
         <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-full bg-brand/20 flex items-center justify-center text-xl shadow-inner">
+          <div className="w-10 h-10 rounded-full bg-brand/20 flex items-center justify-center text-xl shadow-inner leading-none">
             👑
           </div>
           <div>
