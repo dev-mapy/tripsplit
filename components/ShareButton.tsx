@@ -10,9 +10,24 @@ interface Props {
 }
 
 export default function ShareButton({ overrideUrl }: Props = {}) {
-  const { shareUrl: contextUrl, trip, updateIsEditable } = useTrip();
-  const shareUrl = overrideUrl ?? contextUrl;
+  const { shareUrl: contextUrl, trip, isReadOnly } = useTrip();
+  const [allowEditing, setAllowEditing] = useState(false);
   const [copied, setCopied] = useState(false);
+
+  // Generate the URL with the correct 'ie' flag based on allowEditing
+  const getShareUrl = () => {
+    if (overrideUrl) return overrideUrl;
+    if (!contextUrl) return "";
+
+    const url = new URL(contextUrl);
+    // Re-encode with the specific isEditable flag we want
+    const currentTrip = { ...trip, isEditable: allowEditing };
+    const { encodeTrip } = require("@/lib/share");
+    url.searchParams.set("trip", encodeTrip(currentTrip));
+    return url.toString();
+  };
+
+  const shareUrl = getShareUrl();
 
   const handleCopy = async () => {
     if (!shareUrl) return;
@@ -47,17 +62,17 @@ export default function ShareButton({ overrideUrl }: Props = {}) {
           </Typography>
         </div>
 
-        {!overrideUrl && (
+        {!overrideUrl && !isReadOnly && (
           <label className="flex items-center gap-2 cursor-pointer group">
             <Typography variant="small" className="text-[10px] font-bold uppercase tracking-wider opacity-50 group-hover:opacity-100 transition-opacity">
-              Allow editing
+              Allow others to edit
             </Typography>
             <div className="relative inline-flex items-center">
               <input
                 type="checkbox"
                 className="sr-only peer"
-                checked={!!trip.isEditable}
-                onChange={(e) => updateIsEditable(e.target.checked)}
+                checked={allowEditing}
+                onChange={(e) => setAllowEditing(e.target.checked)}
               />
               <div className="w-9 h-5 bg-white/10 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-gold"></div>
             </div>

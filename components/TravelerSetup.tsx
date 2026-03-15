@@ -14,7 +14,7 @@ import { Typography } from "@/components/ui/Typography";
 export default function TravelerSetup() {
   const { user } = useAuth();
   const router = useRouter();
-  const { trip, updateTripName, updateOwnerName, updateCurrency, addTraveler, removeTraveler, setStep } =
+  const { trip, updateTripName, updateOwnerName, updateCurrency, addTraveler, removeTraveler, setStep, isReadOnly } =
     useTrip();
   const [newName, setNewName] = useState("");
   const [loading, setLoading] = useState(false);
@@ -56,11 +56,12 @@ export default function TravelerSetup() {
           </Typography>
         </div>
         <input
-          className="w-full bg-white/8 border border-white/15 rounded-xl px-4 py-3 text-[15px] text-text outline-none focus:border-gold/50 focus:bg-white/12 transition-all"
+          className="w-full bg-white/8 border border-white/15 rounded-xl px-4 py-3 text-[15px] text-text outline-none focus:border-gold/50 focus:bg-white/12 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
           placeholder="e.g. Bali Summer Trip 🌴"
           value={trip.name}
           maxLength={MAX_TRIP_NAME}
           onChange={(e) => updateTripName(e.target.value)}
+          disabled={isReadOnly}
         />
 
         <div className="flex justify-between items-center mb-3 mt-8">
@@ -72,11 +73,12 @@ export default function TravelerSetup() {
           </Typography>
         </div>
         <input
-          className="w-full bg-white/8 border border-white/15 rounded-xl px-4 py-3 text-[15px] text-text outline-none focus:border-gold/50 focus:bg-white/12 transition-all"
+          className="w-full bg-white/8 border border-white/15 rounded-xl px-4 py-3 text-[15px] text-text outline-none focus:border-gold/50 focus:bg-white/12 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
           placeholder="e.g. John Doe"
           value={trip.ownerName ?? ""}
           maxLength={MAX_TRAVELER_NAME}
           onChange={(e) => updateOwnerName(e.target.value.replace(/[0-9]/g, ""))}
+          disabled={isReadOnly}
         />
 
         <Typography variant="small" className="uppercase tracking-widest opacity-40 font-bold mb-3 mt-8 block">
@@ -89,8 +91,9 @@ export default function TravelerSetup() {
               <button
                 key={c.code}
                 onClick={() => updateCurrency(c)}
+                  disabled={isReadOnly}
                 className={`
-                  px-4 py-2 rounded-xl text-sm font-medium transition-all cursor-pointer
+                    px-4 py-2 rounded-xl text-sm font-medium transition-all
                   ${active
                     ? "bg-gold/15 border border-gold text-gold"
                     : "bg-white/8 border border-white/12 text-text opacity-70 hover:opacity-100 hover:bg-white/12"}
@@ -126,7 +129,7 @@ export default function TravelerSetup() {
                   {t.name}
                 </Typography>
               </div>
-              {trip.travelers.length > 2 && i !== 0 && (
+              {trip.travelers.length > 2 && i !== 0 && !isReadOnly && (
                 <button
                   onClick={() => removeTraveler(t.id)}
                   className="w-6 h-6 flex items-center justify-center text-text-faint hover:text-red-400 transition-colors text-2xl cursor-pointer"
@@ -138,32 +141,34 @@ export default function TravelerSetup() {
           ))}
         </div>
 
-        <div className="flex flex-col sm:flex-row gap-2">
-          <div className="relative flex-1">
-            <input
-              className="w-full bg-white/8 border border-white/15 rounded-xl px-4 py-3 pr-14 text-[15px] text-text outline-none focus:border-gold/50 focus:bg-white/12 transition-all"
-              placeholder={trip.travelers.length >= MAX_TRAVELERS ? "Limit reached" : "Add traveler name..."}
-              value={newName}
-              maxLength={MAX_TRAVELER_NAME}
-              onChange={(e) => setNewName(e.target.value.replace(/[0-9]/g, ""))}
-              onKeyDown={(e) => e.key === "Enter" && handleAdd()}
-              disabled={trip.travelers.length >= MAX_TRAVELERS}
-            />
-            <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none">
-              <Typography variant="small" className="text-[10px] opacity-30">
-                {newName.length}/{MAX_TRAVELER_NAME}
-              </Typography>
+        {!isReadOnly && (
+          <div className="flex flex-col sm:flex-row gap-2">
+            <div className="relative flex-1">
+              <input
+                className="w-full bg-white/8 border border-white/15 rounded-xl px-4 py-3 pr-14 text-[15px] text-text outline-none focus:border-gold/50 focus:bg-white/12 transition-all"
+                placeholder={trip.travelers.length >= MAX_TRAVELERS ? "Limit reached" : "Add traveler name..."}
+                value={newName}
+                maxLength={MAX_TRAVELER_NAME}
+                onChange={(e) => setNewName(e.target.value.replace(/[0-9]/g, ""))}
+                onKeyDown={(e) => e.key === "Enter" && handleAdd()}
+                disabled={trip.travelers.length >= MAX_TRAVELERS}
+              />
+              <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none">
+                <Typography variant="small" className="text-[10px] opacity-30">
+                  {newName.length}/{MAX_TRAVELER_NAME}
+                </Typography>
+              </div>
             </div>
+            <Button
+              variant="secondary"
+              onClick={handleAdd}
+              disabled={trip.travelers.length >= MAX_TRAVELERS}
+              className="w-full sm:w-auto"
+            >
+              + Add
+            </Button>
           </div>
-          <Button
-            variant="secondary"
-            onClick={handleAdd}
-            disabled={trip.travelers.length >= MAX_TRAVELERS}
-            className="w-full sm:w-auto"
-          >
-            + Add
-          </Button>
-        </div>
+        )}
         {trip.travelers.length >= MAX_TRAVELERS && (
           <Typography variant="small" className="text-red-400/60 text-[11px] mt-2 block">
             Maximum of {MAX_TRAVELERS} travelers reached.

@@ -40,7 +40,7 @@ interface TripContextValue {
 const makeDefaultTrip = (): Trip => ({
   name: "",
   ownerName: "",
-  isEditable: false,
+  isEditable: true,
   currency: DEFAULT_CURRENCY,
   travelers: [
     { id: randomId(), name: "You" },
@@ -91,6 +91,8 @@ export function TripProvider({
   const [step, setStep] = useState<Step>(() =>
     isSharedView ? "result" : "setup"
   );
+
+  const isReadOnly = isReadOnlyProp || (isSharedView && trip.isEditable === false);
 
   // Keep the URL in sync whenever trip state changes
   const syncUrl = useCallback(
