@@ -30,7 +30,7 @@ interface TripContextValue {
   addExpense: (expense: Omit<Expense, "id">) => void;
   updateExpense: (id: string, expense: Omit<Expense, "id">) => void;
   deleteExpense: (id: string) => void;
-  makeItOwn: (name: string) => void;
+  makeItOwn: (name: string, includeInExpenseIds?: string[]) => void;
   resetTrip: () => void;
   shareUrl: string;
   isSharedView: boolean;
@@ -210,7 +210,7 @@ export function TripProvider({
     setHasBeenModified(true);
   }, []);
 
-  const makeItOwn = useCallback((name: string) => {
+  const makeItOwn = useCallback((name: string, includeInExpenseIds?: string[]) => {
     setTrip((t) => {
       const trimmed = name.trim();
       const existingIdx = t.travelers.findIndex(
@@ -218,21 +218,37 @@ export function TripProvider({
       );
 
       let newTravelers: Traveler[];
+      let newTravelerId: string;
+
       if (existingIdx !== -1) {
         // Move existing traveler to index 0
         const found = t.travelers[existingIdx];
+        newTravelerId = found.id;
         const others = t.travelers.filter((_, idx) => idx !== existingIdx);
         newTravelers = [found, ...others];
       } else {
         // Add as new traveler at index 0
-        newTravelers = [{ id: randomId(), name: trimmed }, ...t.travelers];
+        newTravelerId = randomId();
+        newTravelers = [{ id: newTravelerId, name: trimmed }, ...t.travelers];
       }
+
+      // Apply expense logic
+      const newExpenses = t.expenses.map((e) => {
+        if (includeInExpenseIds?.includes(e.id)) {
+          // Add to splitAmong if not already there
+          if (!e.splitAmong.includes(newTravelerId)) {
+            return { ...e, splitAmong: [...e.splitAmong, newTravelerId] };
+          }
+        }
+        return e;
+      });
 
       return {
         ...t,
         ownerName: trimmed,
         isEditable: true,
         travelers: newTravelers,
+        expenses: newExpenses,
       };
     });
     setHasBeenModified(true);

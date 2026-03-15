@@ -6,11 +6,13 @@ import { MAX_TRAVELER_NAME } from "@/lib/constants";
 import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
 import { Typography } from "@/components/ui/Typography";
+import TravelerExpenseModal from "@/components/TravelerExpenseModal";
 
 export default function MakeItOwn() {
-  const { isSharedView, isReadOnly, hasBeenModified, setStep, makeItOwn } = useTrip();
+  const { trip, isSharedView, isReadOnly, hasBeenModified, setStep, makeItOwn } = useTrip();
   const [showForm, setShowForm] = useState(false);
   const [newName, setNewName] = useState("");
+  const [pendingName, setPendingName] = useState<string | null>(null);
 
   // Visibility is controlled by the parent (Settlement), but we double check here
   if (!isSharedView || isReadOnly || hasBeenModified) return null;
@@ -19,10 +21,28 @@ export default function MakeItOwn() {
     const trimmed = newName.trim();
     if (!trimmed) return;
 
-    makeItOwn(trimmed);
-    setShowForm(false);
-    setNewName("");
-    setStep("setup"); // Go back to setup so they can see themselves as owner
+    const exists = trip.travelers.some(
+      (t) => t.name.toLowerCase() === trimmed.toLowerCase()
+    );
+
+    if (!exists && trip.expenses.length > 0) {
+      setPendingName(trimmed);
+    } else {
+      makeItOwn(trimmed);
+      setShowForm(false);
+      setNewName("");
+      setStep("setup");
+    }
+  };
+
+  const confirmAdd = (expenseIds: string[]) => {
+    if (pendingName) {
+      makeItOwn(pendingName, expenseIds);
+      setPendingName(null);
+      setShowForm(false);
+      setNewName("");
+      setStep("setup");
+    }
   };
 
   if (!showForm) {
@@ -39,6 +59,14 @@ export default function MakeItOwn() {
 
   return (
     <Card className="mt-4 p-6 border-gold/50 bg-gold/5 animate-fade-up">
+      {pendingName && (
+        <TravelerExpenseModal
+          travelerName={pendingName}
+          expenses={trip.expenses}
+          onConfirm={confirmAdd}
+          onCancel={() => setPendingName(null)}
+        />
+      )}
       <Typography variant="h3" className="text-gold mb-2">
         Make it your own
       </Typography>
