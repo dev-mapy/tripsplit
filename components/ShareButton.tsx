@@ -64,8 +64,8 @@ export default function ShareButton({ overrideUrl }: Props = {}) {
 
         {!overrideUrl && !isReadOnly && (
           <label className="flex items-center gap-2 cursor-pointer group">
-            <Typography variant="small" className="text-[10px] font-bold uppercase tracking-wider opacity-50 group-hover:opacity-100 transition-opacity">
-              Allow others to edit
+            <Typography variant="small" className="text-[10px] font-bold uppercase tracking-wider opacity-50 group-hover:opacity-100 transition-opacity text-right max-w-[120px] sm:max-w-none">
+              Allow others to make their own version
             </Typography>
             <div className="relative inline-flex items-center">
               <input
