@@ -10,7 +10,7 @@ export const formatCurrency = (amount: number) => {
 export const formatAmount = (amount: number, symbol: string) =>
   `${symbol}${formatCurrency(amount)}`;
 
-export const getInitial = (name: string) => name[0].toUpperCase();
+export const getInitial = (name: string) => (name[0] || "?").toUpperCase();
 
 export const avatarColor = (index: number) =>
   `hsl(${index * 60 + 200}, 60%, 55%)`;

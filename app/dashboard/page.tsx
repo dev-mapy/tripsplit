@@ -30,7 +30,7 @@ export default async function DashboardPage() {
   });
 
   // Shape trips for the client
-  const trips = rawTrips.map((t) => {
+  const trips = rawTrips.map((t: any) => {
     const expenses = t.expenses as unknown as Expense[];
     const travelers = t.travelers as unknown as Traveler[];
     const currency =

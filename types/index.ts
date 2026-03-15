@@ -17,6 +17,8 @@ export interface Trip {
   currency: Currency;
   travelers: Traveler[];
   expenses: Expense[];
+  ownerName?: string;
+  isEditable?: boolean;
 }
 
 export interface Currency {

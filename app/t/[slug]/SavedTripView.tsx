@@ -484,16 +484,20 @@ function ExpenseFormAdapter({
         step: "expenses",
         setStep: () => {},
         updateTripName: () => {},
+        updateOwnerName: () => {},
+        updateIsEditable: () => {},
         updateCurrency: () => {},
         addTraveler: () => {},
         removeTraveler: () => {},
         addExpense: (exp) => onSave({ ...exp, id: Math.random().toString(36).substr(2, 9) }),
         updateExpense: (id, exp) => onSave({ ...exp, id }),
         deleteExpense: onDelete,
+        makeItOwn: () => {},
         resetTrip: () => {},
         shareUrl: "",
         isSharedView: false,
         isReadOnly: false,
+        hasBeenModified: true,
       }}
     >
       <ExpenseForm editing={editing} onClose={onClose} />
