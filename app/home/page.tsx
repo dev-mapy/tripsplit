@@ -27,7 +27,7 @@ export const metadata: Metadata = {
 
 export default function LandingPage() {
   return (
-    <main className="min-h-screen overflow-x-hidden">
+    <main className="min-h-screen overflow-x-hidden relative">
       <StarsBackground count={50} />
       <Nav />
       <Hero />
@@ -39,131 +39,78 @@ export default function LandingPage() {
 
 /* ── Hero ── */
 function Hero() {
-  return (
-    <Section padding="pt-20 pb-24 md:pt-30 md:pb-40">
-      <Container maxWidth={780} className="text-center">
-        {/* Eyebrow */}
-        <Badge icon="✦" className="mb-8">
-          No login. No app. No drama.
-        </Badge>
+  const avatarColors = [
+    "bg-brand",
+    "bg-brand/80",
+    "bg-brand/60",
+    "bg-brand/40",
+  ];
 
+  return (
+    <Section padding="pt-12 pb-24 md:pt-20 md:pb-32">
+      <Container maxWidth={800} className="text-left md:text-center relative z-10">
         {/* Headline */}
-        <Typography as="h1" variant="h1" className="mb-7 animate-fade-up [animation-delay:0.1s]">
-          Split trip expenses
+        <Typography as="h1" variant="h1" className="mb-8 animate-fade-up [animation-delay:0.1s]">
+          No app, no
           <br />
-          <span className="bg-linear-to-br from-gold to-gold-warm bg-clip-text text-transparent">
-            with one link.
-          </span>
+          login, <span className="text-brand">no</span>
+          <br />
+          <span className="text-brand">drama.</span>
         </Typography>
 
         {/* Subheadline */}
-        <Typography variant="body" className="max-w-[520px] mx-auto mb-12 animate-fade-up [animation-delay:0.2s]">
-          Add your group&apos;s expenses, and TripSplit calculates exactly who
-          owes what. Share one link — no account needed.
+        <Typography variant="body" className="max-w-[540px] md:mx-auto mb-10 animate-fade-up [animation-delay:0.2s] text-text-muted">
+          Split expenses with friends instantly. The simplest way to manage group trips without the overhead. Just create a link and share.
         </Typography>
 
         {/* CTA */}
-        <div className="flex gap-4 justify-center flex-wrap animate-fade-up [animation-delay:0.3s]">
-          <Button href="/split">
-            Split a trip now ✈️
+        <div className="flex flex-col sm:flex-row gap-4 md:justify-center animate-fade-up [animation-delay:0.3s]">
+          <Button href="/split" size="lg" className="w-full sm:w-auto">
+            Start a Trip
           </Button>
         </div>
 
-        {/* Trust badges */}
-        <div className="flex gap-6 justify-center flex-wrap mt-9 animate-fade-up [animation-delay:0.4s]">
-          {[
-            "✓ No login required",
-            "✓ No app to download",
-            "✓ Free to use",
-            ENABLE_AUTH ? "✓ Save trips with Google" : null,
-          ]
-            .filter(Boolean)
-            .map((badge) => (
-              <span
-                key={badge as string}
-                className="font-sans text-sm text-text-faint/70"
+        {/* Social Proof / Trusted By */}
+        <div className="mt-12 flex flex-col md:items-center gap-4 animate-fade-up [animation-delay:0.4s]">
+          <div className="flex -space-x-3 overflow-hidden">
+            {[1, 2, 3, 4].map((i) => (
+              <div
+                key={i}
+                className={`inline-block h-10 w-10 rounded-full ring-4 ring-bg-deep flex items-center justify-center text-xs font-bold text-white ${avatarColors[i-1]}`}
               >
-                {badge}
-              </span>
+                {String.fromCharCode(64 + i)}
+              </div>
             ))}
+            <div className="flex items-center justify-center h-10 w-10 rounded-full ring-4 ring-bg-deep bg-bg-dark text-[10px] font-bold text-text-muted">
+              +12k
+            </div>
+          </div>
+          <Typography variant="sub" className="text-[11px] font-black uppercase tracking-[0.1em] text-text-faint">
+            12k+ travelers splitting right now
+          </Typography>
         </div>
 
-        {/* Floating preview card */}
-        <Card animate className="max-w-[480px] mx-auto mt-18 text-left [animation-delay:0.5s]">
-          <Typography variant="sub" className="mb-4">
-            💸 Settlement Plan
-          </Typography>
-
-          {[
-            { from: "Bob", to: "Ana", amount: "$45.00" },
-            { from: "Carlos", to: "Ana", amount: "$30.00" },
-          ].map((tx, i) => (
-            <div
-              key={i}
-              className="flex items-center justify-between bg-gold/7 border border-gold/15 rounded-xl px-[18px] py-3.5 mb-2.5 font-sans text-[15px]"
-            >
-              <div>
-                <span className="font-bold text-danger">
-                  {tx.from}
-                </span>
-                <span className="text-text-faint mx-2">
-                  → pays →
-                </span>
-                <span className="font-bold text-success">{tx.to}</span>
-              </div>
-              <div className="font-serif text-lg font-bold text-gold">
-                {tx.amount}
-              </div>
+        {/* Floating preview card - simplified and theme-matched */}
+        <Card animate className="max-w-[440px] md:mx-auto mt-20 text-left [animation-delay:0.5s] border-white/5 bg-white/[0.02]">
+          <div className="flex items-center gap-3 mb-6">
+            <div className="w-10 h-10 rounded-full bg-brand/20 flex items-center justify-center text-brand">
+              ✈️
             </div>
-          ))}
-
-          <div className="mt-4 px-4 py-3 bg-gold/6 border border-gold/15 rounded-lg text-[13px] font-sans text-text-muted flex items-center gap-2">
-            <span className="text-gold">🔗</span>
-            <span className="font-mono text-xs overflow-hidden text-ellipsis whitespace-nowrap">
-              {getBaseUrl()}/?trip=QmFsaV8yMDI2...
-            </span>
-            <span className="ml-auto text-gold font-bold text-xs whitespace-nowrap">
-              Copy
-            </span>
+            <div>
+              <div className="text-[15px] font-bold text-white">Flight Tickets</div>
+              <div className="text-[12px] text-text-faint">$420.00</div>
+            </div>
+          </div>
+          <div className="flex items-center gap-3 mb-2">
+            <div className="w-10 h-10 rounded-full bg-success/20 flex items-center justify-center text-success">
+              🍴
+            </div>
+            <div>
+              <div className="text-[15px] font-bold text-white">Dinner at Le Marais</div>
+              <div className="text-[12px] text-text-faint">$115.50</div>
+            </div>
           </div>
         </Card>
-
-        {/* Feature highlights */}
-        <div className="grid grid-cols-[repeat(auto-fit,minmax(200px,1fr))] gap-4 max-w-[720px] mx-auto mt-12 animate-fade-up [animation-delay:0.6s]">
-          {[
-            {
-              icon: "🔗",
-              title: "Instant share link",
-              desc: "Share a link immediately — no account needed.",
-            },
-            ENABLE_AUTH ? {
-              icon: "💾",
-              title: "Save permanently",
-              desc: `Sign in with Google to get a clean link like ${getCleanBaseUrl()}/t/bali-2026.`,
-            } : null,
-            ENABLE_AUTH ? {
-              icon: "📋",
-              title: "Trip history",
-              desc: "Access and edit all your saved trips anytime.",
-            } : null,
-          ].filter(Boolean).map((f) => {
-            const feature = f as { icon: string; title: string; desc: string };
-            return (
-              <div
-                key={feature.title}
-                className="bg-white/4 border border-white/8 rounded-2xl p-5 text-left"
-              >
-                <div className="text-[28px] mb-2.5">{feature.icon}</div>
-                <Typography variant="h3" className="mb-1.5 leading-tight">
-                  {feature.title}
-                </Typography>
-                <p className="font-sans text-[13px] text-text-muted leading-relaxed">
-                  {feature.desc}
-                </p>
-              </div>
-            );
-          })}
-        </div>
       </Container>
     </Section>
   );
@@ -174,79 +121,45 @@ function HowItWorks() {
   const steps = [
     {
       number: "01",
-      emoji: "🧳",
+      icon: "🧳",
       title: "Create your trip",
       desc: "Name your trip, pick your currency, and add everyone who's coming along.",
     },
     {
       number: "02",
-      emoji: "🧾",
+      icon: "🧾",
       title: "Log your expenses",
       desc: "Add each expense, who paid, and who it should be split among. TripSplit handles the math.",
     },
     {
       number: "03",
-      emoji: "🔗",
+      icon: "🔗",
       title: "Share one link",
       desc: "Your entire trip is encoded into a single URL. Share it and everyone sees exactly who owes what.",
     },
-    ENABLE_AUTH ? {
-      number: "04",
-      emoji: "💾",
-      title: "Save & revisit",
-      desc: `Sign in with Google to save your trip permanently and get a clean link like ${getCleanBaseUrl()}/t/bali-2026.`,
-    } : null,
-  ].filter(Boolean) as { number: string; emoji: string; title: string; desc: string }[];
+  ];
 
   return (
-    <Section>
+    <Section className="bg-white/[0.01] border-y border-white/5 relative z-10">
       <Container>
-        {/* Section label */}
-        <div className="text-center mb-16">
-          <Typography variant="eyebrow" className="mb-4 animate-fade-up">
-            How it works
-          </Typography>
-          <Typography as="h2" variant="h2" className="animate-fade-up [animation-delay:0.1s] mb-0">
-            From expenses to settled — in minutes
-          </Typography>
-        </div>
-
-        {/* Steps */}
-        <div className="grid grid-cols-[repeat(auto-fit,minmax(260px,1fr))] gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-12">
           {steps.map((step, i) => (
-            <Card
+            <div
               key={step.number}
-              animate
-              className="[animation-delay:0.2s] relative overflow-hidden group"
-              style={{ animationDelay: `${0.1 + i * 0.12}s` }}
+              className="animate-fade-up"
+              style={{ animationDelay: `${0.2 + i * 0.1}s` }}
             >
-              {/* Background number watermark */}
-              <div className="absolute -top-2.5 right-4 font-serif text-[96px] font-bold text-gold/4 leading-none select-none">
-                {step.number}
+              <div className="text-3xl mb-6 bg-brand/10 w-14 h-14 rounded-2xl flex items-center justify-center">
+                {step.icon}
               </div>
-
-              <div className="text-4xl mb-5">{step.emoji}</div>
-
-              <div className="font-sans text-[11px] font-bold tracking-[1.5px] uppercase text-gold mb-2.5">
-                Step {step.number}
-              </div>
-
-              <Typography variant="h3" className="mb-3">
+              <Typography variant="h3" className="mb-4 text-white">
                 {step.title}
               </Typography>
-
-              <p className="font-sans text-[15px] text-text-muted leading-[1.7]">
+              <Typography variant="small" className="text-[15px] leading-relaxed">
                 {step.desc}
-              </p>
-            </Card>
+              </Typography>
+            </div>
           ))}
-        </div>
-
-        {/* Bottom CTA */}
-        <div className="text-center mt-16 animate-fade-up [animation-delay:0.4s]">
-          <Button href="/split">
-            Start splitting for free ✈️
-          </Button>
         </div>
       </Container>
     </Section>
@@ -256,8 +169,10 @@ function HowItWorks() {
 /* ── Footer ── */
 function Footer() {
   return (
-    <footer className="relative z-10 text-center py-8 px-6 border-t border-white/6 font-sans text-[13px] text-text-faint">
-      Built with ✈️ by TripSplit · No login. No drama. Just fair splits.
+    <footer className="relative z-10 py-12 px-6 border-t border-white/5 font-sans text-[12px] text-text-faint">
+      <Container className="flex justify-between items-center gap-6">
+        <div>© {new Date().getFullYear()} TripSplit</div>
+      </Container>
     </footer>
   );
 }

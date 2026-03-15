@@ -68,9 +68,18 @@ export default function TravelerSetup() {
         />
       )}
       {/* Trip name */}
-      <Card className="p-7 md:p-8">
-        <div className="flex justify-between items-center mb-3">
-          <Typography variant="small" className="uppercase tracking-widest opacity-40 font-bold block">
+      <Card className="p-7 md:p-8 border-white/5 bg-white/[0.02]">
+        <Typography variant="h3" className="mb-6 text-white">Start a New Trip</Typography>
+
+        <div className="bg-brand/10 border border-brand/20 rounded-xl px-4 py-3 mb-8 flex gap-3">
+          <span className="text-brand">ℹ️</span>
+          <p className="text-[12px] text-brand-light font-bold leading-tight">
+            No account needed. Just create and share.
+          </p>
+        </div>
+
+        <div className="flex justify-between items-center mb-2">
+          <Typography variant="sub" className="text-text-muted">
             Trip Name
           </Typography>
           <Typography variant="small" className="text-[10px] opacity-30">
@@ -78,16 +87,16 @@ export default function TravelerSetup() {
           </Typography>
         </div>
         <input
-          className="w-full bg-white/8 border border-white/15 rounded-xl px-4 py-3 text-[15px] text-text outline-none focus:border-gold/50 focus:bg-white/12 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
-          placeholder="e.g. Bali Summer Trip 🌴"
+          className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-[15px] text-text outline-none focus:border-brand/50 focus:bg-white/8 transition-all disabled:opacity-50 disabled:cursor-not-allowed mb-6"
+          placeholder="e.g. Summer in Tokyo"
           value={trip.name}
           maxLength={MAX_TRIP_NAME}
           onChange={(e) => updateTripName(e.target.value)}
           disabled={isReadOnly}
         />
 
-        <div className="flex justify-between items-center mb-3 mt-8">
-          <Typography variant="small" className="uppercase tracking-widest opacity-40 font-bold block">
+        <div className="flex justify-between items-center mb-2">
+          <Typography variant="sub" className="text-text-muted">
             Owner's Name
           </Typography>
           <Typography variant="small" className="text-[10px] opacity-30">
@@ -95,60 +104,55 @@ export default function TravelerSetup() {
           </Typography>
         </div>
         <input
-          className="w-full bg-white/8 border border-white/15 rounded-xl px-4 py-3 text-[15px] text-text outline-none focus:border-gold/50 focus:bg-white/12 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
-          placeholder="e.g. John Doe"
+          className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-[15px] text-text outline-none focus:border-brand/50 focus:bg-white/8 transition-all disabled:opacity-50 disabled:cursor-not-allowed mb-6"
+          placeholder="e.g. John"
           value={trip.ownerName ?? ""}
           maxLength={MAX_TRAVELER_NAME}
           onChange={(e) => updateOwnerName(e.target.value.replace(/[0-9]/g, ""))}
           disabled={isReadOnly}
         />
 
-        <Typography variant="small" className="uppercase tracking-widest opacity-40 font-bold mb-3 mt-8 block">
+        <Typography variant="sub" className="text-text-muted mb-2 block">
           Currency
         </Typography>
-        <div className="flex flex-wrap gap-2">
-          {CURRENCIES.map((c) => {
-            const active = trip.currency.code === c.code;
-            return (
-              <button
-                key={c.code}
-                onClick={() => updateCurrency(c)}
-                  disabled={isReadOnly}
-                className={`
-                    px-4 py-2 rounded-xl text-sm font-medium transition-all
-                  ${active
-                    ? "bg-gold/15 border border-gold text-gold"
-                    : "bg-white/8 border border-white/12 text-text opacity-70 hover:opacity-100 hover:bg-white/12"}
-                `}
-              >
-                {c.flag} {c.code}
-              </button>
-            );
-          })}
-        </div>
+        <select
+          value={trip.currency.code}
+          onChange={(e) => {
+            const c = CURRENCIES.find(curr => curr.code === e.target.value);
+            if (c) updateCurrency(c);
+          }}
+          disabled={isReadOnly}
+          className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-[15px] text-text outline-none focus:border-brand/50 focus:bg-white/8 transition-all disabled:opacity-50 appearance-none cursor-pointer"
+        >
+          {CURRENCIES.map(c => (
+            <option key={c.code} value={c.code} className="bg-bg-deep text-text">
+              {c.code} ({c.symbol})
+            </option>
+          ))}
+        </select>
       </Card>
 
       {/* Travelers */}
-      <Card className="p-7 md:p-8">
-        <Typography variant="small" className="uppercase tracking-widest opacity-40 font-bold mb-4 block">
+      <Card className="p-7 md:p-8 border-white/5 bg-white/[0.02]">
+        <Typography variant="sub" className="text-text-muted mb-4 block">
           Travelers
         </Typography>
-        <div className="flex flex-col gap-3 mb-5">
+        <div className="flex flex-col gap-3 mb-6">
           {trip.travelers.map((t, i) => (
             <div
               key={t.id}
-              className="flex items-center justify-between bg-white/5 rounded-xl px-4 py-3 animate-slide-in"
+              className="flex items-center justify-between bg-white/5 border border-white/5 rounded-xl px-4 py-3 animate-slide-in"
               style={{ animationDelay: `${i * 0.05}s` }}
             >
               <div className="flex items-center gap-3">
                 <div
-                  className="w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold text-white shadow-lg"
-                  style={{ background: avatarColor(i) }}
+                  className="w-8 h-8 rounded-full flex items-center justify-center text-xs font-black text-white"
+                  style={{ background: i === 0 ? "var(--color-brand)" : "#475569" }}
                 >
                   {getInitial(t.name)}
                 </div>
-                <Typography variant="body" className="font-medium truncate max-w-[150px] sm:max-w-[250px]" title={t.name}>
-                  {t.name}
+                <Typography variant="body" className="font-bold text-[15px] text-white truncate max-w-[150px] sm:max-w-[250px]" title={t.name}>
+                  {t.name} {i === 0 && <span className="text-[10px] text-brand-light ml-1 font-black uppercase">Owner</span>}
                 </Typography>
               </div>
               {trip.travelers.length > 2 && i !== 0 && !isReadOnly && (
@@ -167,7 +171,7 @@ export default function TravelerSetup() {
           <div className="flex flex-col sm:flex-row gap-2">
             <div className="relative flex-1">
               <input
-                className="w-full bg-white/8 border border-white/15 rounded-xl px-4 py-3 pr-14 text-[15px] text-text outline-none focus:border-gold/50 focus:bg-white/12 transition-all"
+                className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 pr-14 text-[15px] text-text outline-none focus:border-brand/50 focus:bg-white/8 transition-all"
                 placeholder={trip.travelers.length >= MAX_TRAVELERS ? "Limit reached" : "Add traveler name..."}
                 value={newName}
                 maxLength={MAX_TRAVELER_NAME}
@@ -191,11 +195,6 @@ export default function TravelerSetup() {
             </Button>
           </div>
         )}
-        {trip.travelers.length >= MAX_TRAVELERS && (
-          <Typography variant="small" className="text-red-400/60 text-[11px] mt-2 block">
-            Maximum of {MAX_TRAVELERS} travelers reached.
-          </Typography>
-        )}
       </Card>
 
       <Button
@@ -209,7 +208,7 @@ export default function TravelerSetup() {
             <span className="animate-spin mr-2">🌀</span> Saving...
           </>
         ) : (
-          "Continue to Expenses →"
+          "Create Trip & Get Link →"
         )}
       </Button>
     </div>

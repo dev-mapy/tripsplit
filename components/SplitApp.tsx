@@ -16,7 +16,7 @@ import { StarsBackground } from "@/components/ui/StarsBackground";
 import OwnerHeaderCard from "@/components/OwnerHeaderCard";
 
 const STEPS = ["setup", "expenses", "result"] as const;
-const STEP_LABELS = ["Trip Setup", "Expenses", "Settlement"];
+const STEP_LABELS = ["Setup", "Expenses", "Result"];
 
 export default function SplitApp() {
   const { user } = useAuth();
@@ -25,26 +25,18 @@ export default function SplitApp() {
 
   return (
     <Layout variant="centered">
-      <StarsBackground count={40} />
-
-      <div className="text-center mb-16 relative">
+      <div className="text-center mb-12 relative">
         <div className="absolute top-0 right-0 sm:-top-2">
           <UserNav />
         </div>
 
-        <div className="text-6xl mb-4 animate-bounce-slow">✈️</div>
-        <Typography variant="h1" className="text-[clamp(36px,8vw,56px)] bg-linear-to-br from-gold to-gold-warm bg-clip-text text-transparent mb-2">
+        <div className="w-16 h-16 bg-brand/10 rounded-2xl flex items-center justify-center text-3xl mx-auto mb-6">✈️</div>
+        <Typography variant="h1" className="text-[clamp(32px,8vw,48px)] mb-2">
           TripSplit
         </Typography>
-        <Typography variant="body" className="opacity-50 text-[16px]">
-          No login. No drama. Just fair splits.
+        <Typography variant="body" className="opacity-50 text-[15px]">
+          Split expenses with friends, effortlessly.
         </Typography>
-        <a
-          href="/home"
-          className="inline-block mt-4 text-[11px] font-bold text-text-faint hover:text-white uppercase tracking-widest no-underline transition-colors"
-        >
-          ← About TripSplit
-        </a>
 
         {/* Step indicator */}
         <div className="flex flex-col items-center gap-4 mt-12">
@@ -54,19 +46,19 @@ export default function SplitApp() {
                 <div
                   className={`
                     rounded-full transition-all duration-500
-                    ${step === s ? "w-3 h-3 bg-gold shadow-[0_0_15px_rgba(247,151,30,0.6)]" :
-                      STEPS.indexOf(step) > i ? "w-2.5 h-2.5 bg-gold/40" : "w-2 h-2 bg-white/10"}
+                    ${step === s ? "w-3 h-3 bg-brand shadow-[0_0_15px_rgba(37,99,235,0.6)]" :
+                      STEPS.indexOf(step) > i ? "w-2.5 h-2.5 bg-brand/40" : "w-2 h-2 bg-white/10"}
                   `}
                 />
                 {i < 2 && <div className="w-10 h-px bg-white/5" />}
               </div>
             ))}
           </div>
-          <div className="flex justify-center gap-10 sm:gap-16 text-[10px] font-bold uppercase tracking-widest text-text-faint">
+          <div className="flex justify-center gap-10 sm:gap-16 text-[10px] font-black uppercase tracking-[0.2em] text-text-faint">
             {STEP_LABELS.map((l, i) => (
               <span
                 key={l}
-                className={STEPS[i] === step ? "text-gold" : ""}
+                className={STEPS[i] === step ? "text-brand-light" : ""}
               >
                 {l}
               </span>

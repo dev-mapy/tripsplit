@@ -24,18 +24,18 @@ export function Button({
 
   const variants = {
     primary:
-      "bg-linear-to-br from-gold-warm to-gold text-bg-deep shadow-[0_8px_32px_rgba(247,151,30,0.35)] hover:scale-105 active:scale-95",
+      "bg-brand text-white shadow-[0_8px_24px_rgba(37,99,235,0.35)] hover:bg-brand-light hover:scale-[1.02] active:scale-[0.98]",
     secondary:
-      "bg-white/10 border border-white/20 text-text hover:bg-white/20 hover:border-white/30",
+      "bg-white/10 border border-white/10 text-text hover:bg-white/15 hover:border-white/20",
     ghost: "text-text-muted hover:text-white hover:bg-white/8",
-    outline: "border-2 border-gold text-gold hover:bg-gold hover:text-bg-deep",
+    outline: "border-2 border-brand text-brand hover:bg-brand hover:text-white",
     danger: "bg-red-500/10 border border-red-500/20 text-red-500 hover:bg-red-500/20",
   };
 
   const sizes = {
     sm: "px-4 py-2 text-sm",
-    md: "px-[18px] py-[10px] text-[15px]",
-    lg: "px-9 py-4 text-[17px] tracking-[0.3px]",
+    md: "px-6 py-3 text-[15px]",
+    lg: "px-8 py-4 text-[17px] tracking-tight",
   };
 
   const combinedClasses = `${baseStyles} ${variants[variant]} ${sizes[size]} ${className}`;
