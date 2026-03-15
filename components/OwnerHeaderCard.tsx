@@ -5,7 +5,7 @@ import { Card } from "@/components/ui/Card";
 import { Typography } from "@/components/ui/Typography";
 
 export default function OwnerHeaderCard() {
-  const { trip, isSharedView, step } = useTrip();
+  const { trip, isSharedView, hasBeenModified, step } = useTrip();
 
   if (!trip.ownerName || step === "setup") return null;
 
@@ -24,7 +24,7 @@ export default function OwnerHeaderCard() {
           </Typography>
         </div>
       </div>
-      {trip.isEditable && isSharedView && (
+      {trip.isEditable && isSharedView && !hasBeenModified && (
         <div className="hidden sm:block">
           <Typography variant="small" className="bg-gold/10 text-gold px-3 py-1 rounded-full border border-gold/20 font-bold text-[10px] uppercase tracking-tighter">
             Editable Link
