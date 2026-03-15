@@ -39,6 +39,13 @@ export default function LandingPage() {
 
 /* ── Hero ── */
 function Hero() {
+  const avatarColors = [
+    "bg-brand",
+    "bg-brand/80",
+    "bg-brand/60",
+    "bg-brand/40",
+  ];
+
   return (
     <Section padding="pt-12 pb-24 md:pt-20 md:pb-32">
       <Container maxWidth={800} className="text-left md:text-center relative z-10">
@@ -69,8 +76,7 @@ function Hero() {
             {[1, 2, 3, 4].map((i) => (
               <div
                 key={i}
-                className={`inline-block h-10 w-10 rounded-full ring-4 ring-bg-deep bg-brand-light flex items-center justify-center text-xs font-bold text-white`}
-                style={{ opacity: 1 - i * 0.15 }}
+                className={`inline-block h-10 w-10 rounded-full ring-4 ring-bg-deep flex items-center justify-center text-xs font-bold text-white ${avatarColors[i-1]}`}
               >
                 {String.fromCharCode(64 + i)}
               </div>
@@ -80,7 +86,7 @@ function Hero() {
             </div>
           </div>
           <Typography variant="sub" className="text-[11px] font-black uppercase tracking-[0.1em] text-text-faint">
-            100+ travelers splitting right now
+            12k+ travelers splitting right now
           </Typography>
         </div>
 
