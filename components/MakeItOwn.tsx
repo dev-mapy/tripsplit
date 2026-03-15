@@ -8,11 +8,12 @@ import { Card } from "@/components/ui/Card";
 import { Typography } from "@/components/ui/Typography";
 
 export default function MakeItOwn() {
-  const { trip, isSharedView, setStep, makeItOwn } = useTrip();
+  const { trip, isSharedView, isReadOnly, setStep, makeItOwn } = useTrip();
   const [showForm, setShowForm] = useState(false);
   const [newName, setNewName] = useState("");
 
-  if (!isSharedView || !trip.isEditable) return null;
+  // Only show if it's a shared view and it's read-only (meaning it's not the owner)
+  if (!isSharedView || !isReadOnly) return null;
 
   const handleMakeOwn = () => {
     const trimmed = newName.trim();

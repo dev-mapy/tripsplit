@@ -60,7 +60,7 @@ interface TripProviderProps {
 export function TripProvider({
   children,
   initialTrip,
-  isReadOnly = false,
+  isReadOnly: isReadOnlyProp = false,
 }: TripProviderProps) {
   const { user } = useAuth();
   const [encodedTrip, setEncodedTrip] = useQueryState("trip", {
@@ -190,6 +190,7 @@ export function TripProvider({
       return {
         ...t,
         ownerName: name.trim(),
+        isEditable: true,
         travelers: [newOwner, ...t.travelers],
         // Note: we keep the old owner in the list, they are now at index 1
       };

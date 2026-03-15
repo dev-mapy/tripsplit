@@ -36,7 +36,7 @@ export default function TravelerSetup() {
     setNewName("");
   };
 
-  const canContinue = trip.name.trim().length > 0 && trip.ownerName?.trim().length > 0 && trip.travelers.length >= 2;
+  const canContinue = trip.name.trim().length > 0 && (trip.ownerName?.trim().length ?? 0) > 0 && trip.travelers.length >= 2;
 
   const handleContinue = () => {
     if (!canContinue) return;

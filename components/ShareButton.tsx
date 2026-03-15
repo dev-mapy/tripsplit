@@ -11,7 +11,7 @@ interface Props {
 
 export default function ShareButton({ overrideUrl }: Props = {}) {
   const { shareUrl: contextUrl, trip, isReadOnly } = useTrip();
-  const [allowEditing, setAllowEditing] = useState(false);
+  const [allowEditing, setAllowEditing] = useState(trip.isEditable ?? false);
   const [copied, setCopied] = useState(false);
 
   // Generate the URL with the correct 'ie' flag based on allowEditing
